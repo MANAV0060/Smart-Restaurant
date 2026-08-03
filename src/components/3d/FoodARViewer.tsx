@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, ContactShadows, Float } from '@react-three/drei';
+import { OrbitControls, ContactShadows, Float, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { MenuItem } from '../../types';
-import { Camera, RotateCcw, Scale, Camera as ScreenshotIcon, Share2, Sparkles, X, Check } from 'lucide-react';
+import { Camera, RotateCcw, Scale, Camera as ScreenshotIcon, Share2, Sparkles, Layers } from 'lucide-react';
+import { 
+  RealisticBurger, 
+  RealisticPizza, 
+  RealisticPasta, 
+  RealisticCurry, 
+  RealisticDimSum, 
+  RealisticDessert, 
+  RealisticDrink 
+} from './Food3DViewer';
 
 interface FoodARViewerProps {
   item: MenuItem;
@@ -11,61 +20,26 @@ interface FoodARViewerProps {
   onClose: () => void;
 }
 
-// 3D Mesh Renderer for AR Surface Placement
-function AR3DModel({ item, position }: { item: MenuItem; position: [number, number, number] }) {
-  const meshRef = useRef<THREE.Group>(null);
+// 3D Mesh Renderer for AR Surface Placement using High-Fidelity Models
+function AR3DModel({ item, position, exploded, onSelectLayer, highlightedIndex }: { item: MenuItem; position: [number, number, number], exploded: boolean, onSelectLayer: (idx: number | null) => void, highlightedIndex: number | null }) {
   const shape = item.model3DConfig?.baseShape || 'burger';
 
-  useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.005;
-    }
-  });
-
   return (
-    <group ref={meshRef} position={position}>
+    <group position={position}>
       {shape === 'pizza' ? (
-        <group>
-          <mesh castShadow receiveShadow>
-            <torusGeometry args={[1.2, 0.14, 16, 32]} />
-            <meshStandardMaterial color="#b9770e" roughness={0.7} />
-          </mesh>
-          <mesh castShadow receiveShadow position={[0, -0.02, 0]}>
-            <cylinderGeometry args={[1.2, 1.15, 0.08, 32]} />
-            <meshStandardMaterial color="#fef9e7" roughness={0.3} />
-          </mesh>
-        </group>
+        <RealisticPizza exploded={exploded} highlightedIndex={highlightedIndex} onSelectLayer={onSelectLayer} />
+      ) : shape === 'pasta' ? (
+        <RealisticPasta exploded={exploded} highlightedIndex={highlightedIndex} onSelectLayer={onSelectLayer} />
+      ) : shape === 'curry' ? (
+        <RealisticCurry exploded={exploded} highlightedIndex={highlightedIndex} onSelectLayer={onSelectLayer} />
+      ) : shape === 'sushi' ? (
+        <RealisticDimSum exploded={exploded} highlightedIndex={highlightedIndex} onSelectLayer={onSelectLayer} />
+      ) : shape === 'dessert' ? (
+        <RealisticDessert exploded={exploded} highlightedIndex={highlightedIndex} onSelectLayer={onSelectLayer} />
       ) : shape === 'drink' ? (
-        <group>
-          <mesh castShadow receiveShadow>
-            <cylinderGeometry args={[0.5, 0.4, 1.4, 32]} />
-            <meshPhysicalMaterial color="#ffffff" transparent opacity={0.35} transmission={0.9} />
-          </mesh>
-          <mesh position={[0, -0.05, 0]}>
-            <cylinderGeometry args={[0.46, 0.38, 1.2, 32]} />
-            <meshStandardMaterial color="#c0392b" roughness={0.2} />
-          </mesh>
-        </group>
+        <RealisticDrink exploded={exploded} highlightedIndex={highlightedIndex} onSelectLayer={onSelectLayer} />
       ) : (
-        <group>
-          {/* Burger Model */}
-          <mesh castShadow position={[0, 0.3, 0]}>
-            <sphereGeometry args={[0.8, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-            <meshStandardMaterial color="#c68b59" roughness={0.5} />
-          </mesh>
-          <mesh castShadow position={[0, 0.05, 0]}>
-            <cylinderGeometry args={[0.82, 0.82, 0.05, 32]} />
-            <meshStandardMaterial color="#27ae60" roughness={0.4} />
-          </mesh>
-          <mesh castShadow position={[0, -0.1, 0]}>
-            <cylinderGeometry args={[0.8, 0.78, 0.18, 32]} />
-            <meshStandardMaterial color="#3d1c0c" roughness={0.8} />
-          </mesh>
-          <mesh castShadow position={[0, -0.28, 0]}>
-            <cylinderGeometry args={[0.78, 0.75, 0.2, 32]} />
-            <meshStandardMaterial color="#d2b48c" roughness={0.6} />
-          </mesh>
-        </group>
+        <RealisticBurger exploded={exploded} highlightedIndex={highlightedIndex} onSelectLayer={onSelectLayer} />
       )}
     </group>
   );
@@ -79,6 +53,8 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, comparisonItem
   const [rotation, setRotation] = useState(0);
   const [isCapturing, setIsCapturing] = useState(false);
   const [isComparing, setIsComparing] = useState(!!comparisonItem);
+  const [exploded, setExploded] = useState(false);
+  const [selectedLayerIndex, setSelectedLayerIndex] = useState<number | null>(null);
 
   useEffect(() => {
     async function startCamera() {
@@ -141,32 +117,36 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, comparisonItem
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
           <div className="w-80 h-80 rounded-full border-2 border-dashed border-orange-500/40 animate-ping opacity-30"></div>
           <div className="w-64 h-64 rounded-full border border-orange-400/50 flex items-center justify-center">
-            <span className="text-xs text-orange-300 font-bold bg-slate-900/80 px-3 py-1 rounded-full border border-orange-500/40 backdrop-blur-md">
+            <span className="text-xs text-orange-300 font-bold bg-slate-900/80 px-3 py-1 rounded-full border border-orange-500/40 backdrop-blur-md shadow-xl">
               <Sparkles className="w-3.5 h-3.5 inline mr-1" /> Table Surface Plane Locked
             </span>
           </div>
         </div>
       </div>
 
-      {/* 2. Three.js Transparent 3D Canvas Overlay */}
+      {/* 2. Three.js Transparent 3D Canvas Overlay with Environment Lighting */}
       <div className="absolute inset-0 z-10 pointer-events-auto">
-        <Canvas camera={{ position: [0, 1.8, 3.8], fov: 45 }} gl={{ alpha: true }}>
-          <ambientLight intensity={1.5} />
-          <directionalLight position={[4, 6, 4]} intensity={2.0} castShadow />
+        <Canvas camera={{ position: [0, 1.8, 3.8], fov: 45 }} gl={{ alpha: true, antialias: true }}>
+          <Environment preset="sunset" />
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[4, 6, 4]} intensity={1.5} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
+          <pointLight position={[-5, 5, -5]} intensity={0.5} color="#ffaa55" />
 
           <group scale={scale} rotation={[0, (rotation * Math.PI) / 180, 0]}>
-            {isComparing && comparisonItem ? (
-              <>
-                <AR3DModel item={item} position={[-1.1, 0, 0]} />
-                <AR3DModel item={comparisonItem} position={[1.1, 0, 0]} />
-              </>
-            ) : (
-              <AR3DModel item={item} position={[0, 0, 0]} />
-            )}
-            <ContactShadows position={[0, -0.7, 0]} opacity={0.7} scale={5} blur={1.5} far={3} color="#000000" />
+            <Float speed={1.2} rotationIntensity={0.05} floatIntensity={0.1}>
+              {isComparing && comparisonItem ? (
+                <>
+                  <AR3DModel item={item} position={[-1.2, 0, 0]} exploded={exploded} onSelectLayer={setSelectedLayerIndex} highlightedIndex={selectedLayerIndex} />
+                  <AR3DModel item={comparisonItem} position={[1.2, 0, 0]} exploded={exploded} onSelectLayer={setSelectedLayerIndex} highlightedIndex={selectedLayerIndex} />
+                </>
+              ) : (
+                <AR3DModel item={item} position={[0, 0, 0]} exploded={exploded} onSelectLayer={setSelectedLayerIndex} highlightedIndex={selectedLayerIndex} />
+              )}
+            </Float>
+            <ContactShadows position={[0, -1.0, 0]} opacity={0.8} scale={8} blur={2.5} far={4} color="#000000" />
           </group>
 
-          <OrbitControls enableZoom={true} minDistance={2} maxDistance={6} maxPolarAngle={Math.PI / 2 + 0.1} />
+          <OrbitControls enableZoom={true} minDistance={1.5} maxDistance={6} maxPolarAngle={Math.PI / 2 + 0.1} />
         </Canvas>
       </div>
 
@@ -188,27 +168,39 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, comparisonItem
 
       {/* Bottom Controls */}
       <div className="relative z-20 p-4 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 flex flex-col gap-3">
-        <div className="flex items-center justify-center gap-4">
-          <button 
-            onClick={() => setScale(s => Math.max(0.6, s - 0.1))}
-            className="p-2.5 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold flex items-center gap-1.5 border border-slate-700"
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setExploded(!exploded)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-md ${
+              exploded 
+                ? 'bg-orange-500 text-white shadow-orange-500/30' 
+                : 'bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700'
+            }`}
           >
-            <Scale className="w-4 h-4 text-orange-400" /> Scale -
+            <Layers className="w-4 h-4" />
+            {exploded ? 'Collapse AR View' : 'AR Exploded Layer View'}
           </button>
-
-          <button 
-            onClick={() => setRotation(r => r + 45)}
-            className="p-2.5 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold flex items-center gap-1.5 border border-slate-700"
-          >
-            <RotateCcw className="w-4 h-4 text-orange-400" /> Rotate 45°
-          </button>
-
-          <button 
-            onClick={() => setScale(s => Math.min(1.6, s + 0.1))}
-            className="p-2.5 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold flex items-center gap-1.5 border border-slate-700"
-          >
-            <Scale className="w-4 h-4 text-orange-400" /> Scale +
-          </button>
+          
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setScale(s => Math.max(0.6, s - 0.1))}
+              className="p-2 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold flex items-center gap-1 border border-slate-700"
+            >
+              <Scale className="w-4 h-4 text-orange-400" /> -
+            </button>
+            <button 
+              onClick={() => setRotation(r => r + 45)}
+              className="p-2 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold flex items-center gap-1 border border-slate-700"
+            >
+              <RotateCcw className="w-4 h-4 text-orange-400" /> 45°
+            </button>
+            <button 
+              onClick={() => setScale(s => Math.min(1.6, s + 0.1))}
+              className="p-2 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold flex items-center gap-1 border border-slate-700"
+            >
+              <Scale className="w-4 h-4 text-orange-400" /> +
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
