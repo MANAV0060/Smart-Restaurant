@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, Html, ContactShadows } from '@react-three/drei';
+import { OrbitControls, Float, Html, ContactShadows, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { MenuItem } from '../../types';
 import { Layers, Sparkles, Info } from 'lucide-react';
@@ -10,7 +10,7 @@ interface Food3DViewerProps {
 }
 
 // Custom Steam Particles Component
-function SteamParticles() {
+export function SteamParticles() {
   const count = 15;
   const meshRef = useRef<THREE.Group>(null);
   
@@ -32,7 +32,7 @@ function SteamParticles() {
       {Array.from({ length: count }).map((_, i) => (
         <mesh key={i} position={[(Math.random() - 0.5) * 0.9, i * 0.15, (Math.random() - 0.5) * 0.9]}>
           <sphereGeometry args={[0.2, 12, 12]} />
-          <meshBasicMaterial color="#ffffff" transparent opacity={0.3} depthWrite={false} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.2} depthWrite={false} />
         </mesh>
       ))}
     </group>
@@ -40,7 +40,7 @@ function SteamParticles() {
 }
 
 // 1. Detailed Realistic Burger Model
-function RealisticBurger({ exploded, highlightedIndex, onSelectLayer }: any) {
+export function RealisticBurger({ exploded, highlightedIndex, onSelectLayer }: any) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -59,7 +59,7 @@ function RealisticBurger({ exploded, highlightedIndex, onSelectLayer }: any) {
       <group position={[0, getOffsetY(-0.6, 0), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(0); }}>
         <mesh castShadow receiveShadow>
           <cylinderGeometry args={[1.2, 1.15, 0.3, 32]} />
-          <meshStandardMaterial color={highlightedIndex === 0 ? '#f97316' : '#d2b48c'} roughness={0.6} />
+          <meshPhysicalMaterial color={highlightedIndex === 0 ? '#f97316' : '#d2b48c'} roughness={0.6} clearcoat={0.1} />
         </mesh>
         {(exploded || highlightedIndex === 0) && (
           <Html position={[1.5, 0, 0]} center distanceFactor={8}>
@@ -74,22 +74,38 @@ function RealisticBurger({ exploded, highlightedIndex, onSelectLayer }: any) {
       <group position={[0, getOffsetY(-0.3, 1), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(1); }}>
         <mesh castShadow receiveShadow>
           <cylinderGeometry args={[1.25, 1.22, 0.25, 32]} />
-          <meshStandardMaterial color={highlightedIndex === 1 ? '#f97316' : '#3d1c0c'} roughness={0.8} />
+          <meshPhysicalMaterial color={highlightedIndex === 1 ? '#f97316' : '#2b1408'} roughness={0.7} metalness={0.1} clearcoat={0.3} clearcoatRoughness={0.4} />
         </mesh>
+        {/* Grill marks/char texture representation */}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <mesh key={`char-${i}`} position={[(Math.random() - 0.5) * 1.8, 0.13, (Math.random() - 0.5) * 1.8]} rotation={[0, Math.random() * Math.PI, 0]}>
+            <boxGeometry args={[0.3, 0.02, 0.1]} />
+            <meshBasicMaterial color="#1a0a03" />
+          </mesh>
+        ))}
         {(exploded || highlightedIndex === 1) && (
           <Html position={[1.5, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Cast Iron Wagyu Patty
+              Seared Wagyu Patty
             </div>
           </Html>
         )}
       </group>
 
-      {/* Melted Aged Cheddar Cheese */}
+      {/* Melted Aged Cheddar Cheese with Drips */}
       <group position={[0, getOffsetY(-0.08, 2), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(2); }}>
         <mesh castShadow receiveShadow rotation={[0, Math.PI / 6, 0]}>
           <boxGeometry args={[2.1, 0.05, 2.1]} />
-          <meshStandardMaterial color={highlightedIndex === 2 ? '#f97316' : '#ffb300'} roughness={0.3} />
+          <meshPhysicalMaterial color={highlightedIndex === 2 ? '#f97316' : '#ffaa00'} roughness={0.2} metalness={0.1} clearcoat={0.5} clearcoatRoughness={0.2} />
+        </mesh>
+        {/* Cheese drips */}
+        <mesh castShadow receiveShadow position={[0.9, -0.15, 0.5]} rotation={[0, 0, 0]}>
+          <cylinderGeometry args={[0.08, 0.02, 0.3, 16]} />
+          <meshPhysicalMaterial color={highlightedIndex === 2 ? '#f97316' : '#ffaa00'} roughness={0.2} clearcoat={0.5} />
+        </mesh>
+        <mesh castShadow receiveShadow position={[-0.8, -0.15, 0.7]} rotation={[0, 0, 0]}>
+          <cylinderGeometry args={[0.06, 0.01, 0.25, 16]} />
+          <meshPhysicalMaterial color={highlightedIndex === 2 ? '#f97316' : '#ffaa00'} roughness={0.2} clearcoat={0.5} />
         </mesh>
         {(exploded || highlightedIndex === 2) && (
           <Html position={[1.5, 0, 0]} center distanceFactor={8}>
@@ -103,9 +119,16 @@ function RealisticBurger({ exploded, highlightedIndex, onSelectLayer }: any) {
       {/* Wavy Fresh Lettuce */}
       <group position={[0, getOffsetY(0.12, 3), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(3); }}>
         <mesh castShadow receiveShadow>
-          <cylinderGeometry args={[1.4, 1.3, 0.06, 32]} />
-          <meshStandardMaterial color={highlightedIndex === 3 ? '#f97316' : '#27ae60'} roughness={0.4} />
+          <cylinderGeometry args={[1.4, 1.3, 0.06, 32, 1, false, 0, Math.PI * 2]} />
+          <meshPhysicalMaterial color={highlightedIndex === 3 ? '#f97316' : '#27ae60'} roughness={0.4} transmission={0.2} thickness={0.1} />
         </mesh>
+        {/* Lettuce ruffled edges */}
+        {Array.from({ length: 16 }).map((_, i) => (
+          <mesh key={`lettuce-${i}`} position={[1.3 * Math.cos((i / 16) * Math.PI * 2), 0, 1.3 * Math.sin((i / 16) * Math.PI * 2)]} rotation={[Math.random() * 0.4, (i / 16) * Math.PI * 2, 0]}>
+            <sphereGeometry args={[0.2, 16, 8]} />
+            <meshPhysicalMaterial color={highlightedIndex === 3 ? '#f97316' : '#27ae60'} roughness={0.3} transmission={0.3} thickness={0.05} />
+          </mesh>
+        ))}
         {(exploded || highlightedIndex === 3) && (
           <Html position={[1.5, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
@@ -119,11 +142,11 @@ function RealisticBurger({ exploded, highlightedIndex, onSelectLayer }: any) {
       <group position={[0, getOffsetY(0.28, 4), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(4); }}>
         <mesh castShadow receiveShadow position={[-0.2, 0, 0]}>
           <cylinderGeometry args={[0.9, 0.9, 0.1, 24]} />
-          <meshStandardMaterial color={highlightedIndex === 4 ? '#f97316' : '#e74c3c'} roughness={0.3} />
+          <meshPhysicalMaterial color={highlightedIndex === 4 ? '#f97316' : '#e74c3c'} roughness={0.2} transmission={0.4} thickness={0.2} clearcoat={0.6} />
         </mesh>
         <mesh castShadow receiveShadow position={[0.4, 0, 0]}>
           <cylinderGeometry args={[0.85, 0.85, 0.1, 24]} />
-          <meshStandardMaterial color={highlightedIndex === 4 ? '#f97316' : '#c0392b'} roughness={0.3} />
+          <meshPhysicalMaterial color={highlightedIndex === 4 ? '#f97316' : '#c0392b'} roughness={0.2} transmission={0.4} thickness={0.2} clearcoat={0.6} />
         </mesh>
         {(exploded || highlightedIndex === 4) && (
           <Html position={[1.5, 0, 0]} center distanceFactor={8}>
@@ -134,22 +157,23 @@ function RealisticBurger({ exploded, highlightedIndex, onSelectLayer }: any) {
         )}
       </group>
 
-      {/* Top Brioche Bun with 3D White Sesame Seeds */}
+      {/* Top Brioche Bun with 3D White/Brown Sesame Seeds */}
       <group position={[0, getOffsetY(0.6, 5), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(5); }}>
         <mesh castShadow receiveShadow>
           <sphereGeometry args={[1.25, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-          <meshStandardMaterial color={highlightedIndex === 5 ? '#f97316' : '#c68b59'} roughness={0.5} />
+          <meshPhysicalMaterial color={highlightedIndex === 5 ? '#f97316' : '#c68b59'} roughness={0.4} clearcoat={0.3} clearcoatRoughness={0.2} />
         </mesh>
-        {Array.from({ length: 24 }).map((_, i) => {
-          const phi = (i / 24) * Math.PI * 2;
-          const theta = 0.3 + (i % 3) * 0.3;
-          const x = 1.15 * Math.sin(theta) * Math.cos(phi);
-          const z = 1.15 * Math.sin(theta) * Math.sin(phi);
-          const y = 1.15 * Math.cos(theta) - 0.1;
+        {Array.from({ length: 30 }).map((_, i) => {
+          const phi = (i / 30) * Math.PI * 2;
+          const theta = 0.2 + (i % 4) * 0.25;
+          const x = 1.25 * Math.sin(theta) * Math.cos(phi);
+          const z = 1.25 * Math.sin(theta) * Math.sin(phi);
+          const y = 1.25 * Math.cos(theta) - 0.05;
+          const isBrown = i % 5 === 0;
           return (
-            <mesh key={i} position={[x, y, z]} rotation={[0.2, phi, 0]}>
-              <boxGeometry args={[0.06, 0.03, 0.12]} />
-              <meshStandardMaterial color="#fffbe6" roughness={0.3} />
+            <mesh key={i} position={[x, y, z]} rotation={[Math.random(), phi, Math.random()]}>
+              <boxGeometry args={[0.06, 0.03, 0.1]} />
+              <meshPhysicalMaterial color={isBrown ? "#8b4513" : "#fffbe6"} roughness={0.3} clearcoat={0.2} />
             </mesh>
           );
         })}
@@ -168,7 +192,7 @@ function RealisticBurger({ exploded, highlightedIndex, onSelectLayer }: any) {
 }
 
 // 2. Detailed Realistic Pizza Model
-function RealisticPizza({ exploded, highlightedIndex, onSelectLayer }: any) {
+export function RealisticPizza({ exploded, highlightedIndex, onSelectLayer }: any) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -183,65 +207,87 @@ function RealisticPizza({ exploded, highlightedIndex, onSelectLayer }: any) {
 
   return (
     <group ref={groupRef}>
-      {/* Outer Crust Ring */}
+      {/* Outer Crust Ring with Char Spots */}
       <group position={[0, getOffsetY(-0.1, 0), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(0); }}>
         <mesh castShadow receiveShadow>
-          <torusGeometry args={[2.0, 0.22, 16, 32]} />
-          <meshStandardMaterial color={highlightedIndex === 0 ? '#f97316' : '#b9770e'} roughness={0.7} />
+          <torusGeometry args={[2.0, 0.22, 32, 64]} />
+          <meshPhysicalMaterial color={highlightedIndex === 0 ? '#f97316' : '#d49a4a'} roughness={0.8} bumpScale={0.02} clearcoat={0.1} />
         </mesh>
+        {/* Charred crust spots */}
+        {Array.from({ length: 8 }).map((_, i) => {
+          const angle = (i / 8) * Math.PI * 2 + Math.random();
+          return (
+            <mesh key={`char-${i}`} position={[2.0 * Math.cos(angle), 0.1, 2.0 * Math.sin(angle)]} rotation={[0, angle, Math.PI / 4]}>
+              <boxGeometry args={[0.4, 0.1, 0.2]} />
+              <meshBasicMaterial color="#1a0a03" />
+            </mesh>
+          );
+        })}
         <mesh castShadow receiveShadow position={[0, -0.05, 0]}>
           <cylinderGeometry args={[2.0, 1.95, 0.12, 32]} />
-          <meshStandardMaterial color="#d5b895" roughness={0.8} />
+          <meshPhysicalMaterial color="#d5b895" roughness={0.8} />
         </mesh>
         {(exploded || highlightedIndex === 0) && (
           <Html position={[2.4, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Wood-Fired Crust
+              Wood-Fired Charred Crust
             </div>
           </Html>
         )}
       </group>
 
-      {/* Sauce & Melted Burrata Base */}
+      {/* Sauce & Melted Burrata Base (Glossy) */}
       <group position={[0, getOffsetY(0.08, 1), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(1); }}>
         <mesh castShadow receiveShadow>
           <cylinderGeometry args={[1.9, 1.85, 0.08, 32]} />
-          <meshStandardMaterial color={highlightedIndex === 1 ? '#f97316' : '#fef9e7'} roughness={0.3} />
+          <meshPhysicalMaterial color={highlightedIndex === 1 ? '#f97316' : '#fef9e7'} roughness={0.15} metalness={0.05} clearcoat={0.8} clearcoatRoughness={0.1} />
         </mesh>
+        {/* Red sauce peeking through */}
+        {Array.from({ length: 6 }).map((_, i) => {
+          const angle = (i / 6) * Math.PI * 2;
+          return (
+            <mesh key={`sauce-${i}`} position={[1.2 * Math.cos(angle), 0.045, 1.2 * Math.sin(angle)]}>
+              <cylinderGeometry args={[0.4, 0.4, 0.01, 16]} />
+              <meshPhysicalMaterial color="#c0392b" roughness={0.2} clearcoat={0.6} />
+            </mesh>
+          );
+        })}
         {(exploded || highlightedIndex === 1) && (
           <Html position={[2.4, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Puglia Burrata Cream
+              Melted Burrata & San Marzano
             </div>
           </Html>
         )}
       </group>
 
-      {/* Truffle Shavings & Basil */}
+      {/* Curling Pepperoni & Fresh Basil */}
       <group position={[0, getOffsetY(0.25, 2), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(2); }}>
-        {Array.from({ length: 8 }).map((_, i) => {
-          const angle = (i / 8) * Math.PI * 2;
-          const r = 0.6 + (i % 3) * 0.45;
+        {/* Pepperoni with curled edges */}
+        {Array.from({ length: 9 }).map((_, i) => {
+          const angle = (i / 9) * Math.PI * 2;
+          const r = 0.5 + (i % 4) * 0.4;
           return (
-            <mesh key={i} position={[r * Math.cos(angle), 0, r * Math.sin(angle)]} rotation={[0, angle, 0]}>
-              <cylinderGeometry args={[0.25, 0.25, 0.04, 16]} />
-              <meshStandardMaterial color={highlightedIndex === 2 ? '#f97316' : '#1c2833'} roughness={0.5} />
+            <mesh key={`pep-${i}`} position={[r * Math.cos(angle), 0, r * Math.sin(angle)]} rotation={[0.05, angle, 0.05]}>
+              <cylinderGeometry args={[0.25, 0.22, 0.03, 16]} />
+              <meshPhysicalMaterial color={highlightedIndex === 2 ? '#f97316' : '#b03a2e'} roughness={0.4} clearcoat={0.5} clearcoatRoughness={0.3} />
             </mesh>
           );
         })}
-        {Array.from({ length: 5 }).map((_, i) => {
-          const angle = (i / 5) * Math.PI * 2 + 0.3;
+        {/* Fresh Basil Leaves */}
+        {Array.from({ length: 6 }).map((_, i) => {
+          const angle = (i / 6) * Math.PI * 2 + 0.3;
           return (
-            <mesh key={`basil-${i}`} position={[1.1 * Math.cos(angle), 0.04, 1.1 * Math.sin(angle)]}>
-              <cylinderGeometry args={[0.18, 0.18, 0.02, 12]} />
-              <meshStandardMaterial color="#27ae60" roughness={0.2} />
+            <mesh key={`basil-${i}`} position={[1.3 * Math.cos(angle), 0.02, 1.3 * Math.sin(angle)]} rotation={[0.1, angle + Math.PI/2, 0.1]}>
+              <cylinderGeometry args={[0.2, 0.05, 0.01, 16]} />
+              <meshPhysicalMaterial color="#27ae60" roughness={0.3} clearcoat={0.4} transmission={0.2} />
             </mesh>
           );
         })}
         {(exploded || highlightedIndex === 2) && (
           <Html position={[2.4, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Summer Black Truffle
+              Spicy Pepperoni & Basil
             </div>
           </Html>
         )}
@@ -253,7 +299,7 @@ function RealisticPizza({ exploded, highlightedIndex, onSelectLayer }: any) {
 }
 
 // 3. Detailed Realistic Pasta Model
-function RealisticPasta({ exploded, highlightedIndex, onSelectLayer }: any) {
+export function RealisticPasta({ exploded, highlightedIndex, onSelectLayer }: any) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -272,29 +318,29 @@ function RealisticPasta({ exploded, highlightedIndex, onSelectLayer }: any) {
       <group position={[0, getOffsetY(-0.4, 0), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(0); }}>
         <mesh castShadow receiveShadow>
           <cylinderGeometry args={[1.7, 1.1, 0.45, 32]} />
-          <meshStandardMaterial color={highlightedIndex === 0 ? '#f97316' : '#f4f6f7'} roughness={0.2} />
+          <meshPhysicalMaterial color={highlightedIndex === 0 ? '#f97316' : '#ffffff'} roughness={0.1} metalness={0.05} clearcoat={1.0} clearcoatRoughness={0.05} />
         </mesh>
         {(exploded || highlightedIndex === 0) && (
           <Html position={[2.0, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Deep Ceramic Bowl
+              Glazed Ceramic Bowl
             </div>
           </Html>
         )}
       </group>
 
-      {/* Swirling Fettuccine Strands Nest */}
+      {/* Swirling Fettuccine Strands Nest (Al Dente) */}
       <group position={[0, getOffsetY(0.1, 1), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(1); }}>
-        {Array.from({ length: 6 }).map((_, i) => (
+        {Array.from({ length: 8 }).map((_, i) => (
           <mesh key={i} position={[0, i * 0.05, 0]} rotation={[0.1, i * 0.6, 0]}>
-            <torusGeometry args={[0.9 - i * 0.08, 0.12, 16, 32]} />
-            <meshStandardMaterial color={highlightedIndex === 1 ? '#f97316' : '#f4d03f'} roughness={0.4} />
+            <torusGeometry args={[0.9 - i * 0.06, 0.12, 32, 64]} />
+            <meshPhysicalMaterial color={highlightedIndex === 1 ? '#f97316' : '#f5c85d'} roughness={0.3} clearcoat={0.4} clearcoatRoughness={0.3} transmission={0.1} />
           </mesh>
         ))}
         {(exploded || highlightedIndex === 1) && (
           <Html position={[2.0, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Fresh Fettuccine Nest
+              Al Dente Fettuccine
             </div>
           </Html>
         )}
@@ -302,21 +348,31 @@ function RealisticPasta({ exploded, highlightedIndex, onSelectLayer }: any) {
 
       {/* Porcini Mushrooms & Shaved Parmigiano */}
       <group position={[0, getOffsetY(0.4, 2), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(2); }}>
-        {Array.from({ length: 5 }).map((_, i) => {
-          const angle = (i / 5) * Math.PI * 2;
+        {Array.from({ length: 6 }).map((_, i) => {
+          const angle = (i / 6) * Math.PI * 2;
           return (
-            <group key={i} position={[0.55 * Math.cos(angle), 0, 0.55 * Math.sin(angle)]}>
+            <group key={`mushroom-${i}`} position={[0.6 * Math.cos(angle), 0, 0.6 * Math.sin(angle)]} rotation={[0.2, angle, Math.random()]}>
               <mesh castShadow>
-                <cylinderGeometry args={[0.22, 0.15, 0.1, 16]} />
-                <meshStandardMaterial color={highlightedIndex === 2 ? '#f97316' : '#4a2311'} roughness={0.7} />
+                <sphereGeometry args={[0.18, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+                <meshPhysicalMaterial color={highlightedIndex === 2 ? '#f97316' : '#5c3a21'} roughness={0.6} clearcoat={0.1} />
               </mesh>
             </group>
+          );
+        })}
+        {/* Shaved Parmesan Curls */}
+        {Array.from({ length: 10 }).map((_, i) => {
+          const angle = (i / 10) * Math.PI * 2;
+          return (
+            <mesh key={`parm-${i}`} position={[0.4 * Math.cos(angle), 0.1, 0.4 * Math.sin(angle)]} rotation={[Math.random(), angle, Math.random()]}>
+              <boxGeometry args={[0.2, 0.02, 0.1]} />
+              <meshPhysicalMaterial color="#fffdd0" roughness={0.3} transmission={0.4} thickness={0.05} />
+            </mesh>
           );
         })}
         {(exploded || highlightedIndex === 2) && (
           <Html position={[2.0, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Porcini & Parmigiano
+              Porcini & Parmesan Curls
             </div>
           </Html>
         )}
@@ -328,7 +384,7 @@ function RealisticPasta({ exploded, highlightedIndex, onSelectLayer }: any) {
 }
 
 // 4. Detailed Indian Royal Handi Curry Model
-function RealisticCurry({ exploded, highlightedIndex, onSelectLayer }: any) {
+export function RealisticCurry({ exploded, highlightedIndex, onSelectLayer }: any) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -343,56 +399,61 @@ function RealisticCurry({ exploded, highlightedIndex, onSelectLayer }: any) {
 
   return (
     <group ref={groupRef}>
-      {/* Brass Handi Pot Vessel */}
+      {/* Copper Handi Pot Vessel */}
       <group position={[0, getOffsetY(-0.4, 0), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(0); }}>
         <mesh castShadow receiveShadow>
-          <sphereGeometry args={[1.5, 32, 16, 0, Math.PI * 2, Math.PI / 3, Math.PI / 2]} />
-          <meshStandardMaterial color={highlightedIndex === 0 ? '#f97316' : '#b7950b'} metalness={0.7} roughness={0.3} />
+          <sphereGeometry args={[1.5, 64, 32, 0, Math.PI * 2, Math.PI / 3, Math.PI / 2]} />
+          <meshPhysicalMaterial color={highlightedIndex === 0 ? '#f97316' : '#b87333'} metalness={0.9} roughness={0.2} clearcoat={0.5} />
+        </mesh>
+        {/* Handi Rim */}
+        <mesh castShadow receiveShadow position={[0, 1.25, 0]}>
+          <torusGeometry args={[1.3, 0.06, 16, 64]} />
+          <meshPhysicalMaterial color={highlightedIndex === 0 ? '#f97316' : '#b87333'} metalness={0.9} roughness={0.2} />
         </mesh>
         {(exploded || highlightedIndex === 0) && (
           <Html position={[1.8, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Brass Handi Vessel
+              Hammered Copper Handi
             </div>
           </Html>
         )}
       </group>
 
-      {/* Rich Makhani Tomato Gravy */}
+      {/* Rich Makhani Tomato Gravy (Glossy Sheen) */}
       <group position={[0, getOffsetY(0.1, 1), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(1); }}>
         <mesh castShadow receiveShadow>
-          <cylinderGeometry args={[1.4, 1.35, 0.15, 32]} />
-          <meshStandardMaterial color={highlightedIndex === 1 ? '#f97316' : '#d35400'} roughness={0.3} />
+          <cylinderGeometry args={[1.4, 1.35, 0.15, 64]} />
+          <meshPhysicalMaterial color={highlightedIndex === 1 ? '#f97316' : '#cc4400'} roughness={0.1} metalness={0.05} clearcoat={1.0} clearcoatRoughness={0.1} />
         </mesh>
         {(exploded || highlightedIndex === 1) && (
           <Html position={[1.8, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Rich Makhani Gravy
+              Glossy Makhani Gravy
             </div>
           </Html>
         )}
       </group>
 
-      {/* Charred Chicken / Paneer Cubes & Cream Swirl */}
+      {/* Charred Chicken / Paneer Cubes & Saffron Cream Swirl */}
       <group position={[0, getOffsetY(0.32, 2), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(2); }}>
         {Array.from({ length: 6 }).map((_, i) => {
           const angle = (i / 6) * Math.PI * 2;
           return (
             <mesh key={i} position={[0.6 * Math.cos(angle), 0, 0.6 * Math.sin(angle)]} rotation={[0.2, i, 0.1]}>
               <boxGeometry args={[0.35, 0.35, 0.35]} />
-              <meshStandardMaterial color={highlightedIndex === 2 ? '#f97316' : '#7e5109'} roughness={0.8} />
+              <meshPhysicalMaterial color={highlightedIndex === 2 ? '#f97316' : '#8a4b16'} roughness={0.8} clearcoat={0.2} />
             </mesh>
           );
         })}
-        {/* White Cream Swirl Ring */}
+        {/* Saffron Cream Swirl */}
         <mesh position={[0, 0.05, 0]}>
-          <torusGeometry args={[0.7, 0.08, 16, 32]} />
-          <meshStandardMaterial color="#fef9e7" roughness={0.2} />
+          <torusGeometry args={[0.7, 0.08, 32, 64]} />
+          <meshPhysicalMaterial color="#fff3e0" roughness={0.2} clearcoat={0.6} />
         </mesh>
         {(exploded || highlightedIndex === 2) && (
           <Html position={[1.8, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Charred Tikka + Cream
+              Tandoori Tikka & Cream
             </div>
           </Html>
         )}
@@ -404,7 +465,7 @@ function RealisticCurry({ exploded, highlightedIndex, onSelectLayer }: any) {
 }
 
 // 5. Detailed Bamboo Steamer Dim Sum Model
-function RealisticDimSum({ exploded, highlightedIndex, onSelectLayer }: any) {
+export function RealisticDimSum({ exploded, highlightedIndex, onSelectLayer }: any) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -422,13 +483,18 @@ function RealisticDimSum({ exploded, highlightedIndex, onSelectLayer }: any) {
       {/* Bamboo Steamer Basket */}
       <group position={[0, getOffsetY(-0.35, 0), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(0); }}>
         <mesh castShadow receiveShadow>
-          <cylinderGeometry args={[1.7, 1.65, 0.35, 32]} />
-          <meshStandardMaterial color={highlightedIndex === 0 ? '#f97316' : '#d35400'} roughness={0.8} />
+          <cylinderGeometry args={[1.7, 1.65, 0.35, 64]} />
+          <meshPhysicalMaterial color={highlightedIndex === 0 ? '#f97316' : '#d2a679'} roughness={0.9} bumpScale={0.05} />
+        </mesh>
+        {/* Bamboo slats inside */}
+        <mesh castShadow receiveShadow position={[0, 0.15, 0]}>
+          <cylinderGeometry args={[1.6, 1.6, 0.05, 32]} />
+          <meshPhysicalMaterial color="#c29562" roughness={0.9} />
         </mesh>
         {(exploded || highlightedIndex === 0) && (
           <Html position={[2.0, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Bamboo Steamer
+              Woven Bamboo Steamer
             </div>
           </Html>
         )}
@@ -436,25 +502,25 @@ function RealisticDimSum({ exploded, highlightedIndex, onSelectLayer }: any) {
 
       {/* Assorted Handcrafted Dumplings */}
       <group position={[0, getOffsetY(0.15, 1), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(1); }}>
-        {/* Crystal Truffle Dumpling */}
+        {/* Crystal Truffle Dumpling (Translucent) */}
         <mesh position={[-0.6, 0, -0.4]} castShadow>
-          <sphereGeometry args={[0.38, 16, 16]} />
-          <meshStandardMaterial color="#eaeded" transparent opacity={0.85} roughness={0.2} />
+          <sphereGeometry args={[0.38, 32, 32]} />
+          <meshPhysicalMaterial color="#f0f3f4" transmission={0.8} thickness={0.5} roughness={0.1} clearcoat={0.5} />
         </mesh>
         {/* Charcoal Dumpling */}
         <mesh position={[0.6, 0, -0.4]} castShadow>
-          <sphereGeometry args={[0.38, 16, 16]} />
-          <meshStandardMaterial color="#1c2833" roughness={0.5} />
+          <sphereGeometry args={[0.38, 32, 32]} />
+          <meshPhysicalMaterial color="#1c2833" roughness={0.4} clearcoat={0.3} />
         </mesh>
         {/* Edamame Dumpling */}
         <mesh position={[0, 0, 0.6]} castShadow>
-          <sphereGeometry args={[0.38, 16, 16]} />
-          <meshStandardMaterial color="#27ae60" roughness={0.4} />
+          <sphereGeometry args={[0.38, 32, 32]} />
+          <meshPhysicalMaterial color="#27ae60" transmission={0.4} thickness={0.2} roughness={0.2} clearcoat={0.4} />
         </mesh>
         {(exploded || highlightedIndex === 1) && (
           <Html position={[2.0, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Truffle & Edamame Dumplings
+              Translucent Dumplings
             </div>
           </Html>
         )}
@@ -465,8 +531,8 @@ function RealisticDimSum({ exploded, highlightedIndex, onSelectLayer }: any) {
   );
 }
 
-// 6. Detailed Belgian Chocolate Dessert Model
-function RealisticDessert({ exploded, highlightedIndex, onSelectLayer }: any) {
+// 6. Detailed Belgian Chocolate Dessert Model with Gold Leaf
+export function RealisticDessert({ exploded, highlightedIndex, onSelectLayer }: any) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -484,8 +550,8 @@ function RealisticDessert({ exploded, highlightedIndex, onSelectLayer }: any) {
       {/* Glass Dessert Dish */}
       <group position={[0, getOffsetY(-0.45, 0), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(0); }}>
         <mesh castShadow receiveShadow>
-          <cylinderGeometry args={[1.4, 0.8, 0.35, 32]} />
-          <meshPhysicalMaterial color="#ffffff" transparent opacity={0.4} transmission={0.9} roughness={0.1} />
+          <cylinderGeometry args={[1.4, 0.8, 0.35, 64]} />
+          <meshPhysicalMaterial color="#ffffff" transmission={1.0} thickness={0.5} roughness={0.05} ior={1.5} clearcoat={1.0} />
         </mesh>
         {(exploded || highlightedIndex === 0) && (
           <Html position={[1.8, 0, 0]} center distanceFactor={8}>
@@ -499,8 +565,8 @@ function RealisticDessert({ exploded, highlightedIndex, onSelectLayer }: any) {
       {/* Tahitian Vanilla Gelato Scoop */}
       <group position={[0, getOffsetY(-0.05, 1), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(1); }}>
         <mesh castShadow>
-          <sphereGeometry args={[0.85, 32, 16]} />
-          <meshStandardMaterial color={highlightedIndex === 1 ? '#f97316' : '#fef9e7'} roughness={0.6} />
+          <sphereGeometry args={[0.85, 32, 32]} />
+          <meshPhysicalMaterial color={highlightedIndex === 1 ? '#f97316' : '#fffdd0'} roughness={0.5} clearcoat={0.1} />
         </mesh>
         {(exploded || highlightedIndex === 1) && (
           <Html position={[1.8, 0, 0]} center distanceFactor={8}>
@@ -511,16 +577,30 @@ function RealisticDessert({ exploded, highlightedIndex, onSelectLayer }: any) {
         )}
       </group>
 
-      {/* 70% Belgian Dark Chocolate Sphere */}
+      {/* 70% Belgian Dark Chocolate Sphere with Gold Leaf */}
       <group position={[0, getOffsetY(0.4, 2), 0]} onClick={(e) => { e.stopPropagation(); onSelectLayer(2); }}>
         <mesh castShadow>
-          <sphereGeometry args={[0.75, 32, 16]} />
-          <meshStandardMaterial color={highlightedIndex === 2 ? '#f97316' : '#2c1609'} roughness={0.1} metalness={0.2} />
+          <sphereGeometry args={[0.75, 64, 64]} />
+          <meshPhysicalMaterial color={highlightedIndex === 2 ? '#f97316' : '#231106'} roughness={0.05} metalness={0.1} clearcoat={1.0} clearcoatRoughness={0.05} />
         </mesh>
+        {/* 24k Gold Leaf Flakes */}
+        {Array.from({ length: 15 }).map((_, i) => {
+          const phi = (i / 15) * Math.PI * 2;
+          const theta = 0.1 + (i % 3) * 0.2;
+          const x = 0.76 * Math.sin(theta) * Math.cos(phi);
+          const z = 0.76 * Math.sin(theta) * Math.sin(phi);
+          const y = 0.76 * Math.cos(theta);
+          return (
+            <mesh key={`gold-${i}`} position={[x, y, z]} rotation={[Math.random(), phi, Math.random()]}>
+              <planeGeometry args={[0.08, 0.08]} />
+              <meshPhysicalMaterial color="#ffd700" metalness={1.0} roughness={0.2} />
+            </mesh>
+          );
+        })}
         {(exploded || highlightedIndex === 2) && (
           <Html position={[1.8, 0, 0]} center distanceFactor={8}>
             <div className="bg-slate-900/90 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-orange-500 shadow-xl backdrop-blur-md whitespace-nowrap">
-              Belgian Lava Sphere
+              Chocolate Lava & 24k Gold
             </div>
           </Html>
         )}
@@ -530,7 +610,7 @@ function RealisticDessert({ exploded, highlightedIndex, onSelectLayer }: any) {
 }
 
 // 7. Detailed Realistic Glass Drink Model
-function RealisticDrink({ exploded, highlightedIndex, onSelectLayer }: any) {
+export function RealisticDrink({ exploded, highlightedIndex, onSelectLayer }: any) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -543,21 +623,25 @@ function RealisticDrink({ exploded, highlightedIndex, onSelectLayer }: any) {
     <group ref={groupRef}>
       {/* Translucent Crystal Glass */}
       <mesh position={[0, 0, 0]} castShadow receiveShadow>
-        <cylinderGeometry args={[0.85, 0.7, 2.2, 32]} />
+        <cylinderGeometry args={[0.85, 0.7, 2.2, 64]} />
         <meshPhysicalMaterial 
           color="#ffffff" 
-          transparent 
-          opacity={0.3} 
-          roughness={0.1} 
-          transmission={0.9} 
+          transmission={1.0} 
+          roughness={0.05} 
+          ior={1.5} 
           thickness={0.5} 
+          clearcoat={1.0}
         />
       </mesh>
 
-      {/* Liquid Interior */}
+      {/* Liquid Interior (Gradient effect via two cylinders) */}
       <mesh position={[0, -0.1, 0]}>
         <cylinderGeometry args={[0.8, 0.66, 1.8, 32]} />
-        <meshStandardMaterial color="#c0392b" roughness={0.2} />
+        <meshPhysicalMaterial color="#c0392b" transmission={0.9} thickness={2} roughness={0.1} />
+      </mesh>
+      <mesh position={[0, -0.8, 0]}>
+        <cylinderGeometry args={[0.78, 0.68, 0.4, 32]} />
+        <meshPhysicalMaterial color="#f39c12" transmission={0.8} thickness={2} roughness={0.1} />
       </mesh>
 
       {/* 3D Floating Ice Cubes */}
@@ -568,20 +652,20 @@ function RealisticDrink({ exploded, highlightedIndex, onSelectLayer }: any) {
           rotation={[0.4, i * 0.8, 0.2]}
         >
           <boxGeometry args={[0.35, 0.35, 0.35]} />
-          <meshPhysicalMaterial color="#ebf5fb" transparent opacity={0.65} roughness={0.1} />
+          <meshPhysicalMaterial color="#ffffff" transmission={0.95} ior={1.33} roughness={0.05} thickness={0.5} />
         </mesh>
       ))}
 
       {/* Dehydrated Lime Slice on Glass Rim */}
       <mesh position={[0.82, 0.95, 0]} rotation={[0, 0, Math.PI / 4]}>
-        <cylinderGeometry args={[0.35, 0.35, 0.05, 16]} />
-        <meshStandardMaterial color="#27ae60" roughness={0.4} />
+        <cylinderGeometry args={[0.35, 0.35, 0.05, 32]} />
+        <meshPhysicalMaterial color="#27ae60" roughness={0.4} transmission={0.3} thickness={0.1} />
       </mesh>
 
       {/* Straw */}
       <mesh position={[-0.2, 0.4, 0.1]} rotation={[0.1, 0, -0.25]}>
-        <cylinderGeometry args={[0.04, 0.04, 2.4, 16]} />
-        <meshStandardMaterial color="#f39c12" roughness={0.3} />
+        <cylinderGeometry args={[0.04, 0.04, 2.4, 32]} />
+        <meshPhysicalMaterial color="#f39c12" roughness={0.2} clearcoat={0.8} />
       </mesh>
     </group>
   );
@@ -617,9 +701,12 @@ export const Food3DViewer: React.FC<Food3DViewerProps> = ({ item }) => {
 
       {/* 3D Canvas */}
       <Canvas camera={{ position: [0, 2.2, 4.2], fov: 45 }}>
-        <ambientLight intensity={1.3} />
-        <directionalLight position={[5, 8, 5]} intensity={2.0} castShadow />
-        <pointLight position={[-5, 5, -5]} intensity={0.9} color="#ffaa55" />
+        {/* Environment map for photorealistic lighting and reflections */}
+        <Environment preset="sunset" />
+        
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 8, 5]} intensity={1.5} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
+        <pointLight position={[-5, 5, -5]} intensity={0.5} color="#ffaa55" />
 
         <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.25}>
           {shape === 'pizza' ? (
@@ -639,8 +726,8 @@ export const Food3DViewer: React.FC<Food3DViewerProps> = ({ item }) => {
           )}
         </Float>
 
-        <ContactShadows position={[0, -1.25, 0]} opacity={0.65} scale={6.5} blur={1.8} far={4.5} color="#000000" />
-        <OrbitControls enableZoom={true} minDistance={2.2} maxDistance={6.5} maxPolarAngle={Math.PI / 2 + 0.1} />
+        <ContactShadows position={[0, -1.25, 0]} opacity={0.7} scale={6.5} blur={2.0} far={4.5} color="#000000" />
+        <OrbitControls enableZoom={true} minDistance={2.2} maxDistance={6.5} maxPolarAngle={Math.PI / 2 + 0.1} autoRotate={!exploded} autoRotateSpeed={0.5} />
       </Canvas>
 
       {/* Bottom Info HUD */}
@@ -654,7 +741,7 @@ export const Food3DViewer: React.FC<Food3DViewerProps> = ({ item }) => {
               Drag to rotate 360° • Pinch / Scroll to zoom
             </div>
             <div className="text-[11px] text-slate-400">
-              High-Fidelity Procedural Geometry & Thermal Steam Particles
+              Hyper-Fidelity Physical Shaders & Environment Maps
             </div>
           </div>
         </div>
