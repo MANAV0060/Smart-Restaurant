@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CartItem, AllergyType } from '../../types';
 import confetti from 'canvas-confetti';
-import { ShoppingCart, Trash2, Plus, Minus, Tag, Users, CreditCard, Wallet, Banknote, ShieldAlert, Sparkles, X, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, Tag, Users, CreditCard, Wallet, Banknote, ShieldAlert, X } from 'lucide-react';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -54,10 +54,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
     
-    // Trigger confetti celebration animation!
     confetti({
-      particleCount: 100,
-      spread: 70,
+      particleCount: 60,
+      spread: 60,
       origin: { y: 0.6 }
     });
 
@@ -66,83 +65,86 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex justify-end">
-      <div className="w-full max-w-md bg-slate-900 border-l border-slate-800 h-full flex flex-col shadow-2xl animate-slide-left">
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-2xs flex justify-end font-sans select-none">
+      <div className="w-full max-w-md bg-[#14171d] text-[#FFF6DE] border-l border-white/[0.1] h-full flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
+        <div className="p-4 border-b border-white/[0.08] bg-[#101318] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center border border-orange-500/30">
-              <ShoppingCart className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-md bg-[#F48F68]/15 text-[#F48F68] flex items-center justify-center border border-[#F48F68]/30 shadow-xs">
+              <ShoppingCart className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-extrabold text-white text-base">Your Gourmet Basket</h3>
-              <span className="text-xs text-slate-400">Table {tableNumber} • Live Kitchen Dispatch</span>
+              <h3 className="font-serif font-bold text-[#FFF6DE] text-base">Dining Basket</h3>
+              <span className="text-[11px] text-[#FFE394]">Table {tableNumber} • Kitchen Dispatch</span>
             </div>
           </div>
 
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+          <button 
+            onClick={onClose} 
+            className="w-7 h-7 rounded-md bg-[#1a1e27] text-slate-400 hover:text-white flex items-center justify-center border border-white/[0.08] transition-colors"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Cart Item List */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-950/40">
+        <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#0e1014]">
           {cartItems.length === 0 ? (
-            <div className="h-64 flex flex-col items-center justify-center text-center p-6 text-slate-500">
-              <ShoppingCart className="w-12 h-12 stroke-[1.5] mb-3 text-slate-600" />
-              <p className="text-sm font-semibold text-slate-300">Your basket is empty</p>
-              <p className="text-xs text-slate-500 mt-1">Explore our 3D menu & add culinary favorites.</p>
+            <div className="h-64 flex flex-col items-center justify-center text-center p-6 text-slate-400">
+              <ShoppingCart className="w-10 h-10 stroke-[1.5] mb-2.5 text-slate-500" />
+              <p className="text-sm font-semibold text-[#FFF6DE]">Your basket is empty</p>
+              <p className="text-xs text-slate-400 mt-1">Explore our culinary dishes and add items to order.</p>
             </div>
           ) : (
             cartItems.map((item) => {
               const hasAllergyAlert = item.menuItem.allergens.some(a => activeAllergies.includes(a));
 
               return (
-                <div key={item.menuItem.id} className="bg-slate-900 p-3.5 rounded-2xl border border-slate-800/80 shadow-md space-y-3">
+                <div key={item.menuItem.id} className="bg-[#14171d] p-3.5 rounded-lg border border-white/[0.08] space-y-2.5 shadow-xs">
                   <div className="flex items-start gap-3">
-                    <img src={item.menuItem.image} alt={item.menuItem.name} className="w-16 h-16 rounded-xl object-cover" />
+                    <img src={item.menuItem.image} alt={item.menuItem.name} className="w-14 h-14 rounded-md object-cover flex-shrink-0" />
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
-                        <h4 className="font-bold text-white text-xs truncate">{item.menuItem.name}</h4>
-                        <button onClick={() => onRemoveItem(item.menuItem.id)} className="text-slate-500 hover:text-rose-400">
+                      <div className="flex items-start justify-between gap-1">
+                        <h4 className="font-semibold text-[#FFF6DE] text-xs truncate">{item.menuItem.name}</h4>
+                        <button onClick={() => onRemoveItem(item.menuItem.id)} className="text-slate-400 hover:text-[#F48F68] transition-colors p-0.5">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
 
-                      <div className="text-xs font-semibold text-orange-400 mt-0.5">
+                      <div className="text-xs font-bold text-[#FFE394] mt-0.5">
                         ₹{item.menuItem.price * item.quantity}
                       </div>
 
                       {hasAllergyAlert && (
-                        <div className="mt-1 text-[10px] font-bold text-red-400 flex items-center gap-1">
-                          <ShieldAlert className="w-3 h-3" /> Allergy Alert: {item.menuItem.allergens.join(', ')}
+                        <div className="mt-1 text-[10px] font-semibold text-[#F48F68] flex items-center gap-1">
+                          <ShieldAlert className="w-3 h-3" /> Warning: Contains {item.menuItem.allergens.join(', ')}
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Quantity & Notes Bar */}
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                  <div className="flex items-center justify-between pt-2 border-t border-white/[0.06] gap-2">
                     <input 
                       type="text"
                       value={item.specialInstructions || ''}
                       onChange={(e) => onUpdateInstructions(item.menuItem.id, e.target.value)}
-                      placeholder="Note: 'No Onion', 'Less Spicy'..."
-                      className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-slate-200 placeholder-slate-600 focus:outline-none focus:border-orange-500 mr-3"
+                      placeholder="Special note e.g. Less spicy..."
+                      className="flex-1 bg-[#0e1014] border border-white/[0.08] rounded px-2 py-1 text-[11px] text-[#FFF6DE] placeholder-slate-500 focus:outline-none focus:border-[#8BDFDD]"
                     />
 
-                    <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-lg p-0.5">
+                    <div className="flex items-center gap-1.5 bg-[#0e1014] border border-white/[0.08] rounded px-1 py-0.5">
                       <button 
                         onClick={() => onUpdateQuantity(item.menuItem.id, -1)}
-                        className="w-6 h-6 rounded flex items-center justify-center text-slate-400 hover:text-white"
+                        className="w-5 h-5 rounded flex items-center justify-center text-slate-400 hover:text-[#FFF6DE]"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="text-xs font-bold text-white w-4 text-center">{item.quantity}</span>
+                      <span className="text-xs font-bold text-[#FFF6DE] w-4 text-center">{item.quantity}</span>
                       <button 
                         onClick={() => onUpdateQuantity(item.menuItem.id, 1)}
-                        className="w-6 h-6 rounded flex items-center justify-center text-slate-400 hover:text-white"
+                        className="w-5 h-5 rounded flex items-center justify-center text-slate-400 hover:text-[#FFF6DE]"
                       >
                         <Plus className="w-3 h-3" />
                       </button>
@@ -156,46 +158,46 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           {cartItems.length > 0 && (
             <>
               {/* Coupon Applicator */}
-              <div className="p-3 bg-slate-900 rounded-2xl border border-slate-800 space-y-2">
-                <div className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5 text-orange-400" /> Apply Discount Coupon
+              <div className="p-3 bg-[#14171d] rounded-lg border border-white/[0.08] space-y-2">
+                <div className="text-xs font-semibold text-[#FFF6DE] flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-[#F48F68]" /> Apply Promo Code
                 </div>
                 <div className="flex gap-2">
                   <input 
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Enter code (e.g. GOURMET20)"
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white uppercase placeholder-slate-600 focus:outline-none focus:border-orange-500"
+                    placeholder="e.g. GOURMET20"
+                    className="flex-1 bg-[#0e1014] border border-white/[0.08] rounded-md px-2.5 py-1.5 text-xs text-[#FFF6DE] uppercase placeholder-slate-500 focus:outline-none focus:border-[#8BDFDD]"
                   />
                   <button 
                     onClick={applyCoupon}
-                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-orange-400 font-bold text-xs border border-slate-700"
+                    className="px-3 py-1.5 rounded-md bg-[#1a1e27] hover:bg-[#222733] text-[#FFE394] font-semibold text-xs border border-white/[0.08] transition-colors"
                   >
                     Apply
                   </button>
                 </div>
                 {couponApplied && (
-                  <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-                    ✓ {discountPercent}% Discount Applied! Saved ₹{discountAmount}
+                  <div className="text-[11px] text-[#8BDFDD] font-medium">
+                    ✓ {discountPercent}% discount applied (Saved ₹{discountAmount})
                   </div>
                 )}
               </div>
 
               {/* Split Bill Calculator */}
-              <div className="p-3 bg-slate-900 rounded-2xl border border-slate-800 space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-300">
-                  <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-indigo-400" /> Split Bill Across Guests</span>
-                  <span className="text-indigo-400">₹{perGuestShare} / person</span>
+              <div className="p-3 bg-[#14171d] rounded-lg border border-white/[0.08] space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-[#FFF6DE]">
+                  <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-[#8BDFDD]" /> Split Across Guests</span>
+                  <span className="text-[#FFE394]">₹{perGuestShare} / guest</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-400">Number of Guests:</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] text-slate-400">Guests:</span>
                   {[1, 2, 3, 4, 5, 6].map(num => (
                     <button
                       key={num}
                       onClick={() => setSplitGuests(num)}
-                      className={`w-7 h-7 rounded-lg text-xs font-bold ${
-                        splitGuests === num ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'
+                      className={`w-6 h-6 rounded text-xs font-semibold ${
+                        splitGuests === num ? 'bg-[#F48F68] text-slate-950 font-bold' : 'bg-[#0e1014] text-slate-400 hover:bg-[#1a1e27] border border-white/[0.06]'
                       }`}
                     >
                       {num}
@@ -205,34 +207,34 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               </div>
 
               {/* Payment Methods */}
-              <div className="p-3 bg-slate-900 rounded-2xl border border-slate-800 space-y-2">
-                <div className="text-xs font-bold text-slate-300 mb-2">Select Payment Method</div>
+              <div className="p-3 bg-[#14171d] rounded-lg border border-white/[0.08] space-y-2">
+                <div className="text-xs font-semibold text-[#FFF6DE] mb-1.5">Payment Option</div>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={() => setPaymentMethod('upi')}
-                    className={`p-2 rounded-xl text-xs font-bold flex flex-col items-center gap-1 border ${
-                      paymentMethod === 'upi' ? 'bg-orange-500/20 border-orange-500 text-orange-300' : 'bg-slate-950 border-slate-800 text-slate-400'
+                    className={`p-2 rounded-md text-xs font-medium flex flex-col items-center gap-1 border transition-colors ${
+                      paymentMethod === 'upi' ? 'bg-[#F48F68]/20 border-[#F48F68] text-[#F48F68] font-bold' : 'bg-[#0e1014] border-white/[0.06] text-slate-400 hover:bg-[#1a1e27]'
                     }`}
                   >
-                    <Wallet className="w-4 h-4" /> Instant UPI
+                    <Wallet className="w-3.5 h-3.5" /> Instant UPI
                   </button>
 
                   <button
                     onClick={() => setPaymentMethod('card')}
-                    className={`p-2 rounded-xl text-xs font-bold flex flex-col items-center gap-1 border ${
-                      paymentMethod === 'card' ? 'bg-orange-500/20 border-orange-500 text-orange-300' : 'bg-slate-950 border-slate-800 text-slate-400'
+                    className={`p-2 rounded-md text-xs font-medium flex flex-col items-center gap-1 border transition-colors ${
+                      paymentMethod === 'card' ? 'bg-[#8BDFDD]/20 border-[#8BDFDD] text-[#8BDFDD] font-bold' : 'bg-[#0e1014] border-white/[0.06] text-slate-400 hover:bg-[#1a1e27]'
                     }`}
                   >
-                    <CreditCard className="w-4 h-4" /> Credit Card
+                    <CreditCard className="w-3.5 h-3.5" /> Card / POS
                   </button>
 
                   <button
                     onClick={() => setPaymentMethod('cash')}
-                    className={`p-2 rounded-xl text-xs font-bold flex flex-col items-center gap-1 border ${
-                      paymentMethod === 'cash' ? 'bg-orange-500/20 border-orange-500 text-orange-300' : 'bg-slate-950 border-slate-800 text-slate-400'
+                    className={`p-2 rounded-md text-xs font-medium flex flex-col items-center gap-1 border transition-colors ${
+                      paymentMethod === 'cash' ? 'bg-[#FFE394]/20 border-[#FFE394] text-[#FFE394] font-bold' : 'bg-[#0e1014] border-white/[0.06] text-slate-400 hover:bg-[#1a1e27]'
                     }`}
                   >
-                    <Banknote className="w-4 h-4" /> Pay Cash
+                    <Banknote className="w-3.5 h-3.5" /> Pay Cash
                   </button>
                 </div>
               </div>
@@ -242,22 +244,22 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
         {/* Checkout Summary & Action Footer */}
         {cartItems.length > 0 && (
-          <div className="p-4 bg-slate-950 border-t border-slate-800 space-y-3">
+          <div className="p-4 bg-[#101318] border-t border-white/[0.08] space-y-3">
             <div className="space-y-1 text-xs text-slate-300">
               <div className="flex justify-between"><span>Subtotal:</span><span>₹{subtotal}</span></div>
-              {discountAmount > 0 && <div className="flex justify-between text-emerald-400"><span>Coupon Discount:</span><span>-₹{discountAmount}</span></div>}
+              {discountAmount > 0 && <div className="flex justify-between text-[#8BDFDD]"><span>Coupon Savings:</span><span>-₹{discountAmount}</span></div>}
               <div className="flex justify-between text-slate-400"><span>Taxes & Service (5% GST):</span><span>₹{taxes}</span></div>
-              <div className="flex justify-between text-base font-black text-white pt-1 border-t border-slate-800">
-                <span>Grand Total:</span>
-                <span className="text-orange-400">₹{grandTotal}</span>
+              <div className="flex justify-between text-sm font-bold text-[#FFF6DE] pt-1.5 border-t border-white/[0.08]">
+                <span>Total:</span>
+                <span className="text-[#FFE394]">₹{grandTotal}</span>
               </div>
             </div>
 
             <button
               onClick={handleCheckout}
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-xl shadow-orange-500/30"
+              className="w-full py-3 rounded-lg bg-[#F48F68] hover:bg-[#f27c50] active:bg-[#e0683a] text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors shadow-md"
             >
-              <Sparkles className="w-4 h-4" /> Dispatch Order to Kitchen • ₹{grandTotal}
+              <span>Place Order to Kitchen • ₹{grandTotal}</span>
             </button>
           </div>
         )}

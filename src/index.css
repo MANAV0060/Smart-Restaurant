@@ -3,24 +3,83 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --palette-cream: #FFF6DE;
+    --palette-teal: #8BDFDD;
+    --palette-coral: #F48F68;
+    --palette-yellow: #FFE394;
+    --bg-main: #FFF6DE;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #FFFDF7;
+    --border-subtle: #EADBBA;
+    --text-main: #1C1917;
+  }
+
   html {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    background-color: #FFF6DE;
   }
 
   body {
-    @apply bg-[#070a0f] text-slate-100 overflow-x-hidden font-sans antialiased;
-    background-image: 
-      radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.04) 0%, transparent 60%),
-      radial-gradient(circle at 100% 50%, rgba(234, 88, 12, 0.03) 0%, transparent 50%);
+    background-color: #FFF6DE;
+    color: #1C1917;
+    overflow-x: hidden;
+    font-family: 'Inter', 'Outfit', sans-serif;
+    letter-spacing: -0.01em;
   }
   
   h1, h2, h3, .font-serif-heading {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+    letter-spacing: -0.02em;
+    color: #1C1917;
   }
 }
 
-/* Mobile & Touch Utility Classes */
+/* Palette Card and Button Classes */
+.palette-card {
+  background-color: #FFFFFF;
+  border: 1px solid #EADBBA;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.palette-card:hover {
+  background-color: #FFFDF7;
+  border-color: #F48F68;
+  box-shadow: 0 4px 12px 0 rgba(244, 143, 104, 0.12);
+}
+
+.palette-panel {
+  background-color: #FFFFFF;
+  border: 1px solid #EADBBA;
+  border-radius: 0.75rem;
+}
+
+.palette-btn-primary {
+  background-color: #F48F68;
+  color: #FFFFFF;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.palette-btn-primary:hover {
+  background-color: #f27c50;
+}
+
+.palette-btn-secondary {
+  background-color: #8BDFDD;
+  color: #1C1917;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.palette-btn-secondary:hover {
+  background-color: #74d2d0;
+}
+
+/* Touch & Mobile Utility Classes */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -33,79 +92,21 @@
   padding-bottom: env(safe-area-inset-bottom, 1rem);
 }
 
-/* Luxury Bistro Glassmorphism Utilities */
-.bistro-glass {
-  background: rgba(12, 16, 23, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.bistro-card {
-  background: linear-gradient(145deg, rgba(17, 23, 34, 0.9) 0%, rgba(12, 16, 23, 0.95) 100%);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.bistro-card:active {
-  transform: scale(0.98);
-}
-
-@media (min-width: 640px) {
-  .bistro-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(245, 158, 11, 0.35);
-    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(245, 158, 11, 0.12);
-  }
-}
-
-.gold-gradient-text {
-  background: linear-gradient(135deg, #fef3c7 0%, #facc15 50%, #d97706 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gold-border {
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-/* Custom Scrollbar for Desktop */
+/* Custom Scrollbar styled for light cream theme */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(7, 10, 15, 0.8);
+  background: #FFF6DE;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(245, 158, 11, 0.25);
-  border-radius: 9999px;
+  background: #EADBBA;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(245, 158, 11, 0.6);
-}
-
-/* Steam Particle Animation */
-@keyframes steam {
-  0% {
-    transform: translateY(0) scaleX(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: translateY(-25px) scaleX(1.4);
-    opacity: 0.4;
-  }
-  100% {
-    transform: translateY(-50px) scaleX(1.8);
-    opacity: 0;
-  }
-}
-
-.steam-particle {
-  animation: steam 2.5s infinite ease-out;
+  background: #F48F68;
 }

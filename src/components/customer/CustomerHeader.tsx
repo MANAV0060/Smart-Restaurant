@@ -1,6 +1,6 @@
 import React from 'react';
 import { VoiceAssistant } from './VoiceAssistant';
-import { Bot, ShoppingBag, ShieldAlert, User, Clock, Utensils, Lock, Sparkles, Search } from 'lucide-react';
+import { Bot, ShoppingBag, ShieldAlert, Search, ChevronDown } from 'lucide-react';
 
 interface CustomerHeaderProps {
   tableNumber: number;
@@ -23,13 +23,10 @@ interface CustomerHeaderProps {
 export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
   tableNumber,
   restaurantName,
-  estimatedWaitMinutes,
   cartItemCount,
   onOpenCart,
   onOpenAIChef,
   onOpenAllergyModal,
-  onOpenProfile,
-  onOpenStaffPortal,
   activeAllergiesCount,
   activeLanguage,
   onLanguageChange,
@@ -38,65 +35,44 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
   onReturnToLanding
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#070a0f]/95 border-b border-slate-800/90 backdrop-blur-2xl font-sans select-none">
-      {/* Top Session Bar */}
-      <div className="bg-slate-950 border-b border-slate-900 px-4 py-1 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span className="font-extrabold text-amber-400">Live Dining Session: Table {tableNumber}</span>
-          <button 
+    <header className="sticky top-0 z-40 w-full bg-[#FFF6DE]/95 border-b border-[#EADBBA] backdrop-blur-md font-sans select-none shadow-xs text-[#1C1917]">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        {/* Brand & Table Badge */}
+        <div className="flex items-center gap-3">
+          <div 
             onClick={onReturnToLanding}
-            className="text-slate-400 hover:text-white underline text-[11px] font-semibold ml-1"
+            className="cursor-pointer flex items-center gap-2.5"
           >
-            (Switch Table)
-          </button>
-        </div>
-
-        <button 
-          onClick={onOpenStaffPortal}
-          className="text-slate-400 hover:text-amber-300 font-bold text-[11px] flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity"
-        >
-          <Lock className="w-3 h-3 text-amber-400" /> Staff Portal
-        </button>
-      </div>
-
-      {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex items-center justify-between gap-3">
-        {/* Brand Crest */}
-        <div className="flex items-center gap-2.5 cursor-pointer group" onClick={onReturnToLanding}>
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 flex items-center justify-center text-slate-950 font-serif font-black text-lg sm:text-xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-            R
-          </div>
-          <div>
-            <h1 className="font-serif font-black text-white text-sm sm:text-lg leading-tight tracking-tight gold-gradient-text">
-              {restaurantName}
-            </h1>
-            <div className="text-[10px] sm:text-[11px] text-slate-400 flex items-center gap-1.5 font-sans">
-              <span className="text-amber-400 font-extrabold">Table {tableNumber}</span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3 text-amber-400" /> ~{estimatedWaitMinutes}m cook
+            <div className="w-8 h-8 rounded-lg bg-[#F48F68] text-white font-serif font-black text-base flex items-center justify-center shadow-xs">
+              R
+            </div>
+            <div>
+              <h1 className="font-serif font-bold text-[#1C1917] text-base tracking-tight leading-none">
+                {restaurantName}
+              </h1>
+              <span className="text-[11px] text-[#78716C] font-medium flex items-center gap-1 mt-0.5">
+                Table <strong className="text-[#1C1917] font-bold">{tableNumber}</strong> <ChevronDown className="w-3 h-3 text-[#F48F68]" />
               </span>
             </div>
           </div>
         </div>
 
-        {/* Smart Search Bar */}
-        <div className="hidden md:flex flex-1 max-w-md mx-4 relative">
+        {/* Clean Center Search with Warm White Surface */}
+        <div className="hidden sm:flex flex-1 max-w-sm relative">
           <input 
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchQuery(e.target.value)}
-            placeholder="Search 'Wagyu', 'Truffle Pizza', 'Under ₹500', 'Spicy'..."
-            className="w-full bg-slate-900/90 border border-slate-800 rounded-2xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/80 transition-colors shadow-inner"
+            placeholder="Search dishes or ingredients..."
+            className="w-full bg-[#FFFFFF] border border-[#EADBBA] rounded-full pl-8 pr-7 py-1.5 text-xs text-[#1C1917] placeholder-[#A8A29E] focus:outline-none focus:border-[#F48F68] focus:ring-1 focus:ring-[#F48F68] shadow-2xs transition-colors"
           />
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-2.5" />
+          <Search className="w-3.5 h-3.5 text-[#A8A29E] absolute left-2.5 top-2" />
           {searchQuery && (
-            <button onClick={() => onSearchQuery('')} className="absolute right-3 top-2 text-xs text-slate-400 hover:text-white">✕</button>
+            <button onClick={() => onSearchQuery('')} className="absolute right-2.5 top-1.5 text-xs text-[#78716C] hover:text-[#1C1917]">✕</button>
           )}
         </div>
 
-        {/* Action Controls */}
+        {/* Right Actions */}
         <div className="flex items-center gap-2">
           {/* Voice Assistant */}
           <VoiceAssistant 
@@ -105,57 +81,46 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
             onSpeechResult={(query) => onSearchQuery(query)}
           />
 
-          {/* Desktop Only Action Icons (Hidden on Mobile to prevent duplicate icons with MobileBottomNav) */}
-          <div className="hidden md:flex items-center gap-2">
-            {/* AI Sommelier / Chef Assistant */}
-            <button 
-              onClick={onOpenAIChef}
-              className="p-2.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-105 flex items-center gap-1.5 text-xs font-black px-3.5"
-            >
-              <Bot className="w-4 h-4 stroke-[2.5]" />
-              <span className="font-sans">AI Sommelier</span>
-            </button>
+          {/* AI Sommelier Button */}
+          <button 
+            onClick={onOpenAIChef}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFFFFF] hover:bg-[#FFFDF7] text-[#1C1917] border border-[#8BDFDD] text-xs font-semibold shadow-2xs transition-colors"
+          >
+            <Bot className="w-3.5 h-3.5 text-[#309694]" />
+            <span>AI Sommelier</span>
+          </button>
 
-            {/* Allergy Protection */}
-            <button 
-              onClick={onOpenAllergyModal}
-              className={`p-2.5 rounded-full border transition-all flex items-center justify-center relative ${
-                activeAllergiesCount > 0 
-                  ? 'bg-rose-950/80 border-rose-500 text-rose-400 shadow-lg shadow-rose-500/20' 
-                  : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:bg-slate-800'
-              }`}
-              title="Allergy Filter"
-            >
-              <ShieldAlert className="w-4 h-4" />
-              {activeAllergiesCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center">
-                  {activeAllergiesCount}
-                </span>
-              )}
-            </button>
+          {/* Allergy Filter Button */}
+          <button 
+            onClick={onOpenAllergyModal}
+            className={`p-1.5 rounded-full border transition-colors relative shadow-2xs ${
+              activeAllergiesCount > 0 
+                ? 'bg-[#F48F68] border-[#F48F68] text-white' 
+                : 'bg-[#FFFFFF] border-[#EADBBA] text-[#78716C] hover:text-[#1C1917]'
+            }`}
+            title="Dietary & Allergy Filter"
+          >
+            <ShieldAlert className="w-4 h-4" />
+            {activeAllergiesCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#1C1917] text-white text-[9px] font-bold flex items-center justify-center">
+                {activeAllergiesCount}
+              </span>
+            )}
+          </button>
 
-            {/* Cart Drawer Button */}
-            <button 
-              onClick={onOpenCart}
-              className="p-2.5 rounded-full bg-slate-900/90 border border-slate-800 text-slate-200 hover:bg-slate-800 relative transition-all"
-              title="Cart"
-            >
-              <ShoppingBag className="w-4 h-4 text-amber-400" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black flex items-center justify-center shadow-lg shadow-amber-500/40 animate-bounce">
-                  {cartItemCount}
-                </span>
-              )}
-            </button>
-
-            {/* Profile */}
-            <button 
-              onClick={onOpenProfile}
-              className="w-9.5 h-9.5 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-white flex items-center justify-center font-bold text-xs hover:border-amber-500/50 transition-colors"
-            >
-              <User className="w-4 h-4 text-amber-400" />
-            </button>
-          </div>
+          {/* Cart Button */}
+          <button 
+            onClick={onOpenCart}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F48F68] hover:bg-[#f27c50] active:bg-[#e0683a] text-white font-bold text-xs transition-colors shadow-xs"
+          >
+            <ShoppingBag className="w-3.5 h-3.5 stroke-[2.4]" />
+            <span>Cart</span>
+            {cartItemCount > 0 && (
+              <span className="bg-white text-[#F48F68] text-[10px] font-black px-1.5 py-0.2 rounded-full ml-0.5 shadow-2xs">
+                {cartItemCount}
+              </span>
+            )}
+          </button>
         </div>
       </div>
     </header>

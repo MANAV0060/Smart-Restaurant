@@ -1,275 +1,218 @@
 import React, { useState } from 'react';
 import { MenuItem } from '../../types';
-import { ModelImportModal } from '../3d/ModelImportModal';
-import { Plus, Edit2, Trash2, Check, X, Box, Flame, Sparkles, RefreshCw, Upload, Link as LinkIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Box, Sparkles, Check, X } from 'lucide-react';
 
 interface MenuManagerProps {
   menuItems: MenuItem[];
   onSaveMenuItem: (item: MenuItem) => void;
   onDeleteMenuItem: (id: string) => void;
-  onResetMenu?: () => void;
 }
 
 export const MenuManager: React.FC<MenuManagerProps> = ({
   menuItems,
   onSaveMenuItem,
   onDeleteMenuItem,
-  onResetMenu,
 }) => {
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
-  const [isImportModalOpen, setIsImportModalOpen] = useState<boolean>(false);
-  const [targetDishIdForImport, setTargetDishIdForImport] = useState<string | undefined>(undefined);
+  const [isCreating, setIsCreating] = useState(false);
 
-  const handleAddNew = () => {
-    const newItem: MenuItem = {
+  const [formData, setFormData] = useState<Partial<MenuItem>>({});
+
+  const handleStartCreate = () => {
+    setFormData({
       id: `dish-${Date.now()}`,
-      name: 'New Chef Creation',
-      category: 'starters',
-      price: 299,
+      name: '',
+      category: 'burgers',
+      price: 399,
+      description: '',
+      image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
+      isAvailable: true,
       vegType: 'veg',
       spiceLevel: 2,
-      calories: 400,
-      cookingTimeMinutes: 10,
-      rating: 5.0,
-      reviewCount: 1,
-      isAvailable: true,
-      description: 'Gourmet appetizer made with fresh artisanal ingredients.',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
-      ingredients: ['Fresh Vegetables', 'Special Herbs'],
-      cookingStyle: 'Chef Special Grill',
-      origin: 'Bistro Original',
-      macros: { protein: 15, carbs: 35, fat: 12, sugar: 3 },
-      portionSize: '1 Plate',
       allergens: [],
-      freshnessScore: 99,
+      cookingTimeMinutes: 15,
+      calories: 450,
+      freshnessScore: 98,
+      rating: 4.8,
+      reviewCount: 120,
+      portionSize: 'Standard Platter',
+      cookingStyle: 'Gourmet Artisanal',
+      origin: 'Bistro Creation',
+      macros: { protein: 22, carbs: 48, fat: 18, sugar: 4 },
+      ingredients: ['Organic Seasoning', 'Fresh Herbs'],
       model3DConfig: {
         baseShape: 'burger',
-        primaryColor: '#f59e0b',
-        secondaryColor: '#ea580c',
-        layers: [
-          { name: 'Base Layer', color: '#f59e0b', heightOffset: -0.2, radius: 1.0 },
-          { name: 'Garnish Top', color: '#ea580c', heightOffset: 0.2, radius: 0.9 },
-        ]
+        primaryColor: '#F48F68',
+        secondaryColor: '#FFE394',
+        layers: []
       }
-    };
-
-    setEditingItem(newItem);
+    });
+    setIsCreating(true);
+    setEditingItem(null);
   };
 
-  const handleApply3DModel = (dishId: string, modelUrl: string, scale: number) => {
-    const targetItem = menuItems.find(m => m.id === dishId);
-    if (targetItem) {
-      const updated: MenuItem = {
-        ...targetItem,
-        externalModelUrl: modelUrl,
-        externalModelScale: scale,
-      };
-      onSaveMenuItem(updated);
-      alert(`✅ 3D Model successfully attached to "${targetItem.name}"!`);
-    }
+  const handleStartEdit = (item: MenuItem) => {
+    setFormData({ ...item });
+    setEditingItem(item);
+    setIsCreating(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.price) return;
+    onSaveMenuItem(formData as MenuItem);
+    setEditingItem(null);
+    setIsCreating(false);
   };
 
   return (
-    <div className="bg-[#0c1017] border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6 font-sans select-none">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+    <div className="space-y-4 sm:space-y-5 font-sans select-none text-[#1C1917]">
+      {/* Top Action Bar */}
+      <div className="bg-[#FFFFFF] border border-[#EADBBA] rounded-xl p-4 sm:p-5 flex items-center justify-between shadow-sm">
         <div>
-          <h2 className="text-xl font-serif font-black text-white gold-gradient-text tracking-tight">Menu Product Catalog ({menuItems.length} Dishes)</h2>
-          <p className="text-xs text-slate-400">Add, edit, manage external 3D GLTF models, or restore default products</p>
+          <h2 className="text-base sm:text-lg font-serif font-bold text-[#1C1917]">Menu Catalog & 3D Assets</h2>
+          <p className="text-xs text-[#78716C]">{menuItems.length} Culinary Dishes in Database</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Import 3D Model Button */}
-          <button 
-            onClick={() => {
-              setTargetDishIdForImport(menuItems[0]?.id);
-              setIsImportModalOpen(true);
-            }}
-            className="px-4 py-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-bold text-xs flex items-center gap-2 border border-amber-500/30 transition-all shadow-md"
-          >
-            <Box className="w-4 h-4 text-amber-400" /> Import External 3D Model
-          </button>
-
-          {onResetMenu && (
-            <button 
-              onClick={() => {
-                if (confirm('Reset menu items to full default product catalog?')) {
-                  onResetMenu();
-                }
-              }}
-              className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs flex items-center gap-2 border border-slate-700 transition-colors shadow-md"
-            >
-              <RefreshCw className="w-4 h-4 text-amber-400" /> Restore Defaults
-            </button>
-          )}
-
-          <button 
-            onClick={handleAddNew}
-            className="px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" /> Add New Dish
-          </button>
-        </div>
+        <button
+          onClick={handleStartCreate}
+          className="px-4 py-2 rounded-lg bg-[#F48F68] hover:bg-[#f27c50] text-white font-bold text-xs flex items-center gap-1.5 transition-colors shadow-xs"
+        >
+          <Plus className="w-3.5 h-3.5 stroke-[2.5]" /> Add New Dish
+        </button>
       </div>
 
-      {/* Menu Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs text-slate-300">
-          <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
-            <tr>
-              <th className="p-3">Dish</th>
-              <th className="p-3">Category</th>
-              <th className="p-3">Price</th>
-              <th className="p-3">Dietary</th>
-              <th className="p-3">Cook Time</th>
-              <th className="p-3">3D Asset Type</th>
-              <th className="p-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800/60">
-            {menuItems.map(item => (
-              <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
-                <td className="p-3 flex items-center gap-3">
-                  <img src={item.image} alt={item.name} className="w-10 h-10 rounded-xl object-cover" />
-                  <div>
-                    <div className="font-bold text-white text-sm font-serif">{item.name}</div>
-                    <div className="text-[10px] text-slate-400">{item.portionSize}</div>
-                  </div>
-                </td>
-
-                <td className="p-3 font-semibold uppercase text-amber-400">{item.category}</td>
-                <td className="p-3 font-extrabold text-white">₹{item.price}</td>
-                <td className="p-3">
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    item.vegType === 'veg' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-                  }`}>
-                    {item.vegType}
-                  </span>
-                </td>
-                <td className="p-3 font-bold">{item.cookingTimeMinutes}m</td>
-                <td className="p-3">
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 w-fit ${
-                    item.externalModelUrl 
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' 
-                      : 'bg-slate-800 text-slate-400'
-                  }`}>
-                    <Box className="w-3 h-3" />
-                    {item.externalModelUrl ? 'Imported GLTF' : 'Procedural 3D'}
-                  </span>
-                </td>
-                <td className="p-3 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button 
-                      onClick={() => {
-                        setTargetDishIdForImport(item.id);
-                        setIsImportModalOpen(true);
-                      }}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700"
-                      title="Attach 3D Model"
-                    >
-                      <Box className="w-3.5 h-3.5" />
-                    </button>
-
-                    <button 
-                      onClick={() => setEditingItem(item)}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
-                      title="Edit Item"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-
-                    <button 
-                      onClick={() => onDeleteMenuItem(item.id)}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 border border-slate-700"
-                      title="Delete Item"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Edit Drawer Modal */}
-      {editingItem && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-serif font-black text-white text-base">Edit Dish: {editingItem.name}</h3>
-              <button onClick={() => setEditingItem(null)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
+      {/* Edit / Create Form Modal */}
+      {(isCreating || editingItem) && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-2xs flex items-center justify-center p-4">
+          <div className="w-full max-w-xl bg-[#FFFFFF] border border-[#EADBBA] rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-[#EADBBA] pb-3">
+              <h3 className="font-serif font-bold text-[#1C1917] text-base">
+                {isCreating ? 'Create Gourmet Dish' : `Edit ${editingItem?.name}`}
+              </h3>
+              <button onClick={() => { setIsCreating(false); setEditingItem(null); }} className="text-[#78716C] hover:text-[#1C1917]">
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="space-y-3 text-xs">
+            <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[#78716C] font-semibold mb-1">Dish Name</label>
+                  <input
+                    type="text"
+                    value={formData.name || ''}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                    className="w-full bg-[#FFFDF7] border border-[#EADBBA] rounded-md px-3 py-1.5 text-[#1C1917]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[#78716C] font-semibold mb-1">Price (₹)</label>
+                  <input
+                    type="number"
+                    value={formData.price || 0}
+                    onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                    required
+                    className="w-full bg-[#FFFDF7] border border-[#EADBBA] rounded-md px-3 py-1.5 text-[#1C1917]"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="text-slate-400 font-bold">Dish Name:</label>
-                <input 
-                  type="text" 
-                  value={editingItem.name} 
-                  onChange={e => setEditingItem({...editingItem, name: e.target.value})}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold mt-1"
+                <label className="block text-[#78716C] font-semibold mb-1">Description</label>
+                <textarea
+                  value={formData.description || ''}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={2}
+                  className="w-full bg-[#FFFDF7] border border-[#EADBBA] rounded-md px-3 py-1.5 text-[#1C1917]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-400 font-bold">Price (₹):</label>
-                  <input 
-                    type="number" 
-                    value={editingItem.price} 
-                    onChange={e => setEditingItem({...editingItem, price: Number(e.target.value)})}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold mt-1"
-                  />
+                  <label className="block text-[#78716C] font-semibold mb-1">Category</label>
+                  <select
+                    value={formData.category || 'burgers'}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                    className="w-full bg-[#FFFDF7] border border-[#EADBBA] rounded-md px-3 py-1.5 text-[#1C1917]"
+                  >
+                    <option value="starters">Starters</option>
+                    <option value="pizza">Artisan Pizza</option>
+                    <option value="burgers">Gourmet Burgers</option>
+                    <option value="pasta">Fresh Pasta</option>
+                    <option value="indian">Royal Indian</option>
+                    <option value="asian">Asian Wok</option>
+                    <option value="desserts">Desserts</option>
+                    <option value="drinks">Cocktails & Drinks</option>
+                  </select>
                 </div>
 
                 <div>
-                  <label className="text-slate-400 font-bold">Cooking Time (Mins):</label>
-                  <input 
-                    type="number" 
-                    value={editingItem.cookingTimeMinutes} 
-                    onChange={e => setEditingItem({...editingItem, cookingTimeMinutes: Number(e.target.value)})}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold mt-1"
+                  <label className="block text-[#78716C] font-semibold mb-1">External 3D Model URL (GLB/GLTF)</label>
+                  <input
+                    type="text"
+                    value={formData.externalModelUrl || ''}
+                    onChange={(e) => setFormData({ ...formData, externalModelUrl: e.target.value })}
+                    placeholder="https://.../model.glb"
+                    className="w-full bg-[#FFFDF7] border border-[#EADBBA] rounded-md px-3 py-1.5 text-[#1C1917]"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="text-slate-400 font-bold">External 3D GLTF/GLB Model URL (Optional):</label>
-                <input 
-                  type="text" 
-                  placeholder="https://example.com/model.glb"
-                  value={editingItem.externalModelUrl || ''} 
-                  onChange={e => setEditingItem({...editingItem, externalModelUrl: e.target.value})}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-amber-300 font-mono mt-1 text-[11px]"
-                />
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#EADBBA]">
+                <button
+                  type="button"
+                  onClick={() => { setIsCreating(false); setEditingItem(null); }}
+                  className="px-4 py-1.5 rounded-md bg-[#FFF6DE] text-[#78716C] hover:text-[#1C1917] border border-[#EADBBA] font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-md bg-[#F48F68] hover:bg-[#f27c50] text-white font-bold shadow-xs"
+                >
+                  Save Dish
+                </button>
               </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-800 flex justify-end gap-2">
-              <button onClick={() => setEditingItem(null)} className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">Cancel</button>
-              <button 
-                onClick={() => {
-                  onSaveMenuItem(editingItem);
-                  setEditingItem(null);
-                }} 
-                className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs"
-              >
-                Save Changes
-              </button>
-            </div>
+            </form>
           </div>
         </div>
       )}
 
-      {/* Model Importer Modal */}
-      <ModelImportModal 
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        onApplyModel={handleApply3DModel}
-        menuItems={menuItems}
-        defaultDishId={targetDishIdForImport}
-      />
+      {/* Menu Cards Table Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        {menuItems.map((item) => (
+          <div key={item.id} className="bg-[#FFFFFF] border border-[#EADBBA] rounded-xl p-3.5 flex items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+              <div className="min-w-0">
+                <h4 className="font-bold text-xs text-[#1C1917] truncate">{item.name}</h4>
+                <div className="text-[11px] font-bold text-[#F48F68] mt-0.5">₹{item.price}</div>
+                <div className="text-[10px] text-[#78716C] capitalize">{item.category}</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => handleStartEdit(item)}
+                className="p-1.5 rounded-md bg-[#FFF6DE] hover:bg-[#FFFDF7] text-[#1C1917] border border-[#EADBBA] shadow-2xs"
+                title="Edit item"
+              >
+                <Edit2 className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onDeleteMenuItem(item.id)}
+                className="p-1.5 rounded-md bg-[#FFF6DE] hover:bg-rose-50 text-rose-600 border border-[#EADBBA] shadow-2xs"
+                title="Delete item"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
