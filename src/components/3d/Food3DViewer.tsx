@@ -699,8 +699,13 @@ export const Food3DViewer: React.FC<Food3DViewerProps> = ({ item }) => {
         </span>
       </div>
 
-      {/* 3D Canvas */}
-      <Canvas camera={{ position: [0, 2.2, 4.2], fov: 45 }}>
+      {/* High-Performance 3D Canvas */}
+      <Canvas 
+        dpr={[1, 2]} 
+        performance={{ min: 0.5 }}
+        gl={{ antialias: true, powerPreference: 'high-performance' }} 
+        camera={{ position: [0, 2.2, 4.2], fov: 45 }}
+      >
         <Environment preset="sunset" />
         
         <ambientLight intensity={0.7} />
@@ -739,7 +744,16 @@ export const Food3DViewer: React.FC<Food3DViewerProps> = ({ item }) => {
         </Float>
 
         <ContactShadows position={[0, -1.25, 0]} opacity={0.6} scale={6.5} blur={2.0} far={4.5} color="#000000" />
-        <OrbitControls enableZoom={true} minDistance={2.0} maxDistance={6.5} maxPolarAngle={Math.PI / 2 + 0.1} autoRotate autoRotateSpeed={0.6} />
+        <OrbitControls 
+          enableZoom={true} 
+          enableDamping={true} 
+          dampingFactor={0.05} 
+          minDistance={2.0} 
+          maxDistance={6.5} 
+          maxPolarAngle={Math.PI / 2 + 0.1} 
+          autoRotate 
+          autoRotateSpeed={0.6} 
+        />
       </Canvas>
     </div>
   );

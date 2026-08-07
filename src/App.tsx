@@ -19,6 +19,7 @@ import { StaffPortalModal } from './components/staff/StaffPortalModal';
 import { KitchenDashboard } from './components/kitchen/KitchenDashboard';
 import { ChefScreenView } from './components/kitchen/ChefScreenView';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { preloadAll3DModels } from './services/modelPreloader';
 import { Sparkles, Utensils, Search, ChevronRight, X, AlertCircle } from 'lucide-react';
 
 const RESTAURANT_NAME = "The Royal Gourmet Bistro";
@@ -51,8 +52,10 @@ export function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
 
-  // Load and Restore Session & Cart on Page Reload / Refresh
+  // Load and Restore Session & Cart on Page Reload / Refresh + Preload 3D Models
   useEffect(() => {
+    preloadAll3DModels();
+
     const params = new URLSearchParams(window.location.search);
     const tableParam = params.get('table');
 
