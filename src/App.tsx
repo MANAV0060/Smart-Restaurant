@@ -14,6 +14,7 @@ import { AllergyFilterModal } from './components/customer/AllergyFilterModal';
 import { CartDrawer } from './components/customer/CartDrawer';
 import { OrderTrackerModal } from './components/customer/OrderTrackerModal';
 import { CustomerProfileModal } from './components/customer/CustomerProfileModal';
+import { MobileBottomNav } from './components/customer/MobileBottomNav';
 import { StaffPortalModal } from './components/staff/StaffPortalModal';
 import { KitchenDashboard } from './components/kitchen/KitchenDashboard';
 import { ChefScreenView } from './components/kitchen/ChefScreenView';
@@ -23,13 +24,13 @@ import { Sparkles, Utensils, Search, ChevronRight, X, AlertCircle } from 'lucide
 const RESTAURANT_NAME = "The Royal Gourmet Bistro";
 
 export function App() {
-  const { menuItems, orders, queueMode, setMenuItems, setQueueMode, updateOrderStatus, placeOrder } = useStore();
+  const { menuItems, orders, queueMode, totalTables, setMenuItems, setQueueMode, updateOrderStatus, placeOrder, resetMenu } = useStore();
 
   // Navigation State ('landing' | 'menu' | 'kitchen' | 'chef' | 'admin')
   const [currentScreen, setCurrentScreen] = useState<'landing' | 'menu' | 'kitchen' | 'chef' | 'admin'>('landing');
 
-  // Customer Table Session (parsed from URL e.g. ?table=15 or selected from Landing)
-  const [tableNumber, setTableNumber] = useState<number>(15);
+  // Customer Table Session (parsed from URL e.g. ?table=1 or selected from Landing)
+  const [tableNumber, setTableNumber] = useState<number>(1);
   const [activeLanguage, setActiveLanguage] = useState<'en' | 'hi' | 'mr'>('en');
 
   // Customer State
@@ -50,15 +51,61 @@ export function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
 
+  // Load and Restore Session & Cart on Page Reload / Refresh
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tableParam = params.get('table');
+
     if (tableParam && !isNaN(Number(tableParam))) {
-      setTableNumber(Number(tableParam));
-      // If table param present in URL, land directly on menu
+      const tbl = Number(tableParam);
+      setTableNumber(tbl);
       setCurrentScreen('menu');
+      localStorage.setItem('gourmetverse_active_table_v1', tbl.toString());
+      localStorage.setItem('gourmetverse_active_screen_v1', 'menu');
+    } else {
+      const savedTable = localStorage.getItem('gourmetverse_active_table_v1');
+      const savedScreen = localStorage.getItem('gourmetverse_active_screen_v1');
+      if (savedTable && !isNaN(Number(savedTable))) {
+        const tbl = Number(savedTable);
+        setTableNumber(tbl);
+        window.history.replaceState(null, '', `?table=${tbl}`);
+        if (savedScreen && ['menu', 'kitchen', 'chef', 'admin'].includes(savedScreen)) {
+          setCurrentScreen(savedScreen as any);
+        } else {
+          setCurrentScreen('menu');
+        }
+      }
+    }
+
+    try {
+      const savedCart = localStorage.getItem('gourmetverse_active_cart_v1');
+      if (savedCart) {
+        setCart(JSON.parse(savedCart));
+      }
+    } catch (e) {
+      console.error('Failed to parse saved cart', e);
     }
   }, []);
+
+  // Save Cart to LocalStorage on Update
+  useEffect(() => {
+    localStorage.setItem('gourmetverse_active_cart_v1', JSON.stringify(cart));
+  }, [cart]);
+
+  // Save Current Screen to LocalStorage on Update
+  useEffect(() => {
+    if (currentScreen !== 'landing') {
+      localStorage.setItem('gourmetverse_active_screen_v1', currentScreen);
+    }
+  }, [currentScreen]);
+
+  const handleSelectTableAndEnter = (tbl: number) => {
+    setTableNumber(tbl);
+    setCurrentScreen('menu');
+    localStorage.setItem('gourmetverse_active_table_v1', tbl.toString());
+    localStorage.setItem('gourmetverse_active_screen_v1', 'menu');
+    window.history.replaceState(null, '', `?table=${tbl}`);
+  };
 
   // Voice Search Handler with Phonetic Fuzzy Matching
   const handleVoiceSearch = (rawText: string) => {
@@ -160,10 +207,8 @@ export function App() {
       <div>
         <LandingPage 
           restaurantName={RESTAURANT_NAME}
-          onSelectTableAndEnter={(tbl) => {
-            setTableNumber(tbl);
-            setCurrentScreen('menu');
-          }}
+          totalTables={totalTables}
+          onSelectTableAndEnter={handleSelectTableAndEnter}
           onOpenStaffPortal={() => setIsStaffModalOpen(true)}
         />
 
@@ -229,13 +274,14 @@ export function App() {
             }
           }}
           onDeleteMenuItem={(id) => setMenuItems(menuItems.filter(m => m.id !== id))}
+          onResetMenu={resetMenu}
         />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-20 selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen bg-[#070a0f] text-slate-100 font-sans pb-28 md:pb-20 selection:bg-amber-500 selection:text-slate-950">
       {/* Customer Header */}
       <CustomerHeader 
         tableNumber={tableNumber}
@@ -256,17 +302,17 @@ export function App() {
       />
 
       {/* Hero Welcome Banner */}
-      <div className="max-w-7xl mx-auto px-4 pt-6 pb-2">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-orange-950 via-slate-900 to-slate-950 border border-orange-500/30 p-6 sm:p-8 shadow-2xl">
+      <div className="max-w-7xl mx-auto px-4 pt-6 pb-2 select-none">
+        <div className="relative rounded-3xl overflow-hidden bistro-card border-amber-500/30 p-6 sm:p-8 shadow-2xl">
           <div className="relative z-10 max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 border border-orange-500/40 text-orange-400 text-xs font-bold">
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Welcome to {RESTAURANT_NAME}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold font-sans">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" /> Michelin Recommended • {RESTAURANT_NAME}
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-              Preview Food Models in <span className="text-orange-400">3D & Real-World AR</span>
+            <h2 className="text-3xl sm:text-4xl font-serif font-black text-white leading-tight tracking-tight">
+              Interactive 3D & AR <span className="gold-gradient-text">Culinary Showcase</span>
             </h2>
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Place food items on your table surface, check ingredient macros, and dispatch orders straight to the kitchen.
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed font-sans">
+              Explore 360° GLTF 3D food models, place dishes on your dining table in live AR, analyze macro distributions, and order seamlessly.
             </p>
           </div>
         </div>
@@ -282,18 +328,32 @@ export function App() {
             <AlertCircle className="w-12 h-12 stroke-[1.5] text-slate-600 mb-3" />
             <h3 className="text-lg font-bold text-slate-200">No dishes found matching search parameters</h3>
             <p className="text-xs text-slate-500 mt-1 max-w-sm">
-              Try clearing search parameters or adjusting active category filters.
+              Try clearing search parameters, adjusting active category filters, or restoring the full menu catalog.
             </p>
-            <button 
-              onClick={() => {
-                setSelectedCategory('all');
-                setSearchQuery('');
-                setActiveAllergies([]);
-              }}
-              className="mt-4 px-4 py-2 rounded-xl bg-orange-500 text-white font-bold text-xs shadow-lg shadow-orange-500/30"
-            >
-              Reset All Filters
-            </button>
+            <div className="flex items-center gap-2 mt-4">
+              <button 
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setSearchQuery('');
+                  setActiveAllergies([]);
+                }}
+                className="px-4 py-2 rounded-xl bg-orange-500 text-white font-bold text-xs shadow-lg shadow-orange-500/30"
+              >
+                Reset Search Filters
+              </button>
+
+              <button 
+                onClick={() => {
+                  resetMenu();
+                  setSelectedCategory('all');
+                  setSearchQuery('');
+                  setActiveAllergies([]);
+                }}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs border border-slate-700 shadow-md"
+              >
+                Restore Default 3D Products
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -314,34 +374,39 @@ export function App() {
         )}
       </main>
 
-      {/* Floating Active Order Tracker Bar */}
-      {orders.length > 0 && (
-        <div className="fixed bottom-4 left-4 right-4 z-40 max-w-md mx-auto">
-          <button 
-            onClick={() => setTrackedOrder(orders[0])}
-            className="w-full bg-slate-900/95 border border-orange-500/50 p-3.5 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center justify-between text-xs hover:border-orange-500 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-orange-500 text-white font-black flex items-center justify-center">
-                #{orders[0].queuePosition}
-              </div>
-              <div className="text-left">
-                <div className="font-bold text-white flex items-center gap-1.5">
-                  Live Order {orders[0].orderNumber}
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                </div>
-                <div className="text-slate-400 text-[11px]">
-                  Status: <strong className="text-orange-400 uppercase">{orders[0].status}</strong>
-                </div>
-              </div>
-            </div>
+      {/* Floating Active Order Tracker Bar (ONLY shown when current table has placed an order) */}
+      {(() => {
+        const activeTableOrder = orders.find(o => o.tableNumber === tableNumber && o.status !== 'delivered' && o.status !== 'cancelled');
+        if (!activeTableOrder) return null;
 
-            <span className="text-orange-400 font-bold flex items-center gap-1">
-              Track Order <ChevronRight className="w-4 h-4" />
-            </span>
-          </button>
-        </div>
-      )}
+        return (
+          <div className="fixed bottom-20 md:bottom-6 left-4 right-4 z-30 max-w-md mx-auto">
+            <button 
+              onClick={() => setTrackedOrder(activeTableOrder)}
+              className="w-full bg-[#0c1017]/95 border border-amber-500/50 p-3 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center justify-between text-xs hover:border-amber-500 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8.5 h-8.5 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-sm shadow-lg shadow-amber-500/20">
+                  #{activeTableOrder.queuePosition}
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-white flex items-center gap-1.5">
+                    Live Order {activeTableOrder.orderNumber}
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  </div>
+                  <div className="text-slate-400 text-[11px]">
+                    Status: <strong className="text-amber-400 uppercase">{activeTableOrder.status}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <span className="text-amber-400 font-bold flex items-center gap-1 text-xs">
+                Track Order <ChevronRight className="w-4 h-4" />
+              </span>
+            </button>
+          </div>
+        );
+      })()}
 
       {/* Modals & Drawers */}
       {active3DItem && (
@@ -418,6 +483,20 @@ export function App() {
         isOpen={isStaffModalOpen}
         onClose={() => setIsStaffModalOpen(false)}
         onSelectStaffView={(view) => setCurrentScreen(view)}
+      />
+
+      {/* Mobile Sticky Thumb Navigation Bar */}
+      <MobileBottomNav
+        activeScreen="menu"
+        cartItemCount={cart.reduce((acc, c) => acc + c.quantity, 0)}
+        activeAllergiesCount={activeAllergies.length}
+        onOpenMenu={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onOpenCart={() => setIsCartOpen(true)}
+        onOpenAIChef={() => setIsAIChefOpen(true)}
+        onOpenAllergies={() => setIsAllergyModalOpen(true)}
+        onOpenProfile={() => setIsProfileOpen(true)}
       />
     </div>
   );

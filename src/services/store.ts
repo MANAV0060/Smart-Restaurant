@@ -6,13 +6,14 @@ const BROADCAST_CHANNEL_NAME = 'gourmetverse_live_sync';
 const LOCAL_STORAGE_KEY_ORDERS = 'gourmetverse_orders_v1';
 const LOCAL_STORAGE_KEY_MENU = 'gourmetverse_menu_v1';
 const LOCAL_STORAGE_KEY_PROFILE = 'gourmetverse_profile_v1';
+const LOCAL_STORAGE_KEY_TABLES = 'gourmetverse_tables_count_v1';
 
 // Initial Mock Orders
 const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-101',
     orderNumber: '#101',
-    tableNumber: 15,
+    tableNumber: 1,
     items: [
       { menuItem: MOCK_MENU_ITEMS[0], quantity: 2, specialInstructions: 'Extra Truffle Aioli, No Onion' },
       { menuItem: MOCK_MENU_ITEMS[7], quantity: 2 }
@@ -32,7 +33,7 @@ const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-102',
     orderNumber: '#102',
-    tableNumber: 8,
+    tableNumber: 2,
     items: [
       { menuItem: MOCK_MENU_ITEMS[1], quantity: 1, specialInstructions: 'Gluten sensitivity warning!' },
       { menuItem: MOCK_MENU_ITEMS[3], quantity: 1 }
@@ -50,7 +51,7 @@ const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-103',
     orderNumber: '#103',
-    tableNumber: 22,
+    tableNumber: 3,
     items: [
       { menuItem: MOCK_MENU_ITEMS[2], quantity: 1, specialInstructions: 'Less Spicy' },
       { menuItem: MOCK_MENU_ITEMS[5], quantity: 1 }
@@ -72,7 +73,21 @@ const INITIAL_ORDERS: Order[] = [
 const getStoredMenu = (): MenuItem[] => {
   try {
     const data = localStorage.getItem(LOCAL_STORAGE_KEY_MENU);
-    return data ? JSON.parse(data) : MOCK_MENU_ITEMS;
+    if (data) {
+      const parsed: MenuItem[] = JSON.parse(data);
+      return parsed.map(item => {
+        const match = MOCK_MENU_ITEMS.find(m => m.id === item.id);
+        if (match?.externalModelUrl && !item.externalModelUrl) {
+          return {
+            ...item,
+            externalModelUrl: match.externalModelUrl,
+            externalModelScale: match.externalModelScale || 1.0,
+          };
+        }
+        return item;
+      });
+    }
+    return MOCK_MENU_ITEMS;
   } catch {
     return MOCK_MENU_ITEMS;
   }
@@ -88,10 +103,21 @@ const getStoredOrders = (): Order[] => {
   }
 };
 
+// Helper to get initial tables count
+const getStoredTablesCount = (): number => {
+  try {
+    const data = localStorage.getItem(LOCAL_STORAGE_KEY_TABLES);
+    return data && !isNaN(Number(data)) ? Number(data) : 4;
+  } catch {
+    return 4;
+  }
+};
+
 // Global memory state for simple pub-sub subscriber listener pattern
 let globalMenuItems: MenuItem[] = getStoredMenu();
 let globalOrders: Order[] = getStoredOrders();
 let globalQueueMode: KDSQueueMode = 'ai_parallel';
+let globalTotalTables: number = getStoredTablesCount();
 const listeners = new Set<() => void>();
 
 const broadcastChannel = typeof window !== 'undefined' && 'BroadcastChannel' in window 
@@ -108,6 +134,9 @@ if (broadcastChannel) {
       notifyListeners();
     } else if (event.data?.type === 'UPDATE_QUEUE_MODE') {
       globalQueueMode = event.data.mode;
+      notifyListeners();
+    } else if (event.data?.type === 'UPDATE_TABLES_COUNT') {
+      globalTotalTables = event.data.count;
       notifyListeners();
     }
   };
@@ -207,15 +236,37 @@ export function useStore() {
     return newOrd;
   };
 
+  // Reset menu and orders to initial mock state
+  const resetMenu = () => {
+    globalMenuItems = [...MOCK_MENU_ITEMS];
+    globalOrders = [...INITIAL_ORDERS];
+    localStorage.setItem(LOCAL_STORAGE_KEY_MENU, JSON.stringify(globalMenuItems));
+    localStorage.setItem(LOCAL_STORAGE_KEY_ORDERS, JSON.stringify(globalOrders));
+    broadcastChannel?.postMessage({ type: 'UPDATE_MENU', menu: globalMenuItems });
+    broadcastChannel?.postMessage({ type: 'UPDATE_ORDERS', orders: globalOrders });
+    notifyListeners();
+  };
+
+  const setTotalTables = (count: number) => {
+    const safeCount = Math.max(1, count);
+    globalTotalTables = safeCount;
+    localStorage.setItem(LOCAL_STORAGE_KEY_TABLES, safeCount.toString());
+    broadcastChannel?.postMessage({ type: 'UPDATE_TABLES_COUNT', count: safeCount });
+    notifyListeners();
+  };
+
   return {
     menuItems: globalMenuItems,
     orders: globalOrders,
     queueMode: globalQueueMode,
+    totalTables: globalTotalTables,
     setOrders,
     setMenuItems,
     setQueueMode,
+    setTotalTables,
     updateOrderStatus,
     placeOrder,
+    resetMenu,
   };
 }
 

@@ -43,6 +43,9 @@ export interface MenuItem {
   portionSize: string;
   allergens: AllergyType[];
   freshnessScore: number; // 1-100
+  externalModelUrl?: string; // Direct URL or Blob URL for imported GLTF/GLB 3D model
+  externalModelScale?: number; // Custom scale factor (e.g. 1.0)
+  externalModelRotation?: [number, number, number]; // Custom rotation tuple [x, y, z] in radians
   model3DConfig: {
     baseShape: 'burger' | 'pizza' | 'pasta' | 'drink' | 'sushi' | 'dessert' | 'curry' | 'steak';
     primaryColor: string;

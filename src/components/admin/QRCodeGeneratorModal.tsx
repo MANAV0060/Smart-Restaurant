@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useStore } from '../../services/store';
 import { QrCode, Download, Printer, X, Sparkles, Plus, Trash2, Table } from 'lucide-react';
 
 interface QRCodeGeneratorModalProps {
@@ -7,7 +8,7 @@ interface QRCodeGeneratorModalProps {
 }
 
 export const QRCodeGeneratorModal: React.FC<QRCodeGeneratorModalProps> = ({ isOpen, onClose }) => {
-  const [totalTables, setTotalTables] = useState<number>(4); // Default restaurant capacity (4 tables)
+  const { totalTables, setTotalTables } = useStore();
   const [selectedTable, setSelectedTable] = useState<number>(1);
 
   if (!isOpen) return null;
@@ -16,15 +17,17 @@ export const QRCodeGeneratorModal: React.FC<QRCodeGeneratorModalProps> = ({ isOp
   const qrSvgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(currentUrl)}&color=f97316&bgcolor=0f172a`;
 
   const handleAddTable = () => {
-    setTotalTables(prev => prev + 1);
-    setSelectedTable(totalTables + 1);
+    const next = totalTables + 1;
+    setTotalTables(next);
+    setSelectedTable(next);
   };
 
   const handleRemoveTable = () => {
     if (totalTables > 1) {
-      setTotalTables(prev => prev - 1);
-      if (selectedTable >= totalTables) {
-        setSelectedTable(totalTables - 1);
+      const next = totalTables - 1;
+      setTotalTables(next);
+      if (selectedTable > next) {
+        setSelectedTable(next);
       }
     }
   };

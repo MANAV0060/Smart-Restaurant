@@ -1,0 +1,52 @@
+{
+  "burger.glb": {
+    "filename": "burger.glb",
+    "sizeMb": 18.04,
+    "meshCount": 2,
+    "materialCount": 1,
+    "textureCount": 1,
+    "optimizedForMobile": true,
+    "targetPortionScale": 1.0,
+    "defaultTableAnchorY": -0.4
+  },
+  "butter_chicken_set.glb": {
+    "filename": "butter_chicken_set.glb",
+    "sizeMb": 11.79,
+    "meshCount": 3,
+    "materialCount": 3,
+    "textureCount": 6,
+    "optimizedForMobile": true,
+    "targetPortionScale": 1.0,
+    "defaultTableAnchorY": -0.4
+  },
+  "momos.glb": {
+    "filename": "momos.glb",
+    "sizeMb": 31.95,
+    "meshCount": 8,
+    "materialCount": 1,
+    "textureCount": 1,
+    "optimizedForMobile": true,
+    "targetPortionScale": 1.0,
+    "defaultTableAnchorY": -0.4
+  },
+  "pasta.glb": {
+    "filename": "pasta.glb",
+    "sizeMb": 10.02,
+    "meshCount": 1,
+    "materialCount": 1,
+    "textureCount": 4,
+    "optimizedForMobile": true,
+    "targetPortionScale": 1.0,
+    "defaultTableAnchorY": -0.4
+  },
+  "pizza.glb": {
+    "filename": "pizza.glb",
+    "sizeMb": 44.59,
+    "meshCount": 2,
+    "materialCount": 2,
+    "textureCount": 4,
+    "optimizedForMobile": true,
+    "targetPortionScale": 1.0,
+    "defaultTableAnchorY": -0.4
+  }
+}

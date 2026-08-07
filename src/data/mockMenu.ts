@@ -41,6 +41,8 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     portionSize: '350g (Single Serving)',
     allergens: ['Milk', 'Gluten', 'Egg', 'Sesame'],
     freshnessScore: 98,
+    externalModelUrl: '/models/burger.glb',
+    externalModelScale: 1.0,
     model3DConfig: {
       baseShape: 'burger',
       primaryColor: '#8b4513',
@@ -78,6 +80,8 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     portionSize: '12 Inches (6 Slices)',
     allergens: ['Milk', 'Gluten'],
     freshnessScore: 99,
+    externalModelUrl: '/models/pizza.glb',
+    externalModelScale: 1.0,
     model3DConfig: {
       baseShape: 'pizza',
       primaryColor: '#c0392b',
@@ -112,6 +116,8 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     portionSize: '450ml Bowl (Serves 2)',
     allergens: ['Milk', 'Tree Nuts'],
     freshnessScore: 96,
+    externalModelUrl: '/models/butter_chicken_set.glb',
+    externalModelScale: 1.0,
     model3DConfig: {
       baseShape: 'curry',
       primaryColor: '#d35400',
@@ -146,6 +152,8 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     portionSize: '320g',
     allergens: ['Milk', 'Gluten', 'Egg'],
     freshnessScore: 97,
+    externalModelUrl: '/models/pasta.glb',
+    externalModelScale: 1.0,
     model3DConfig: {
       baseShape: 'pasta',
       primaryColor: '#f4d03f',
@@ -180,6 +188,8 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     portionSize: '8 Pieces Assorted',
     allergens: ['Soy', 'Gluten', 'Sesame'],
     freshnessScore: 100,
+    externalModelUrl: '/models/momos.glb',
+    externalModelScale: 1.0,
     model3DConfig: {
       baseShape: 'sushi',
       primaryColor: '#f5cba7',
