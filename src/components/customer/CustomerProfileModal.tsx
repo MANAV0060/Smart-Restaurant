@@ -1,6 +1,6 @@
 import React from 'react';
-import { UserProfile, Order, MenuItem } from '../../types';
-import { Award, Gift, Heart, ShieldAlert, Clock, Sparkles, User, X, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Order, MenuItem } from '../../types';
+import { User, Award, Heart, History, X } from 'lucide-react';
 
 interface CustomerProfileModalProps {
   isOpen: boolean;
@@ -19,137 +19,73 @@ export const CustomerProfileModal: React.FC<CustomerProfileModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const mockUser: UserProfile = {
-    name: 'Alex Mercer',
-    email: 'alex.mercer@gourmetverse.com',
-    phone: '+1 (555) 019-2834',
-    savedAllergies: savedAllergies as any,
-    preferences: ['Spicy Food', 'High Protein', 'Gluten Free Option'],
-    loyaltyPoints: 1250,
-    unlockedBadges: [
-      { id: 'b1', name: 'Food Explorer', icon: '🧭', description: 'Tried dishes from 5 distinct culinary categories', dateUnlocked: '2026-07-28' },
-      { id: 'b2', name: 'Burger Connoisseur', icon: '🍔', description: 'Ordered Wagyu Smash Burger 3 times', dateUnlocked: '2026-08-01' },
-      { id: 'b3', name: 'VIP Diner', icon: '👑', description: 'Spent over ₹3000 at GourmetVerse', dateUnlocked: '2026-08-03' },
-    ],
-    orderHistory: orders,
-  };
+  const loyaltyPoints = orders.length * 150 + 200;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-8 animate-scale-up">
-        {/* Profile Banner */}
-        <div className="p-6 bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-white relative">
-          <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/30 text-white flex items-center justify-center backdrop-blur-md">
-            <X className="w-4 h-4" />
-          </button>
-
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-slate-900 border-2 border-white/40 flex items-center justify-center text-white text-2xl font-black shadow-xl">
-              AM
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-2xs flex items-center justify-center p-4 font-sans select-none">
+      <div className="w-full max-w-md bg-[#14171d] text-[#FFF6DE] border border-white/[0.1] rounded-xl shadow-2xl overflow-hidden">
+        {/* Header */}
+        <div className="p-4 border-b border-white/[0.08] bg-[#101318] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-md bg-[#8BDFDD]/15 text-[#8BDFDD] flex items-center justify-center border border-[#8BDFDD]/30">
+              <User className="w-4 h-4" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-extrabold">{mockUser.name}</h2>
-                <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
-                  VIP LEVEL 3
-                </span>
-              </div>
-              <p className="text-xs text-orange-100 mt-0.5">{mockUser.email}</p>
+              <h3 className="font-serif font-bold text-[#FFF6DE] text-base">Guest Dining Profile</h3>
+              <span className="text-[11px] text-[#FFE394]">VIP Bistro Dining Member</span>
             </div>
           </div>
 
-          {/* Points HUD */}
-          <div className="mt-4 pt-4 border-t border-white/20 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-300" />
-              <span className="text-xs font-bold text-orange-100">Gourmet Rewards Points:</span>
-              <span className="text-lg font-black text-amber-300">{mockUser.loyaltyPoints} PTS</span>
-            </div>
-
-            <span className="text-xs text-white/80 font-medium">₹100 = 10 PTS</span>
-          </div>
+          <button 
+            onClick={onClose} 
+            className="w-7 h-7 rounded-md bg-[#1a1e27] text-slate-400 hover:text-white flex items-center justify-center border border-white/[0.08] transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Modal Tabs Body */}
-        <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
-          {/* Gamification Badges */}
-          <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <Award className="w-4 h-4 text-amber-400" /> Unlocked Culinary Badges
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {mockUser.unlockedBadges.map(b => (
-                <div key={b.id} className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center gap-3">
-                  <span className="text-2xl">{b.icon}</span>
-                  <div>
-                    <div className="font-bold text-white text-xs">{b.name}</div>
-                    <div className="text-[10px] text-slate-400">{b.description}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Active Allergy Safeguards */}
-          <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <ShieldAlert className="w-4 h-4 text-red-400" /> Saved Allergy Protection Profile
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {savedAllergies.length > 0 ? (
-                savedAllergies.map(a => (
-                  <span key={a} className="px-3 py-1 rounded-xl bg-red-500/20 text-red-300 border border-red-500/40 text-xs font-bold">
-                    {a}
-                  </span>
-                ))
-              ) : (
-                <span className="text-xs text-slate-500">No allergy filters selected.</span>
-              )}
-            </div>
-          </div>
-
-          {/* Favorites */}
-          <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <Heart className="w-4 h-4 text-rose-400" /> Your Favorite Dishes ({favorites.length})
-            </h3>
-            {favorites.length > 0 ? (
-              <div className="grid grid-cols-2 gap-2">
-                {favorites.map(f => (
-                  <div key={f.id} className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center gap-2">
-                    <img src={f.image} alt={f.name} className="w-10 h-10 rounded-lg object-cover" />
-                    <div className="truncate">
-                      <div className="font-bold text-xs text-white truncate">{f.name}</div>
-                      <div className="text-[11px] text-orange-400 font-semibold">₹{f.price}</div>
-                    </div>
-                  </div>
-                ))}
+        <div className="p-5 space-y-4 bg-[#0e1014]">
+          {/* Rewards Card */}
+          <div className="bg-[#14171d] p-4 rounded-xl border border-white/[0.08] flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#FFE394]/15 text-[#FFE394] flex items-center justify-center border border-[#FFE394]/30">
+                <Award className="w-5 h-5" />
               </div>
-            ) : (
-              <p className="text-xs text-slate-500">No favorites added yet.</p>
-            )}
+              <div>
+                <div className="text-xs text-slate-400 font-medium">Bistro Loyalty Points</div>
+                <div className="text-lg font-bold text-[#FFE394] font-serif">{loyaltyPoints} Pts</div>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-[#F48F68] bg-[#F48F68]/15 px-2.5 py-1 rounded border border-[#F48F68]/30">
+              Gold Tier
+            </span>
           </div>
 
-          {/* Recent Order History */}
-          <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-orange-400" /> Recent Order History
-            </h3>
-            <div className="space-y-2">
-              {orders.map(ord => (
-                <div key={ord.id} className="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-between text-xs">
-                  <div>
-                    <div className="font-bold text-white">{ord.orderNumber} • Table {ord.tableNumber}</div>
-                    <div className="text-slate-400 text-[11px] mt-0.5">{ord.items.length} items • {new Date(ord.timestamp).toLocaleTimeString()}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-black text-orange-400">₹{ord.totalAmount}</div>
-                    <span className="text-[10px] text-emerald-400 uppercase font-bold">{ord.status}</span>
+          {/* Favorite Items */}
+          <div className="space-y-2">
+            <div className="text-xs font-semibold text-[#FFF6DE] flex items-center gap-1.5">
+              <Heart className="w-3.5 h-3.5 text-[#F48F68]" /> Saved Dishes ({favorites.length})
+            </div>
+            <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto">
+              {favorites.map((fav) => (
+                <div key={fav.id} className="bg-[#14171d] p-2 rounded-lg border border-white/[0.06] flex items-center gap-2">
+                  <img src={fav.image} alt={fav.name} className="w-8 h-8 rounded object-cover" />
+                  <div className="truncate">
+                    <div className="font-semibold text-xs text-[#FFF6DE] truncate">{fav.name}</div>
+                    <div className="text-[10px] text-[#FFE394] font-bold">₹{fav.price}</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Active Allergies */}
+          {savedAllergies.length > 0 && (
+            <div className="p-3 bg-[#14171d] rounded-lg border border-white/[0.06] space-y-1">
+              <div className="text-xs font-semibold text-[#F48F68]">Active Dietary Safeguards:</div>
+              <div className="text-xs text-slate-300">{savedAllergies.join(', ')}</div>
+            </div>
+          )}
         </div>
       </div>
     </div>

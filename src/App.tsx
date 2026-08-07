@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from './services/store';
-import { MenuItem, CategoryId, CartItem, AllergyType, Order } from './types';
-import { matchVoiceSearch } from './services/voiceMatching';
+import { MenuItem, CategoryId, CartItem, Order, AllergyType } from './types';
 import { LandingPage } from './components/customer/LandingPage';
 import { CustomerHeader } from './components/customer/CustomerHeader';
 import { CategoryBar } from './components/customer/CategoryBar';
 import { FoodCard } from './components/customer/FoodCard';
-import { Food3DViewer } from './components/3d/Food3DViewer';
-import { FoodARViewer } from './components/3d/FoodARViewer';
 import { DishDetailModal } from './components/customer/DishDetailModal';
+import { CartDrawer } from './components/customer/CartDrawer';
 import { AIChefAssistant } from './components/customer/AIChefAssistant';
 import { AllergyFilterModal } from './components/customer/AllergyFilterModal';
-import { CartDrawer } from './components/customer/CartDrawer';
+import { Food3DViewer } from './components/3d/Food3DViewer';
+import { FoodARViewer } from './components/3d/FoodARViewer';
 import { OrderTrackerModal } from './components/customer/OrderTrackerModal';
 import { CustomerProfileModal } from './components/customer/CustomerProfileModal';
 import { MobileBottomNav } from './components/customer/MobileBottomNav';
@@ -20,17 +19,17 @@ import { KitchenDashboard } from './components/kitchen/KitchenDashboard';
 import { ChefScreenView } from './components/kitchen/ChefScreenView';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { preloadAll3DModels } from './services/modelPreloader';
-import { Sparkles, Utensils, Search, ChevronRight, X, AlertCircle } from 'lucide-react';
+import { ChevronRight, AlertCircle } from 'lucide-react';
 
 const RESTAURANT_NAME = "The Royal Gourmet Bistro";
 
 export function App() {
-  const { menuItems, orders, queueMode, totalTables, setMenuItems, setQueueMode, updateOrderStatus, placeOrder, resetMenu } = useStore();
+  const { menuItems, orders, queueMode, totalTables, setMenuItems, setQueueMode, setTotalTables, updateOrderStatus, placeOrder, resetMenu } = useStore();
 
   // Navigation State ('landing' | 'menu' | 'kitchen' | 'chef' | 'admin')
   const [currentScreen, setCurrentScreen] = useState<'landing' | 'menu' | 'kitchen' | 'chef' | 'admin'>('landing');
 
-  // Customer Table Session (parsed from URL e.g. ?table=1 or selected from Landing)
+  // Customer Table Session
   const [tableNumber, setTableNumber] = useState<number>(1);
   const [activeLanguage, setActiveLanguage] = useState<'en' | 'hi' | 'mr'>('en');
 
@@ -52,7 +51,6 @@ export function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
 
-  // Load and Restore Session & Cart on Page Reload / Refresh + Preload 3D Models
   useEffect(() => {
     preloadAll3DModels();
 
@@ -60,142 +58,74 @@ export function App() {
     const tableParam = params.get('table');
 
     if (tableParam && !isNaN(Number(tableParam))) {
-      const tbl = Number(tableParam);
-      setTableNumber(tbl);
+      const parsedNum = Number(tableParam);
+      setTableNumber(parsedNum);
       setCurrentScreen('menu');
-      localStorage.setItem('gourmetverse_active_table_v1', tbl.toString());
-      localStorage.setItem('gourmetverse_active_screen_v1', 'menu');
-    } else {
-      const savedTable = localStorage.getItem('gourmetverse_active_table_v1');
-      const savedScreen = localStorage.getItem('gourmetverse_active_screen_v1');
-      if (savedTable && !isNaN(Number(savedTable))) {
-        const tbl = Number(savedTable);
-        setTableNumber(tbl);
-        window.history.replaceState(null, '', `?table=${tbl}`);
-        if (savedScreen && ['menu', 'kitchen', 'chef', 'admin'].includes(savedScreen)) {
-          setCurrentScreen(savedScreen as any);
-        } else {
-          setCurrentScreen('menu');
-        }
-      }
-    }
-
-    try {
-      const savedCart = localStorage.getItem('gourmetverse_active_cart_v1');
-      if (savedCart) {
-        setCart(JSON.parse(savedCart));
-      }
-    } catch (e) {
-      console.error('Failed to parse saved cart', e);
     }
   }, []);
 
-  // Save Cart to LocalStorage on Update
-  useEffect(() => {
-    localStorage.setItem('gourmetverse_active_cart_v1', JSON.stringify(cart));
-  }, [cart]);
-
-  // Save Current Screen to LocalStorage on Update
-  useEffect(() => {
-    if (currentScreen !== 'landing') {
-      localStorage.setItem('gourmetverse_active_screen_v1', currentScreen);
-    }
-  }, [currentScreen]);
-
-  const handleSelectTableAndEnter = (tbl: number) => {
-    setTableNumber(tbl);
+  const handleSelectTableAndEnter = (tNum: number) => {
+    setTableNumber(tNum);
     setCurrentScreen('menu');
-    localStorage.setItem('gourmetverse_active_table_v1', tbl.toString());
-    localStorage.setItem('gourmetverse_active_screen_v1', 'menu');
-    window.history.replaceState(null, '', `?table=${tbl}`);
   };
 
-  // Voice Search Handler with Phonetic Fuzzy Matching
-  const handleVoiceSearch = (rawText: string) => {
-    const { normalizedKeyword, categoryHint } = matchVoiceSearch(rawText);
-    setSearchQuery(normalizedKeyword);
-    if (categoryHint && categoryHint !== 'all') {
-      setSelectedCategory(categoryHint as CategoryId);
+  const handleStaffSelect = (role: string) => {
+    if (role === 'kds' || role === 'kitchen') {
+      setCurrentScreen('kitchen');
+    } else if (role === 'chef') {
+      setCurrentScreen('chef');
+    } else if (role === 'admin') {
+      setCurrentScreen('admin');
     }
+    setIsStaffModalOpen(false);
   };
 
-  // Filter Menu Logic
-  const filteredMenuItems = menuItems.filter(item => {
-    // Category Filter
-    if (selectedCategory !== 'all') {
-      if (selectedCategory === 'chef-specials' && !item.isChefSpecial) return false;
-      if (selectedCategory === 'seasonal' && !item.isSeasonal) return false;
-      if (selectedCategory === 'vegan' && item.vegType !== 'vegan') return false;
-      if (selectedCategory !== 'chef-specials' && selectedCategory !== 'seasonal' && selectedCategory !== 'vegan' && item.category !== selectedCategory) {
-        return false;
-      }
-    }
-
-    // Search Query (Supports fuzzy matching & price filters)
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      if (query.includes('under ₹') || query.includes('under ')) {
-        const num = parseInt(query.replace(/[^0-9]/g, ''), 10);
-        if (!isNaN(num) && item.price > num) return false;
-      }
-      if (query.includes('spicy') && item.spiceLevel < 3) return false;
-      if (query.includes('healthy') && item.category !== 'healthy') return false;
-
-      const nameMatch = item.name.toLowerCase().includes(query);
-      const descMatch = item.description.toLowerCase().includes(query);
-      const ingMatch = item.ingredients.some(i => i.toLowerCase().includes(query));
-      const catMatch = item.category.toLowerCase().includes(query);
-
-      return nameMatch || descMatch || ingMatch || catMatch;
-    }
-
-    return true;
-  });
-
-  // Cart operations
-  const handleAddToCart = (item: MenuItem) => {
+  const handleAddToCart = (dish: MenuItem) => {
     setCart(prev => {
-      const existingIndex = prev.findIndex(c => c.menuItem.id === item.id);
-      if (existingIndex > -1) {
-        const updated = [...prev];
-        updated[existingIndex].quantity += 1;
-        return updated;
+      const existing = prev.find(item => item.menuItem.id === dish.id);
+      if (existing) {
+        return prev.map(item =>
+          item.menuItem.id === dish.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
       }
-      return [...prev, { menuItem: item, quantity: 1 }];
+      return [...prev, { menuItem: dish, quantity: 1 }];
     });
-  };
-
-  const handleAddComboToCart = (comboItems: MenuItem[]) => {
-    comboItems.forEach(item => handleAddToCart(item));
-    setIsCartOpen(true);
   };
 
   const handleUpdateQuantity = (dishId: string, delta: number) => {
-    setCart(prev => {
-      return prev.map(item => {
-        if (item.menuItem.id === dishId) {
-          const newQty = item.quantity + delta;
-          return newQty > 0 ? { ...item, quantity: newQty } : null;
-        }
-        return item;
-      }).filter(Boolean) as CartItem[];
-    });
+    setCart(prev =>
+      prev
+        .map(item => {
+          if (item.menuItem.id === dishId) {
+            const nextQty = item.quantity + delta;
+            return nextQty > 0 ? { ...item, quantity: nextQty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean) as CartItem[]
+    );
   };
 
   const handleUpdateInstructions = (dishId: string, notes: string) => {
-    setCart(prev => prev.map(item => item.menuItem.id === dishId ? { ...item, specialInstructions: notes } : item));
+    setCart(prev =>
+      prev.map(item => (item.menuItem.id === dishId ? { ...item, specialInstructions: notes } : item))
+    );
   };
 
-  const handleRemoveItem = (dishId: string) => {
+  const handleRemoveFromCart = (dishId: string) => {
     setCart(prev => prev.filter(item => item.menuItem.id !== dishId));
   };
 
-  const handleToggleFavorite = (id: string) => {
-    setFavorites(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+  const handleToggleFavorite = (dishId: string) => {
+    setFavorites(prev =>
+      prev.includes(dishId) ? prev.filter(id => id !== dishId) : [...prev, dishId]
+    );
   };
 
   const handleToggleAllergy = (allergy: AllergyType) => {
-    setActiveAllergies(prev => prev.includes(allergy) ? prev.filter(a => a !== allergy) : [...prev, allergy]);
+    setActiveAllergies(prev =>
+      prev.includes(allergy) ? prev.filter(a => a !== allergy) : [...prev, allergy]
+    );
   };
 
   const handlePlaceOrderSubmit = (tNum: number, items: CartItem[], notes: string, payMethod: string) => {
@@ -204,7 +134,7 @@ export function App() {
     setTrackedOrder(createdOrder);
   };
 
-  // Screen Router
+  // 1. Landing Screen
   if (currentScreen === 'landing') {
     return (
       <div>
@@ -218,20 +148,25 @@ export function App() {
         <StaffPortalModal 
           isOpen={isStaffModalOpen}
           onClose={() => setIsStaffModalOpen(false)}
-          onSelectStaffView={(view) => setCurrentScreen(view)}
+          onSelectRole={handleStaffSelect}
+          onSelectStaffView={handleStaffSelect}
         />
       </div>
     );
   }
 
+  // 2. Kitchen Display System (KDS) Screen
   if (currentScreen === 'kitchen') {
     return (
-      <div>
-        <div className="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs">
-          <span className="text-orange-400 font-extrabold flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> KITCHEN KDS TV MODE ACTIVE
+      <div className="bg-[#FFF6DE] min-h-screen">
+        <div className="bg-[#FFFFFF] border-b border-[#EADBBA] px-4 py-2.5 flex items-center justify-between text-xs font-sans shadow-2xs">
+          <span className="text-[#1C1917] font-bold flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#309694]"></span> Kitchen Display System Active
           </span>
-          <button onClick={() => setCurrentScreen('landing')} className="bg-orange-500 text-white font-bold px-3 py-1 rounded-xl">
+          <button 
+            onClick={() => setCurrentScreen('landing')} 
+            className="bg-[#F48F68] hover:bg-[#f27c50] text-white font-bold px-3 py-1.5 rounded-md text-xs transition-colors shadow-2xs"
+          >
             ← Exit Staff Mode
           </button>
         </div>
@@ -240,12 +175,16 @@ export function App() {
     );
   }
 
+  // 3. Chef Touch Screen
   if (currentScreen === 'chef') {
     return (
-      <div>
-        <div className="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs">
-          <span className="text-amber-400 font-extrabold">CHEF TOUCH SCREEN MODE ACTIVE</span>
-          <button onClick={() => setCurrentScreen('landing')} className="bg-orange-500 text-white font-bold px-3 py-1 rounded-xl">
+      <div className="bg-[#FFF6DE] min-h-screen">
+        <div className="bg-[#FFFFFF] border-b border-[#EADBBA] px-4 py-2.5 flex items-center justify-between text-xs font-sans shadow-2xs">
+          <span className="text-[#1C1917] font-bold">Chef Touch Station Mode</span>
+          <button 
+            onClick={() => setCurrentScreen('landing')} 
+            className="bg-[#F48F68] hover:bg-[#f27c50] text-white font-bold px-3 py-1.5 rounded-md text-xs transition-colors shadow-2xs"
+          >
             ← Exit Staff Mode
           </button>
         </div>
@@ -254,18 +193,27 @@ export function App() {
     );
   }
 
+  // 4. Admin Management Console
   if (currentScreen === 'admin') {
     return (
-      <div>
-        <div className="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs">
-          <span className="text-indigo-400 font-extrabold">ADMIN CONSOLE MODE ACTIVE</span>
-          <button onClick={() => setCurrentScreen('landing')} className="bg-orange-500 text-white font-bold px-3 py-1 rounded-xl">
+      <div className="bg-[#FFF6DE] min-h-screen">
+        <div className="bg-[#FFFFFF] border-b border-[#EADBBA] px-4 py-2.5 flex items-center justify-between text-xs font-sans shadow-2xs">
+          <span className="text-[#1C1917] font-bold">Admin & Operations Console</span>
+          <button 
+            onClick={() => setCurrentScreen('landing')} 
+            className="bg-[#F48F68] hover:bg-[#f27c50] text-white font-bold px-3 py-1.5 rounded-md text-xs transition-colors shadow-2xs"
+          >
             ← Exit Staff Mode
           </button>
         </div>
         <AdminDashboard 
           orders={orders} 
           menuItems={menuItems} 
+          restaurantName={RESTAURANT_NAME}
+          totalTables={totalTables}
+          onAddTable={() => setTotalTables(totalTables + 1)}
+          onRemoveTable={() => setTotalTables(Math.max(1, totalTables - 1))}
+          onExit={() => setCurrentScreen('landing')}
           onSaveMenuItem={(item) => {
             const index = menuItems.findIndex(m => m.id === item.id);
             if (index > -1) {
@@ -283,14 +231,27 @@ export function App() {
     );
   }
 
+  // 5. Main Customer Menu Screen
+  const filteredMenuItems = menuItems.filter(item => {
+    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+    const matchesSearch = 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.ingredients.some(ing => ing.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return matchesCategory && matchesSearch;
+  });
+
+  const cartItemCount = cart.reduce((acc, i) => acc + i.quantity, 0);
+
   return (
-    <div className="min-h-screen bg-[#070a0f] text-slate-100 font-sans pb-28 md:pb-20 selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-[#FFF6DE] text-[#1C1917] font-sans pb-24 md:pb-12 selection:bg-[#F48F68] selection:text-white">
       {/* Customer Header */}
       <CustomerHeader 
         tableNumber={tableNumber}
         restaurantName={RESTAURANT_NAME}
-        estimatedWaitMinutes={12}
-        cartItemCount={cart.reduce((acc, c) => acc + c.quantity, 0)}
+        estimatedWaitMinutes={18}
+        cartItemCount={cartItemCount}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenAIChef={() => setIsAIChefOpen(true)}
         onOpenAllergyModal={() => setIsAllergyModalOpen(true)}
@@ -304,62 +265,30 @@ export function App() {
         onReturnToLanding={() => setCurrentScreen('landing')}
       />
 
-      {/* Hero Welcome Banner */}
-      <div className="max-w-7xl mx-auto px-4 pt-6 pb-2 select-none">
-        <div className="relative rounded-3xl overflow-hidden bistro-card border-amber-500/30 p-6 sm:p-8 shadow-2xl">
-          <div className="relative z-10 max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold font-sans">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" /> Michelin Recommended • {RESTAURANT_NAME}
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-serif font-black text-white leading-tight tracking-tight">
-              Interactive 3D & AR <span className="gold-gradient-text">Culinary Showcase</span>
-            </h2>
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed font-sans">
-              Explore 360° GLTF 3D food models, place dishes on your dining table in live AR, analyze macro distributions, and order seamlessly.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Category Navigation Bar */}
+      <CategoryBar 
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+      />
 
-      {/* Category Bar */}
-      <CategoryBar selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
-
-      {/* Main Food Card Grid */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      {/* Main Menu Grid */}
+      <main className="max-w-6xl mx-auto px-4 py-6">
         {filteredMenuItems.length === 0 ? (
-          <div className="h-64 bg-slate-900/60 rounded-3xl border border-slate-800 flex flex-col items-center justify-center text-slate-500 text-center p-6">
-            <AlertCircle className="w-12 h-12 stroke-[1.5] text-slate-600 mb-3" />
-            <h3 className="text-lg font-bold text-slate-200">No dishes found matching search parameters</h3>
-            <p className="text-xs text-slate-500 mt-1 max-w-sm">
-              Try clearing search parameters, adjusting active category filters, or restoring the full menu catalog.
+          <div className="py-20 text-center bg-[#FFFFFF] rounded-2xl border border-[#EADBBA] p-8 max-w-md mx-auto shadow-sm">
+            <AlertCircle className="w-10 h-10 text-[#F48F68] mx-auto mb-2" />
+            <h3 className="text-base font-serif font-bold text-[#1C1917]">No Dishes Found</h3>
+            <p className="text-xs text-[#78716C] mt-1">
+              Try adjusting your search query or selecting a different category.
             </p>
-            <div className="flex items-center gap-2 mt-4">
-              <button 
-                onClick={() => {
-                  setSelectedCategory('all');
-                  setSearchQuery('');
-                  setActiveAllergies([]);
-                }}
-                className="px-4 py-2 rounded-xl bg-orange-500 text-white font-bold text-xs shadow-lg shadow-orange-500/30"
-              >
-                Reset Search Filters
-              </button>
-
-              <button 
-                onClick={() => {
-                  resetMenu();
-                  setSelectedCategory('all');
-                  setSearchQuery('');
-                  setActiveAllergies([]);
-                }}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs border border-slate-700 shadow-md"
-              >
-                Restore Default 3D Products
-              </button>
-            </div>
+            <button 
+              onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
+              className="mt-3.5 px-3.5 py-1.5 rounded-md bg-[#F48F68] hover:bg-[#f27c50] text-white font-bold text-xs transition-colors shadow-2xs"
+            >
+              Reset Filters
+            </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
             {filteredMenuItems.map(item => (
               <FoodCard 
                 key={item.id}
@@ -377,34 +306,34 @@ export function App() {
         )}
       </main>
 
-      {/* Floating Active Order Tracker Bar (ONLY shown when current table has placed an order) */}
+      {/* Floating Active Order Tracker Bar */}
       {(() => {
         const activeTableOrder = orders.find(o => o.tableNumber === tableNumber && o.status !== 'delivered' && o.status !== 'cancelled');
         if (!activeTableOrder) return null;
 
         return (
           <div className="fixed bottom-20 md:bottom-6 left-4 right-4 z-30 max-w-md mx-auto">
-            <button 
+            <button
               onClick={() => setTrackedOrder(activeTableOrder)}
-              className="w-full bg-[#0c1017]/95 border border-amber-500/50 p-3 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center justify-between text-xs hover:border-amber-500 transition-colors"
+              className="w-full bg-[#FFFFFF] border border-[#EADBBA] rounded-xl p-3.5 flex items-center justify-between shadow-xl hover:shadow-2xl transition-all"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8.5 h-8.5 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-sm shadow-lg shadow-amber-500/20">
+                <div className="w-8 h-8 rounded-md bg-[#F48F68] text-white font-bold flex items-center justify-center text-xs shadow-2xs">
                   #{activeTableOrder.queuePosition}
                 </div>
                 <div className="text-left">
-                  <div className="font-bold text-white flex items-center gap-1.5">
-                    Live Order {activeTableOrder.orderNumber}
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  <div className="font-bold text-[#1C1917] flex items-center gap-1.5">
+                    Order {activeTableOrder.orderNumber}
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#309694]"></span>
                   </div>
-                  <div className="text-slate-400 text-[11px]">
-                    Status: <strong className="text-amber-400 uppercase">{activeTableOrder.status}</strong>
+                  <div className="text-[#78716C] text-[11px]">
+                    Status: <strong className="text-[#F48F68] uppercase font-bold">{activeTableOrder.status}</strong>
                   </div>
                 </div>
               </div>
 
-              <span className="text-amber-400 font-bold flex items-center gap-1 text-xs">
-                Track Order <ChevronRight className="w-4 h-4" />
+              <span className="text-[#F48F68] font-bold flex items-center gap-1 text-xs">
+                Track <ChevronRight className="w-4 h-4" />
               </span>
             </button>
           </div>
@@ -413,16 +342,16 @@ export function App() {
 
       {/* Modals & Drawers */}
       {active3DItem && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl bg-slate-900 border border-slate-800 rounded-3xl p-6 relative shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-2xs flex items-center justify-center p-4 select-none">
+          <div className="w-full max-w-3xl bg-[#FFFFFF] text-[#1C1917] border border-[#EADBBA] rounded-2xl p-6 relative shadow-2xl">
             <button 
               onClick={() => setActive3DItem(null)}
-              className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center"
+              className="absolute top-4 right-4 z-20 w-8 h-8 rounded-lg bg-[#FFF6DE] hover:bg-[#FFFDF7] text-[#1C1917] hover:text-[#F48F68] font-bold flex items-center justify-center text-sm transition-colors border border-[#EADBBA] shadow-2xs"
             >
               ✕
             </button>
-            <h3 className="text-xl font-extrabold text-white mb-3 flex items-center gap-2">
-              3D Model: {active3DItem.name}
+            <h3 className="text-lg font-serif font-bold text-[#1C1917] mb-3">
+              {active3DItem.name} — Interactive 3D Model
             </h3>
             <Food3DViewer item={active3DItem} />
           </div>
@@ -441,11 +370,27 @@ export function App() {
         onToggleFavorite={handleToggleFavorite}
       />
 
+      <CartDrawer 
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cart}
+        onUpdateQuantity={handleUpdateQuantity}
+        onUpdateInstructions={handleUpdateInstructions}
+        onRemoveItem={handleRemoveFromCart}
+        onPlaceOrder={handlePlaceOrderSubmit}
+        tableNumber={tableNumber}
+        activeAllergies={activeAllergies}
+      />
+
       <AIChefAssistant 
         isOpen={isAIChefOpen}
         onClose={() => setIsAIChefOpen(false)}
         menuItems={menuItems}
-        onAddComboToCart={handleAddComboToCart}
+        onAddComboToCart={(items) => {
+          items.forEach(i => handleAddToCart(i));
+          setIsAIChefOpen(false);
+          setIsCartOpen(true);
+        }}
         savedAllergies={activeAllergies}
       />
 
@@ -457,18 +402,6 @@ export function App() {
         onClearAll={() => setActiveAllergies([])}
       />
 
-      <CartDrawer 
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cart}
-        onUpdateQuantity={handleUpdateQuantity}
-        onUpdateInstructions={handleUpdateInstructions}
-        onRemoveItem={handleRemoveItem}
-        onPlaceOrder={handlePlaceOrderSubmit}
-        tableNumber={tableNumber}
-        activeAllergies={activeAllergies}
-      />
-
       <OrderTrackerModal 
         order={trackedOrder}
         onClose={() => setTrackedOrder(null)}
@@ -477,7 +410,7 @@ export function App() {
       <CustomerProfileModal 
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        orders={orders}
+        orders={orders.filter(o => o.tableNumber === tableNumber)}
         favorites={menuItems.filter(m => favorites.includes(m.id))}
         savedAllergies={activeAllergies}
       />
@@ -485,17 +418,16 @@ export function App() {
       <StaffPortalModal 
         isOpen={isStaffModalOpen}
         onClose={() => setIsStaffModalOpen(false)}
-        onSelectStaffView={(view) => setCurrentScreen(view)}
+        onSelectRole={handleStaffSelect}
+        onSelectStaffView={handleStaffSelect}
       />
 
-      {/* Mobile Sticky Thumb Navigation Bar */}
-      <MobileBottomNav
+      {/* Mobile Bottom Navigation Bar */}
+      <MobileBottomNav 
         activeScreen="menu"
-        cartItemCount={cart.reduce((acc, c) => acc + c.quantity, 0)}
+        cartItemCount={cartItemCount}
         activeAllergiesCount={activeAllergies.length}
-        onOpenMenu={() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onOpenMenu={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenAIChef={() => setIsAIChefOpen(true)}
         onOpenAllergies={() => setIsAllergyModalOpen(true)}

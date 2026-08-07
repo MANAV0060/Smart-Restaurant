@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mic, MicOff, Volume2, Sparkles, Languages, X } from 'lucide-react';
+import { Mic, MicOff, Languages, X } from 'lucide-react';
 
 interface VoiceAssistantProps {
   onSpeechResult: (text: string) => void;
@@ -26,7 +26,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({
   const toggleListening = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert('Speech Recognition is not supported in this browser window. Please use Chrome/Edge.');
+      alert('Speech Recognition is not supported in this browser. Please use Chrome or Edge.');
       return;
     }
 
@@ -46,7 +46,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({
 
     recognition.onstart = () => {
       setIsListening(true);
-      setTranscript('Listening for your order...');
+      setTranscript('Listening for food order...');
     };
 
     recognition.onresult = (event: any) => {
@@ -56,7 +56,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({
       if (event.results[current].isFinal) {
         setIsListening(false);
         onSpeechResult(text);
-        speakFeedback(`Got it! Searching for ${text}`);
+        speakFeedback(`Searching menu for ${text}`);
       }
     };
 
@@ -81,49 +81,49 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({
   };
 
   return (
-    <div className="relative inline-block">
-      <div className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 rounded-full p-1 shadow-lg">
+    <div className="relative inline-block font-sans">
+      <div className="flex items-center gap-1 bg-[#14171f] border border-white/[0.08] rounded-lg p-1">
         {/* Language selector toggle */}
-        <div className="flex items-center text-xs font-semibold px-2 py-1 text-slate-300 gap-1 border-r border-slate-800">
-          <Languages className="w-3.5 h-3.5 text-orange-400" />
+        <div className="flex items-center text-xs font-semibold px-2 py-0.5 text-slate-300 gap-1 border-r border-white/[0.08]">
+          <Languages className="w-3.5 h-3.5 text-amber-400" />
           <select 
             value={activeLanguage}
             onChange={(e) => onLanguageChange(e.target.value as any)}
             className="bg-transparent text-slate-200 focus:outline-none cursor-pointer text-xs font-bold"
           >
-            <option value="en" className="bg-slate-900 text-white">EN</option>
-            <option value="hi" className="bg-slate-900 text-white">हिंदी</option>
-            <option value="mr" className="bg-slate-900 text-white">मराठी</option>
+            <option value="en" className="bg-[#14171f] text-white">EN</option>
+            <option value="hi" className="bg-[#14171f] text-white">हिंदी</option>
+            <option value="mr" className="bg-[#14171f] text-white">मराठी</option>
           </select>
         </div>
 
         {/* Mic Action Button */}
         <button
           onClick={toggleListening}
-          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+          className={`w-7 h-7 rounded flex items-center justify-center transition-colors ${
             isListening 
-              ? 'bg-red-500 text-white animate-pulse shadow-lg shadow-red-500/40' 
-              : 'bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20'
+              ? 'bg-rose-600 text-white' 
+              : 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold'
           }`}
-          title="Voice Order Assistant"
+          title="Voice Search"
         >
-          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
         </button>
       </div>
 
       {/* Voice Transcript Popup Card */}
       {isListening && (
-        <div className="absolute right-0 top-12 z-50 w-72 p-3 bg-slate-900 border border-orange-500/50 rounded-2xl shadow-2xl backdrop-blur-xl animate-fade-in">
-          <div className="flex items-center justify-between text-xs font-bold text-orange-400 mb-1">
+        <div className="absolute right-0 top-11 z-50 w-72 p-3 bg-[#14171f] border border-amber-500/40 rounded-lg shadow-xl">
+          <div className="flex items-center justify-between text-xs font-bold text-amber-400 mb-1">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+              <span className="w-2 h-2 rounded-full bg-rose-500"></span>
               Voice Order Assistant
             </span>
             <button onClick={() => setIsListening(false)} className="text-slate-400 hover:text-white">
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
-          <p className="text-xs text-slate-200 italic font-medium">{transcript}</p>
+          <p className="text-xs text-slate-200 font-medium">{transcript}</p>
         </div>
       )}
     </div>
