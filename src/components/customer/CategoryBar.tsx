@@ -30,9 +30,9 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
   onSelectCategory
 }) => {
   return (
-    <div className="w-full bg-[#FFF6DE] border-b border-[#EADBBA] py-2.5 sticky top-[57px] z-30 select-none shadow-xs">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 touch-pan-x">
+    <div className="w-full bg-[#FFF6DE] border-b border-[#EADBBA] py-2 sticky top-[88px] sm:top-[57px] z-30 select-none shadow-2xs">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4">
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 touch-pan-x">
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.id;
             const Icon = ICON_MAP[cat.icon] || Utensils;
@@ -41,13 +41,13 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all shadow-2xs ${
+                className={`px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all shadow-2xs ${
                   isSelected
                     ? 'bg-[#F48F68] text-white font-bold shadow-xs scale-102'
                     : 'bg-[#FFFFFF] text-[#44403C] hover:text-[#1C1917] hover:bg-[#FFFDF7] border border-[#EADBBA]'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-white stroke-[2.5]' : 'text-[#309694]'}`} />
+                <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isSelected ? 'text-white stroke-[2.5]' : 'text-[#309694]'}`} />
                 <span>{cat.name}</span>
               </button>
             );
