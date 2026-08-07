@@ -10,6 +10,7 @@ interface AdminDashboardProps {
   menuItems: MenuItem[];
   onSaveMenuItem: (item: MenuItem) => void;
   onDeleteMenuItem: (id: string) => void;
+  onResetMenu?: () => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -17,6 +18,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   menuItems,
   onSaveMenuItem,
   onDeleteMenuItem,
+  onResetMenu,
 }) => {
   const [activeTab, setActiveTab] = useState<'analytics' | 'menu'>('analytics');
   const [showQRModal, setShowQRModal] = useState(false);
@@ -51,7 +53,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               activeTab === 'menu' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' : 'bg-slate-800 text-slate-300'
             }`}
           >
-            <Utensils className="w-4 h-4" /> Menu Manager
+            <Utensils className="w-4 h-4" /> Menu Manager ({menuItems.length})
           </button>
 
           <button
@@ -71,6 +73,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           menuItems={menuItems} 
           onSaveMenuItem={onSaveMenuItem} 
           onDeleteMenuItem={onDeleteMenuItem} 
+          onResetMenu={onResetMenu}
         />
       )}
 
