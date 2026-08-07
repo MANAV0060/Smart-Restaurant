@@ -193,7 +193,12 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, comparisonItem
 
       {/* 2. Three.js Transparent 3D AR Canvas Overlay */}
       <div className="absolute inset-0 z-10 pointer-events-auto">
-        <Canvas camera={{ position: [0, 1.8, 3.8], fov: 45 }} gl={{ alpha: true, antialias: true }}>
+        <Canvas 
+          dpr={[1, 2]} 
+          performance={{ min: 0.5 }}
+          gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }} 
+          camera={{ position: [0, 1.8, 3.8], fov: 45 }}
+        >
           <Environment preset="sunset" />
           <ambientLight intensity={0.7} />
           <directionalLight position={[4, 6, 4]} intensity={1.6} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
@@ -217,6 +222,8 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, comparisonItem
           {/* Orbit Controls (Allows Diners to Orbit/Rotate Camera around Anchored Food) */}
           <OrbitControls 
             enableZoom={true} 
+            enableDamping={true}
+            dampingFactor={0.05}
             minDistance={1.2} 
             maxDistance={6} 
             maxPolarAngle={Math.PI / 2 + 0.05} 
