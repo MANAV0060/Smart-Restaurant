@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MenuItem } from '../../types';
 import { Food3DViewer } from '../3d/Food3DViewer';
-import { Star, Clock, Flame, ShieldAlert, Box, CheckCircle2, X, Heart, Plus, ArrowLeft } from 'lucide-react';
+import { Star, Clock, Flame, ShieldAlert, Box, CheckCircle2, X, Heart, Plus, ArrowLeft, Camera } from 'lucide-react';
 
 interface DishDetailModalProps {
   item: MenuItem | null;
@@ -9,6 +9,7 @@ interface DishDetailModalProps {
   onAddToCart: (item: MenuItem) => void;
   isFavorite: boolean;
   onToggleFavorite: (id: string) => void;
+  onOpenAR?: (item: MenuItem) => void;
 }
 
 export const DishDetailModal: React.FC<DishDetailModalProps> = ({
@@ -17,6 +18,7 @@ export const DishDetailModal: React.FC<DishDetailModalProps> = ({
   onAddToCart,
   isFavorite,
   onToggleFavorite,
+  onOpenAR,
 }) => {
   const [show3D, setShow3D] = useState(false);
 
@@ -71,14 +73,26 @@ export const DishDetailModal: React.FC<DishDetailModalProps> = ({
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
 
-                {/* Media Toggle Button */}
-                <button 
-                  onClick={() => setShow3D(true)}
-                  className="absolute bottom-2.5 right-2.5 z-10 px-3 py-1.5 rounded-md bg-[#8BDFDD] hover:bg-[#74d2d0] text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition-colors"
-                >
-                  <Box className="w-3.5 h-3.5 text-slate-950" />
-                  <span>{isExternal ? '3D GLTF Model' : '3D View'}</span>
-                </button>
+                {/* Media Toggle Buttons */}
+                <div className="absolute bottom-2.5 right-2.5 z-10 flex items-center gap-2">
+                  {onOpenAR && (
+                    <button 
+                      onClick={() => onOpenAR(item)}
+                      className="px-3 py-1.5 rounded-md bg-[#FFF6DE] hover:bg-[#FFFDF7] text-[#1C1917] font-bold text-xs flex items-center gap-1.5 shadow-md border border-[#EADBBA] transition-colors"
+                      title="View on your table in AR"
+                    >
+                      <Camera className="w-3.5 h-3.5 text-[#F48F68]" />
+                      <span>AR Table</span>
+                    </button>
+                  )}
+                  <button 
+                    onClick={() => setShow3D(true)}
+                    className="px-3 py-1.5 rounded-md bg-[#8BDFDD] hover:bg-[#74d2d0] text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition-colors"
+                  >
+                    <Box className="w-3.5 h-3.5 text-slate-950" />
+                    <span>{isExternal ? '3D GLTF Model' : '3D View'}</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
