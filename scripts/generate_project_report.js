@@ -344,6 +344,7 @@ async function generateReport() {
             ["Project Parameter", "Technical Specification Details"],
             [
               ["System Name", "Smart Restaurant (The Royal Gourmet Bistro)"],
+              ["Live Vercel Production URL", "https://smart-restaurant-2za8.vercel.app/"],
               ["Core Technology Stack", "React 18, TypeScript, Vite, Tailwind CSS, Three.js, WebXR, Google Model-Viewer"],
               ["Repository", "https://github.com/MANAV0060/Smart-Restaurant.git"],
               ["Deployment Target", "Vercel Cloud Edge Platform (HTTPS & PWA Enabled)"],
