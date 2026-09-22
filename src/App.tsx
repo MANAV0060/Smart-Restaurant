@@ -56,13 +56,22 @@ export function App() {
 
     const params = new URLSearchParams(window.location.search);
     const tableParam = params.get('table');
+    const arItemParam = params.get('arItem');
 
     if (tableParam && !isNaN(Number(tableParam))) {
       const parsedNum = Number(tableParam);
       setTableNumber(parsedNum);
       setCurrentScreen('menu');
     }
-  }, []);
+
+    if (arItemParam) {
+      const targetItem = menuItems.find(item => item.id === arItemParam);
+      if (targetItem) {
+        setActiveARItem(targetItem);
+        setCurrentScreen('menu');
+      }
+    }
+  }, [menuItems]);
 
   const handleSelectTableAndEnter = (tNum: number) => {
     setTableNumber(tNum);
@@ -368,6 +377,10 @@ export function App() {
         onAddToCart={handleAddToCart}
         isFavorite={activeDetailItem ? favorites.includes(activeDetailItem.id) : false}
         onToggleFavorite={handleToggleFavorite}
+        onOpenAR={(dish) => {
+          setActiveDetailItem(null);
+          setActiveARItem(dish);
+        }}
       />
 
       <CartDrawer 
