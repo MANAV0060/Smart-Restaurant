@@ -1,5 +1,7 @@
 # GourmetVerse AI | 3D & AR Smart Menu Platform
 
+🔗 **Live Vercel Production URL**: [https://smart-restaurant-2za8.vercel.app/](https://smart-restaurant-2za8.vercel.app/)
+
 A responsive, AI-powered restaurant ordering platform designed to revolutionize the dining experience. Customers can scan a QR code placed on their table to view hyper-realistic 3D food models, place them in their real-world environment using Augmented Reality (AR), and receive personalized AI recommendations based on preferences and allergies.
 
 Orders are sent directly to the kitchen's smart display system for efficient tracking, prioritization, and delivery.
@@ -26,8 +28,8 @@ Orders are sent directly to the kitchen's smart display system for efficient tra
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/suryawanshisanskar4599-boop/Smart-Restaurant-.git
-   cd Smart-Restaurant-
+   git clone https://github.com/MANAV0060/Smart-Restaurant.git
+   cd Smart-Restaurant
    ```
 
 2. **Install dependencies:**

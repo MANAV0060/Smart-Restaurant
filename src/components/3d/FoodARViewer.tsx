@@ -104,14 +104,16 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
   };
 
   // Google Scene Viewer fallback intent URL (for Android)
-  const fullOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const productionOrigin = 'https://smart-restaurant-2za8.vercel.app';
+  const fullOrigin = isLocal ? productionOrigin : (typeof window !== 'undefined' ? window.location.origin : productionOrigin);
   const sceneViewerUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(
     fullOrigin + modelUrl
   )}&mode=ar_preferred&title=${encodeURIComponent(item.name)}&resizable=true#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;end;`;
 
-  const mobileUrl = typeof window !== 'undefined' 
-    ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}/?arItem=${item.id}`
-    : '';
+  const mobileUrl = isLocal 
+    ? `${productionOrigin}/?arItem=${item.id}`
+    : (typeof window !== 'undefined' ? `${window.location.origin}/?arItem=${item.id}` : `${productionOrigin}/?arItem=${item.id}`);
 
   return (
     <div className="fixed inset-0 z-50 bg-[#1C1917] flex flex-col font-sans select-none text-[#1C1917] overflow-hidden">
