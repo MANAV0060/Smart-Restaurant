@@ -5,12 +5,16 @@ import * as THREE from 'three';
 import { MenuItem } from '../../types';
 import { 
   getItemPhysicalDimensions, 
-  checkWebXRARSupport 
+  checkWebXRARSupport,
+  extractSurfaceFeatures,
+  MobileSensorFusion,
+  SensorTelemetry,
+  SurfaceFeaturePoint
 } from '../../services/arTrackingEngine';
 import { 
   Camera, X, Sparkles, CheckCircle2, RotateCw, 
   Layers, ShieldCheck, AlertCircle, Ruler, RefreshCw, 
-  Zap, Lock, Unlock, QrCode, ExternalLink, Play
+  Zap, Lock, Unlock, QrCode, ExternalLink, Play, Check
 } from 'lucide-react';
 import { 
   RealisticBurger, 
@@ -32,7 +36,7 @@ interface AnchorTransform {
   quaternion: THREE.Quaternion;
 }
 
-// 3D GLTF Model Component scaled to exact real-world meters
+// 3D GLTF Model Component normalized to real-world meters
 function WebXRGLTFModel({ 
   url, 
   metricScale = 0.15, 
@@ -49,11 +53,9 @@ function WebXRGLTFModel({
     const size = new THREE.Vector3();
     box.getSize(size);
     const maxDim = Math.max(size.x, size.z);
-    // Normalize to exact target metric diameter (in meters)
     const factor = (metricScale / (maxDim || 1));
     clone.scale.set(factor, factor, factor);
 
-    // Adjust bottom to lie flush on the table surface (y = 0)
     const updatedBox = new THREE.Box3().setFromObject(clone);
     clone.position.y = -updatedBox.min.y;
     return clone;
@@ -66,29 +68,25 @@ function WebXRGLTFModel({
   );
 }
 
-// 3D Surface Reticle hovering on the physical table plane
-function WorldSpaceReticle() {
+// Physical Surface Reticle indicator
+function SurfaceReticleMesh() {
   return (
     <group position={[0, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-      {/* Outer Targeting Ring */}
       <mesh>
-        <ringGeometry args={[0.12, 0.13, 36]} />
-        <meshBasicMaterial color="#38bdf8" side={THREE.DoubleSide} transparent opacity={0.85} />
+        <ringGeometry args={[0.10, 0.12, 36]} />
+        <meshBasicMaterial color="#38bdf8" side={THREE.DoubleSide} transparent opacity={0.9} />
       </mesh>
-      {/* Inner Pulsing Radar Ring */}
       <mesh>
-        <ringGeometry args={[0.08, 0.09, 36]} />
+        <ringGeometry args={[0.06, 0.08, 36]} />
         <meshBasicMaterial color="#8BDFDD" side={THREE.DoubleSide} transparent opacity={0.7} />
       </mesh>
-      {/* Center Target Dot */}
       <mesh>
-        <circleGeometry args={[0.015, 24]} />
+        <circleGeometry args={[0.018, 24]} />
         <meshBasicMaterial color="#F48F68" side={THREE.DoubleSide} />
       </mesh>
-      {/* 4 Alignment Ticks */}
       {[0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].map((angle, idx) => (
-        <mesh key={idx} rotation={[0, 0, angle]} position={[Math.cos(angle) * 0.105, Math.sin(angle) * 0.105, 0]}>
-          <planeGeometry args={[0.008, 0.03]} />
+        <mesh key={idx} rotation={[0, 0, angle]} position={[Math.cos(angle) * 0.09, Math.sin(angle) * 0.09, 0]}>
+          <planeGeometry args={[0.006, 0.025]} />
           <meshBasicMaterial color="#FFE394" side={THREE.DoubleSide} />
         </mesh>
       ))}
@@ -96,105 +94,114 @@ function WorldSpaceReticle() {
   );
 }
 
-// Internal WebXR Session & Hit-Testing Controller
-function WebXRHitTestController({
+// Internal Three.js WebXR Hit-Testing Loop Component
+function WebXRHitTestManager({
   item,
   placed,
   anchorTransform,
-  onAutoPlace,
+  onPlace,
   rotationY,
   scaleMultiplier,
 }: {
   item: MenuItem;
   placed: boolean;
   anchorTransform: AnchorTransform | null;
-  onAutoPlace: (transform: AnchorTransform) => void;
+  onPlace: (transform: AnchorTransform) => void;
   rotationY: number;
   scaleMultiplier: number;
 }) {
   const { gl } = useThree();
   const reticleRef = useRef<THREE.Group>(null);
-  const [hitTestSource, setHitTestSource] = useState<XRHitTestSource | null>(null);
-  const [localSpace, setLocalSpace] = useState<XRReferenceSpace | null>(null);
+  const hitTestSourceRef = useRef<XRHitTestSource | null>(null);
+  const hitTestSourceRequestedRef = useRef(false);
   const consecutiveHitsRef = useRef(0);
 
   const physicalDimensions = useMemo(() => getItemPhysicalDimensions(item), [item]);
-  // Metric diameter in meters (e.g. 14.2 cm = 0.142 m)
   const targetDiameterMeters = (physicalDimensions.diameterCm / 100) * scaleMultiplier;
 
-  // Initialize WebXR hit-test source when session starts
+  // Listen for WebXR 'select' event (tap anywhere on screen in WebXR session)
   useEffect(() => {
     const session = gl.xr.getSession();
     if (!session) return;
 
-    let active = true;
+    const handleSelect = () => {
+      if (reticleRef.current && reticleRef.current.visible && !placed) {
+        const position = new THREE.Vector3();
+        const quaternion = new THREE.Quaternion();
+        const scale = new THREE.Vector3();
+        reticleRef.current.matrix.decompose(position, quaternion, scale);
 
-    async function setupHitTest() {
-      try {
-        const viewerSpace = await session!.requestReferenceSpace('viewer');
-        // Request hit test source relative to viewer camera
-        if ('requestHitTestSource' in session!) {
-          const source = await (session as unknown as { 
-            requestHitTestSource: (options: { space: XRReferenceSpace }) => Promise<XRHitTestSource> 
-          }).requestHitTestSource({ space: viewerSpace });
-          
-          const refSpace = await session!.requestReferenceSpace('local');
-
-          if (active) {
-            setHitTestSource(source);
-            setLocalSpace(refSpace);
-          }
-        }
-      } catch (err) {
-        console.warn('Hit test source setup notice:', err);
+        onPlace({
+          position: position.clone(),
+          quaternion: quaternion.clone(),
+        });
       }
-    }
-
-    setupHitTest();
-
-    const onSessionEnd = () => {
-      active = false;
-      setHitTestSource(null);
-      setLocalSpace(null);
-      consecutiveHitsRef.current = 0;
     };
 
-    session.addEventListener('end', onSessionEnd);
+    session.addEventListener('select', handleSelect);
     return () => {
-      active = false;
-      session.removeEventListener('end', onSessionEnd);
+      session.removeEventListener('select', handleSelect);
     };
-  }, [gl.xr]);
+  }, [gl.xr, placed, onPlace]);
 
   // Frame-by-frame WebXR Hit-Testing Loop
   useFrame((_, __, xrFrame) => {
-    if (!xrFrame || !hitTestSource || !localSpace || !reticleRef.current) return;
+    if (!xrFrame || !reticleRef.current) return;
 
-    if (!placed) {
+    const session = gl.xr.getSession();
+    if (!session) return;
+
+    // 1. Initialize Hit Test Source dynamically on first available frame
+    if (!hitTestSourceRequestedRef.current) {
+      hitTestSourceRequestedRef.current = true;
+      session.requestReferenceSpace('viewer').then((viewerSpace) => {
+        if ('requestHitTestSource' in session) {
+          (session as unknown as { 
+            requestHitTestSource: (options: { space: XRReferenceSpace }) => Promise<XRHitTestSource> 
+          }).requestHitTestSource({ space: viewerSpace })
+            .then((source) => {
+              hitTestSourceRef.current = source;
+            })
+            .catch((err) => {
+              console.warn('Error requesting hit test source:', err);
+            });
+        }
+      }).catch((err) => console.warn('Viewer space error:', err));
+
+      session.addEventListener('end', () => {
+        hitTestSourceRef.current = null;
+        hitTestSourceRequestedRef.current = false;
+        consecutiveHitsRef.current = 0;
+      });
+    }
+
+    // 2. Perform Hit-Testing against the physical environment
+    const hitTestSource = hitTestSourceRef.current;
+    const referenceSpace = gl.xr.getReferenceSpace();
+
+    if (hitTestSource && referenceSpace && !placed) {
       const hitTestResults = xrFrame.getHitTestResults(hitTestSource);
 
       if (hitTestResults.length > 0) {
         const hit = hitTestResults[0];
-        const pose = hit.getPose(localSpace);
+        const pose = hit.getPose(referenceSpace);
 
         if (pose) {
           reticleRef.current.visible = true;
-          const matrix = new THREE.Matrix4().fromArray(pose.transform.matrix);
-          const position = new THREE.Vector3();
-          const quaternion = new THREE.Quaternion();
-          const scale = new THREE.Vector3();
-          matrix.decompose(position, quaternion, scale);
-
-          reticleRef.current.position.copy(position);
-          reticleRef.current.quaternion.copy(quaternion);
+          reticleRef.current.matrix.fromArray(pose.transform.matrix);
 
           consecutiveHitsRef.current++;
 
-          // AUTOMATIC PLACEMENT: As soon as table plane is stably tracked for 4 consecutive frames
-          if (consecutiveHitsRef.current >= 4) {
-            onAutoPlace({
-              position: position.clone(),
-              quaternion: quaternion.clone(),
+          // AUTOMATIC PLACEMENT: Automatically lock once table surface is detected stably for 3 frames
+          if (consecutiveHitsRef.current >= 3) {
+            const pos = new THREE.Vector3();
+            const quat = new THREE.Quaternion();
+            const scl = new THREE.Vector3();
+            reticleRef.current.matrix.decompose(pos, quat, scl);
+
+            onPlace({
+              position: pos.clone(),
+              quaternion: quat.clone(),
             });
             consecutiveHitsRef.current = 0;
           }
@@ -203,7 +210,7 @@ function WebXRHitTestController({
         reticleRef.current.visible = false;
         consecutiveHitsRef.current = Math.max(0, consecutiveHitsRef.current - 1);
       }
-    } else {
+    } else if (placed) {
       reticleRef.current.visible = false;
     }
   });
@@ -218,9 +225,9 @@ function WebXRHitTestController({
       <directionalLight position={[-2, 3, -1]} intensity={0.9} color="#FFE394" />
       <Environment preset="sunset" />
 
-      {/* Surface Reticle tracking the real physical table plane */}
-      <group ref={reticleRef} visible={false}>
-        <WorldSpaceReticle />
+      {/* Surface Reticle tracking physical table plane */}
+      <group ref={reticleRef} matrixAutoUpdate={false} visible={false}>
+        <SurfaceReticleMesh />
       </group>
 
       {/* 3D Model Anchored to Exact Physical Coordinates in World Space */}
@@ -254,7 +261,7 @@ function WebXRHitTestController({
             </group>
           )}
 
-          {/* Real-World Contact Shadow cast directly on the physical table plane */}
+          {/* Contact Shadow cast directly on the physical table plane */}
           <ContactShadows 
             position={[0, 0.001, 0]} 
             opacity={0.75} 
@@ -278,25 +285,107 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
   const [scaleMultiplier, setScaleMultiplier] = useState(1.0);
   const [autoPlacedNotice, setAutoPlacedNotice] = useState(false);
   const [webXRError, setWebXRError] = useState<string | null>(null);
+  const [showQRModal, setShowQRModal] = useState(false);
+
+  // Fallback Camera Stream State
+  const [cameraActive, setCameraActive] = useState(false);
+  const [featurePoints, setFeaturePoints] = useState<SurfaceFeaturePoint[]>([]);
+  const [telemetry, setTelemetry] = useState<SensorTelemetry>({
+    pitch: 45,
+    roll: 0,
+    heading: 0,
+    isStable: false,
+    stabilityScore: 90,
+    estimatedDistanceCm: 50,
+    gravityZ: 0.7,
+  });
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const glRef = useRef<THREE.WebGLRenderer | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationFrameRef = useRef<number | null>(null);
 
   const physicalDimensions = useMemo(() => getItemPhysicalDimensions(item), [item]);
 
-  // Check if device supports native WebXR immersive-ar
+  // Check WebXR support
   useEffect(() => {
     checkWebXRARSupport().then((supported) => {
       setIsWebXRSupported(supported);
     });
   }, []);
 
-  // Launch Native WebXR Session with hit-test & dom-overlay
+  // Initialize Sensors for Fallback Camera mode
+  useEffect(() => {
+    const fusion = new MobileSensorFusion();
+    fusion.start();
+    const unsub = fusion.subscribe(setTelemetry);
+    return () => {
+      unsub();
+      fusion.stop();
+    };
+  }, []);
+
+  // Initialize Camera Feed for non-WebXR preview
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+
+    async function startCam() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } },
+          audio: false,
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current?.play();
+            setCameraActive(true);
+          };
+        }
+      } catch {
+        setCameraActive(false);
+      }
+    }
+
+    if (!isSessionActive) {
+      startCam();
+    }
+
+    return () => {
+      if (stream) stream.getTracks().forEach((t) => t.stop());
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, [isSessionActive]);
+
+  // Optical feature scanning for camera fallback
+  useEffect(() => {
+    if (isSessionActive) return;
+
+    function loop() {
+      if (canvasRef.current && videoRef.current && videoRef.current.readyState >= 2) {
+        const ctx = canvasRef.current.getContext('2d');
+        if (ctx) {
+          canvasRef.current.width = 320;
+          canvasRef.current.height = 240;
+          ctx.drawImage(videoRef.current, 0, 0, 320, 240);
+          setFeaturePoints(extractSurfaceFeatures(ctx, 320, 240));
+        }
+      }
+      animationFrameRef.current = requestAnimationFrame(loop);
+    }
+    animationFrameRef.current = requestAnimationFrame(loop);
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, [isSessionActive]);
+
+  // Launch Native WebXR Session
   const handleStartWebXRSession = async () => {
     setWebXRError(null);
 
     if (typeof navigator === 'undefined' || !('xr' in navigator)) {
-      setWebXRError('WebXR is not supported on this browser.');
+      setWebXRError('WebXR is not supported on this browser. Use Chrome on Android with ARCore.');
       return;
     }
 
@@ -327,29 +416,26 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
         setAnchorTransform(null);
       });
     } catch (err: unknown) {
-      console.error('WebXR session request error:', err);
-      const message = err instanceof Error ? err.message : String(err);
-      setWebXRError(`Could not start WebXR AR session: ${message}`);
+      console.error('WebXR session error:', err);
+      const msg = err instanceof Error ? err.message : String(err);
+      setWebXRError(`Could not start WebXR AR: ${msg}. Tap Google Scene Viewer below as fallback.`);
     }
   };
 
-  const handleAutoPlace = (transform: AnchorTransform) => {
-    if (!placed) {
-      setAnchorTransform(transform);
-      setPlaced(true);
-      setAutoPlacedNotice(true);
+  const handlePlace = (transform: AnchorTransform) => {
+    setAnchorTransform(transform);
+    setPlaced(true);
+    setAutoPlacedNotice(true);
 
-      // Trigger haptic feedback if available
-      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-        try {
-          navigator.vibrate([40, 30, 40]);
-        } catch {
-          // ignore
-        }
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([40, 30, 40]);
+      } catch {
+        // ignore
       }
-
-      setTimeout(() => setAutoPlacedNotice(false), 3000);
     }
+
+    setTimeout(() => setAutoPlacedNotice(false), 3000);
   };
 
   const handleUnlockAndRescan = () => {
@@ -367,17 +453,81 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
     ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}/?arItem=${item.id}`
     : '';
 
-  // Google Scene Viewer fallback for Android devices
+  // Google Scene Viewer HTTPS URL with title and resizable flag
   const sceneViewerUrl = item.externalModelUrl
     ? `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(
         window.location.origin + item.externalModelUrl
-      )}&mode=ar_preferred#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;end;`
+      )}&mode=ar_preferred&title=${encodeURIComponent(item.name)}&resizable=true#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;end;`
     : null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col font-sans select-none text-[#1C1917] overflow-hidden">
-      {/* 3D WebXR Canvas (Full Screen) */}
-      <div className="absolute inset-0 z-0">
+      <canvas ref={canvasRef} className="hidden" />
+
+      {/* Camera Video for Non-WebXR Preview Mode */}
+      {!isSessionActive && (
+        <div className="absolute inset-0 z-0 overflow-hidden bg-slate-950 flex items-center justify-center">
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            autoPlay
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+              cameraActive ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          />
+
+          {!cameraActive && (
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-stone-900 via-stone-800 to-amber-950/40 flex flex-col justify-end">
+              <div className="w-full h-2/3 bg-gradient-to-t from-stone-900/90 via-amber-950/30 to-transparent relative">
+                <div 
+                  className="absolute inset-0 opacity-25"
+                  style={{
+                    backgroundImage: `radial-gradient(#EADBBA 1.5px, transparent 1.5px)`,
+                    backgroundSize: '24px 24px',
+                    transform: 'perspective(500px) rotateX(60deg)',
+                    transformOrigin: 'bottom center'
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Perspective Plane Grid during preview */}
+          <div className="absolute inset-x-0 bottom-0 h-3/5 flex items-center justify-center overflow-hidden pointer-events-none">
+            <div 
+              className="w-[180%] h-[180%] border-t border-[#8BDFDD]/40 relative"
+              style={{
+                backgroundImage: `linear-gradient(to right, rgba(139, 223, 221, 0.16) 1px, transparent 1px),
+                                  linear-gradient(to bottom, rgba(139, 223, 221, 0.16) 1px, transparent 1px)`,
+                backgroundSize: '36px 36px',
+                transform: 'perspective(450px) rotateX(65deg) translateY(-20%)',
+                transformOrigin: 'bottom center',
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-[#8BDFDD]/25 via-transparent to-transparent animate-pulse" />
+            </div>
+          </div>
+
+          {/* Feature Points */}
+          <div className="absolute inset-0 pointer-events-none">
+            {featurePoints.map((pt, idx) => (
+              <div
+                key={idx}
+                className="absolute w-2 h-2 -ml-1 -mt-1 rounded-full bg-[#8BDFDD] shadow-[0_0_8px_#8BDFDD]"
+                style={{
+                  left: `${pt.x * 100}%`,
+                  top: `${pt.y * 100}%`,
+                  opacity: pt.confidence,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 3D WebXR Canvas (Active during WebXR Session) */}
+      <div className={`absolute inset-0 z-0 ${isSessionActive ? 'block' : 'hidden'}`}>
         <Canvas
           gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
           onCreated={({ gl }) => {
@@ -385,11 +535,11 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
             gl.xr.enabled = true;
           }}
         >
-          <WebXRHitTestController 
+          <WebXRHitTestManager 
             item={item}
             placed={placed}
             anchorTransform={anchorTransform}
-            onAutoPlace={handleAutoPlace}
+            onPlace={handlePlace}
             rotationY={rotationY}
             scaleMultiplier={scaleMultiplier}
           />
@@ -419,28 +569,38 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
                   <span className="flex items-center gap-1 text-[#309694] font-semibold">
                     <ShieldCheck className="w-3 h-3" />
                     {placed 
-                      ? 'Locked to Table (World-Space 6DoF)' 
+                      ? 'Locked to Table (World Space 6DoF)' 
                       : isSessionActive 
-                      ? 'Aim camera at table to auto-place' 
-                      : 'WebXR Table Tracking'}
+                      ? 'Scanning physical table plane...' 
+                      : 'Live AR Table Calibration'}
                   </span>
                 </div>
               </div>
             </div>
 
-            <button
-              onClick={() => {
-                if (isSessionActive && glRef.current) {
-                  const s = glRef.current.xr.getSession();
-                  s?.end();
-                }
-                onClose();
-              }}
-              className="p-2 rounded-lg bg-[#FFF6DE] hover:bg-[#FFFDF7] text-[#1C1917] border border-[#EADBBA] transition-colors"
-              title="Close AR"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setShowQRModal(true)}
+                className="p-2 rounded-lg bg-[#FFF6DE] hover:bg-[#FFFDF7] text-[#1C1917] border border-[#EADBBA] transition-colors"
+                title="Share QR"
+              >
+                <QrCode className="w-4 h-4 text-[#F48F68]" />
+              </button>
+
+              <button
+                onClick={() => {
+                  if (isSessionActive && glRef.current) {
+                    const s = glRef.current.xr.getSession();
+                    s?.end();
+                  }
+                  onClose();
+                }}
+                className="p-2 rounded-lg bg-[#FFF6DE] hover:bg-[#FFFDF7] text-[#1C1917] border border-[#EADBBA] transition-colors"
+                title="Close AR"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* WebXR Error Banner if unsupported */}
@@ -461,7 +621,7 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
                 <span>Move phone slowly over dining table</span>
               </div>
               <p className="text-[11px] text-white/80">
-                WebXR hit-testing will <strong>automatically anchor</strong> the dish to the table.
+                Tap anywhere on screen or hold steady to <strong>place dish on table</strong>.
               </p>
             </div>
           )}
@@ -469,14 +629,13 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
           {autoPlacedNotice && (
             <div className="bg-[#309694]/95 backdrop-blur-md text-white px-5 py-2.5 rounded-full shadow-2xl inline-flex items-center gap-2 text-xs font-bold animate-bounce">
               <CheckCircle2 className="w-4 h-4 text-[#FFE394]" />
-              <span>Anchored to Table! Walk around to view.</span>
+              <span>Anchored to Physical Table! Walk around to inspect.</span>
             </div>
           )}
         </div>
 
         {/* Bottom Control Bar */}
         <div className="max-w-lg mx-auto w-full space-y-2 pb-[calc(env(safe-area-inset-bottom,10px)+4px)] pointer-events-auto">
-          {/* Non-Active Session Prompt: Launch WebXR Button */}
           {!isSessionActive ? (
             <div className="bg-[#FFFFFF]/95 backdrop-blur-md border border-[#EADBBA] rounded-2xl p-4 shadow-xl text-center space-y-3">
               <div className="space-y-1">
@@ -484,7 +643,7 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
                   True World-Space WebXR Tracking
                 </h4>
                 <p className="text-xs text-[#78716C] leading-relaxed">
-                  Uses physical plane hit-testing so the 3D model stays pinned to your table as you walk around.
+                  Uses physical plane hit-testing so the 3D model stays anchored to your table as you walk around.
                 </p>
               </div>
 
@@ -500,24 +659,21 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
                 {sceneViewerUrl && (
                   <a
                     href={sceneViewerUrl}
-                    className="py-3 px-4 rounded-xl bg-[#FFF6DE] hover:bg-[#FFFDF7] text-[#1C1917] font-bold text-xs border border-[#EADBBA] transition-colors shadow-lg flex items-center justify-center gap-1.5"
+                    className="py-3 px-4 rounded-xl bg-[#8BDFDD] hover:bg-[#74d2d0] text-[#1C1917] font-bold text-xs border border-[#8BDFDD] transition-colors shadow-lg flex items-center justify-center gap-1.5"
                   >
-                    <ExternalLink className="w-4 h-4 text-[#309694]" />
+                    <ExternalLink className="w-4 h-4 text-[#1C1917]" />
                     <span>Google Scene Viewer</span>
                   </a>
                 )}
               </div>
 
-              {isWebXRSupported === false && (
-                <div className="pt-2 border-t border-[#EADBBA] text-[11px] text-[#78716C]">
-                  WebXR is supported on Chrome for Android with Google Play Services for AR.
-                </div>
-              )}
+              <div className="pt-2 border-t border-[#EADBBA] flex items-center justify-between text-[11px] text-[#78716C]">
+                <span>1:1 Scale: <strong>Ø {currentDiameterCm} cm</strong></span>
+                <span>Supported on Chrome Android with ARCore</span>
+              </div>
             </div>
           ) : (
-            /* Active WebXR Session Controls */
             <div className="bg-[#FFFFFF]/95 backdrop-blur-md border border-[#EADBBA] rounded-2xl p-3 shadow-xl space-y-2.5">
-              {/* Physical Dimension Meter */}
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5">
                   <Ruler className="w-3.5 h-3.5 text-[#F48F68]" />
@@ -539,7 +695,6 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
                 </button>
               </div>
 
-              {/* Rotation & Scale Sliders */}
               <div className="grid grid-cols-2 gap-3 pt-1 border-t border-[#EADBBA]/60">
                 <div className="space-y-1">
                   <div className="flex justify-between text-[10px] text-[#78716C] font-semibold">
@@ -574,7 +729,6 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex items-center gap-2 pt-1">
                 {placed ? (
                   <button
@@ -587,7 +741,7 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
                 ) : (
                   <div className="flex-1 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-[#FFF6DE] text-[#78716C] border border-[#EADBBA]">
                     <Layers className="w-3.5 h-3.5 animate-pulse text-[#F48F68]" />
-                    <span>Detecting table surface...</span>
+                    <span>Scanning table (Tap screen to place)</span>
                   </div>
                 )}
 
@@ -603,6 +757,57 @@ export const FoodARViewer: React.FC<FoodARViewerProps> = ({ item, onClose }) => 
           )}
         </div>
       </div>
+
+      {/* QR Code Handoff Modal */}
+      {showQRModal && (
+        <div 
+          className="fixed inset-0 z-60 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setShowQRModal(false)}
+        >
+          <div 
+            className="bg-[#FFFFFF] border border-[#EADBBA] rounded-2xl p-5 max-w-sm w-full text-center shadow-2xl space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[#309694] font-bold text-xs">
+                <Camera className="w-4 h-4 text-[#F48F68]" />
+                <span>Open on Smartphone</span>
+              </div>
+              <button 
+                onClick={() => setShowQRModal(false)}
+                className="w-6 h-6 rounded-md bg-[#FFF6DE] hover:bg-[#FFFDF7] text-[#78716C] flex items-center justify-center text-xs"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-3 bg-white border border-[#EADBBA] rounded-xl shadow-inner inline-block mx-auto">
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(mobileUrl)}`}
+                alt="Scan to open AR on Phone"
+                className="w-44 h-44 mx-auto rounded-lg"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <h4 className="font-serif font-bold text-sm text-[#1C1917]">Scan with your Phone</h4>
+              <p className="text-xs text-[#78716C] leading-relaxed">
+                Scan with your phone camera to open in Chrome on Android with native ARCore.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(mobileUrl);
+                alert('Link copied!');
+              }}
+              className="w-full py-2 rounded-lg bg-[#F48F68] hover:bg-[#f27c50] text-white font-bold text-xs"
+            >
+              Copy Mobile Link
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
