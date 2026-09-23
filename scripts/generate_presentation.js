@@ -31,33 +31,47 @@ async function buildPresentation() {
   const FONT_HEAD = 'Cambria';
   const FONT_BODY = 'Calibri';
 
-  // Helper to add clean standard slide header and footer
+  const headerImgPath = path.resolve('d:/resrtorant/presentation_assets/tcet_header.jpeg');
+
+  // Helper to add clean standard slide header with TCET department banner
   function addHeader(slide, category, title) {
     slide.background = { color: C_BG };
 
-    // Clean Section Category Label
-    slide.addText(category, {
+    // Institutional TCET Department Header Watermark / Banner
+    if (fs.existsSync(headerImgPath)) {
+      slide.addImage({
+        path: headerImgPath,
+        x: 2.0,
+        y: 0.05,
+        w: 6.0,
+        h: 0.82
+      });
+    }
+
+    // Slide Title (Left)
+    slide.addText(title, {
       x: 0.6,
-      y: 0.4,
-      w: 8.8,
-      h: 0.22,
-      fontFace: FONT_BODY,
-      fontSize: 10,
+      y: 0.89,
+      w: 6.5,
+      h: 0.36,
+      fontFace: FONT_HEAD,
+      fontSize: 16.5,
       bold: true,
-      color: C_BLUE,
+      color: C_NAVY,
       margin: 0
     });
 
-    // Main Slide Title
-    slide.addText(title, {
-      x: 0.6,
-      y: 0.62,
-      w: 8.8,
-      h: 0.45,
-      fontFace: FONT_HEAD,
-      fontSize: 21,
+    // Section / Rubric Tag (Right-aligned)
+    slide.addText(category, {
+      x: 7.1,
+      y: 0.92,
+      w: 2.3,
+      h: 0.30,
+      fontFace: FONT_BODY,
+      fontSize: 9.5,
       bold: true,
-      color: C_NAVY,
+      color: C_BLUE,
+      align: 'right',
       margin: 0
     });
 
@@ -93,13 +107,23 @@ async function buildPresentation() {
     const slide = pres.addSlide();
     slide.background = { color: C_BG };
 
+    if (fs.existsSync(headerImgPath)) {
+      slide.addImage({
+        path: headerImgPath,
+        x: 1.5,
+        y: 0.15,
+        w: 7.0,
+        h: 0.95
+      });
+    }
+
     slide.addText('Presentation III – Capstone Project Evaluation (A.Y. 2026–27)', {
       x: 0.8,
-      y: 0.65,
+      y: 1.18,
       w: 8.4,
-      h: 0.3,
+      h: 0.25,
       fontFace: FONT_BODY,
-      fontSize: 11,
+      fontSize: 10.5,
       bold: true,
       color: C_BLUE,
       align: 'center',
@@ -108,11 +132,11 @@ async function buildPresentation() {
 
     slide.addText('Smart Restaurant', {
       x: 0.8,
-      y: 1.0,
+      y: 1.45,
       w: 8.4,
-      h: 0.65,
+      h: 0.55,
       fontFace: FONT_HEAD,
-      fontSize: 34,
+      fontSize: 32,
       bold: true,
       color: C_NAVY,
       align: 'center',
@@ -121,11 +145,11 @@ async function buildPresentation() {
 
     slide.addText('A Contactless Dining Platform with Markerless WebXR 3D Augmented Reality & Real-Time Kitchen Display System', {
       x: 1.0,
-      y: 1.68,
+      y: 2.05,
       w: 8.0,
-      h: 0.5,
+      h: 0.38,
       fontFace: FONT_BODY,
-      fontSize: 13,
+      fontSize: 12,
       color: C_TEXT_BODY,
       align: 'center',
       margin: 0
@@ -134,7 +158,7 @@ async function buildPresentation() {
     // Left Panel: Team Members
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.8,
-      y: 2.45,
+      y: 2.52,
       w: 4.0,
       h: 1.95,
       rectRadius: 0.08,
@@ -144,7 +168,7 @@ async function buildPresentation() {
 
     slide.addText('PROJECT TEAM MEMBERS', {
       x: 1.0,
-      y: 2.6,
+      y: 2.65,
       w: 3.6,
       h: 0.25,
       fontFace: FONT_BODY,
@@ -163,7 +187,7 @@ async function buildPresentation() {
       { text: '   Systems Integration & QA Lead', options: { color: C_TEXT_MUTED, fontSize: 9.5 } }
     ], {
       x: 1.0,
-      y: 2.9,
+      y: 2.92,
       w: 3.6,
       h: 1.35,
       fontFace: FONT_BODY,
@@ -175,7 +199,7 @@ async function buildPresentation() {
     // Right Panel: Mentorship & Institution
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 5.2,
-      y: 2.45,
+      y: 2.52,
       w: 4.0,
       h: 1.95,
       rectRadius: 0.08,
@@ -185,7 +209,7 @@ async function buildPresentation() {
 
     slide.addText('MENTORSHIP & INSTITUTION', {
       x: 5.4,
-      y: 2.6,
+      y: 2.65,
       w: 3.6,
       h: 0.25,
       fontFace: FONT_BODY,
@@ -205,7 +229,7 @@ async function buildPresentation() {
       { text: 'Affiliated with University of Mumbai', options: { color: C_BLUE, fontSize: 9.5 } }
     ], {
       x: 5.4,
-      y: 2.9,
+      y: 2.92,
       w: 3.6,
       h: 1.35,
       fontFace: FONT_BODY,
@@ -245,7 +269,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Context & Motivation', 'Problem Statement & Dining Industry Challenges');
+    addHeader(slide, 'Context & Motivation', 'Problem Statement & Dining Challenges');
 
     const cards = [
       {
@@ -518,7 +542,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Literature Review', 'Existing Dining Systems & Research Gap Analysis');
+    addHeader(slide, 'Literature Review', 'Existing Systems & Research Gap Analysis');
 
     const tableData = [
       [
@@ -874,7 +898,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Rubric Criterion 4 (10 Marks)', 'Project Management: Agile Methodology, Milestones & Risk Analysis');
+    addHeader(slide, 'Rubric Criterion 4 (10 Marks)', 'Project Management: Agile Sprints & Risk Analysis');
 
     // Left Column: Sprints
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
@@ -981,7 +1005,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Rubric Criterion 5 (10 Marks)', 'Teamwork, Task Allocation & Collaborative Practices');
+    addHeader(slide, 'Rubric Criterion 5 (10 Marks)', 'Teamwork, Task Allocation & Collaboration');
 
     const members = [
       {
@@ -1227,7 +1251,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Rubric Criterion 7 (30 Marks)', '100% Implementation: Working Modules & Live Deployment Verification');
+    addHeader(slide, 'Rubric Criterion 7 (30 Marks)', '100% Implementation: Working Modules & Live Proof');
 
     // Left screenshot: Menu UI
     const imgMenuPath = path.resolve('d:/resrtorant/presentation_assets/back_to_menu_1790013320137.png');
@@ -1239,7 +1263,6 @@ async function buildPresentation() {
         w: 3.6,
         h: 2.4
       });
-      // Subtle neat border around image
       slide.addShape(pres.shapes.RECTANGLE, {
         x: 0.6, y: 1.3, w: 3.6, h: 2.4,
         fill: { type: 'none' },
@@ -1317,7 +1340,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Live Model Demonstration', 'Operational Workflow & Step-by-Step Diner Journey');
+    addHeader(slide, 'Live Model Demonstration', 'Operational Workflow & Diner Journey');
 
     // Left: QR Handoff screenshot
     const imgQrPath = path.resolve('d:/resrtorant/presentation_assets/qr_handoff_modal_1790013103448.png');
@@ -1531,7 +1554,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Experimental Results', 'Quantitative Performance Benchmarks & Optimization Results');
+    addHeader(slide, 'Experimental Results', 'Quantitative Performance Benchmarks & Results');
 
     const chartData = [
       {
@@ -1628,7 +1651,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Rubric Criterion 9 (20 Marks)', 'Research Paper: Academic Contribution, Methodology & Status');
+    addHeader(slide, 'Rubric Criterion 9 (20 Marks)', 'Research Paper: Academic Contribution & Status');
 
     // Title Card
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
@@ -1736,7 +1759,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Project Conclusion', 'Key Achievements, Academic Contributions & Takeaways');
+    addHeader(slide, 'Project Conclusion', 'Key Achievements & Overall Summary');
 
     const conclusions = [
       {
@@ -1789,7 +1812,7 @@ async function buildPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    addHeader(slide, 'Roadmap & Horizons', 'Future Scope, Commercial Scalability & Research Horizons');
+    addHeader(slide, 'Roadmap & Horizons', 'Future Scope & Commercial Scalability');
 
     const futureCards = [
       {
