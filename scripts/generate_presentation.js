@@ -7,7 +7,7 @@ async function buildPresentation() {
   pres.layout = 'LAYOUT_16x9'; // 10" x 5.625"
   pres.author = 'Manav Singh, Sanskar Suryavanshi, Kesar Singh';
   pres.company = 'Thakur College of Engineering and Technology (TCET)';
-  pres.title = 'Smart Restaurant - Presentation III Final Evaluation';
+  pres.title = 'An Intelligent AI-Powered Restaurant Ordering System Using Augmented Reality - Presentation III Final Evaluation';
 
   // Professional Academic White & Navy Color Palette
   const C_BG = 'FFFFFF';         // Pure White Background
@@ -130,13 +130,13 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addText('Smart Restaurant', {
-      x: 0.8,
-      y: 1.45,
-      w: 8.4,
-      h: 0.55,
+    slide.addText('AN INTELLIGENT AI-POWERED RESTAURANT ORDERING SYSTEM USING AUGMENTED REALITY', {
+      x: 0.5,
+      y: 1.34,
+      w: 9.0,
+      h: 0.70,
       fontFace: FONT_HEAD,
-      fontSize: 32,
+      fontSize: 21,
       bold: true,
       color: C_NAVY,
       align: 'center',
@@ -144,12 +144,12 @@ async function buildPresentation() {
     });
 
     slide.addText('A Contactless Dining Platform with Markerless WebXR 3D Augmented Reality & Real-Time Kitchen Display System', {
-      x: 1.0,
-      y: 2.05,
-      w: 8.0,
-      h: 0.38,
+      x: 0.8,
+      y: 2.08,
+      w: 8.4,
+      h: 0.32,
       fontFace: FONT_BODY,
-      fontSize: 12,
+      fontSize: 11.5,
       color: C_TEXT_BODY,
       align: 'center',
       margin: 0
@@ -261,7 +261,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('Good morning esteemed evaluators, mentors, and faculty members. Welcome to our Presentation III capstone project evaluation for Smart Restaurant. Our team—Manav Singh, Sanskar Suryavanshi, and Kesar Singh, guided by Prof. Vinitta Sunish from the Department of Computer Engineering, TCET—presents a fully implemented, zero-install WebXR 3D Augmented Reality contactless dining platform and real-time Kitchen Display System.');
+    slide.addNotes('Good morning esteemed evaluators, mentors, and faculty members. Welcome to our Presentation III capstone project evaluation for "An Intelligent AI-Powered Restaurant Ordering System Using Augmented Reality". Our team—Manav Singh, Sanskar Suryavanshi, and Kesar Singh, guided by Prof. Vinitta Sunish from the Department of Computer Engineering, TCET—presents a fully implemented, zero-install WebXR 3D Augmented Reality contactless dining platform and real-time Kitchen Display System.');
   }
 
   // ==========================================
@@ -279,7 +279,7 @@ async function buildPresentation() {
       h: 3.75,
       rectRadius: 0.08,
       fill: { color: C_CARD },
-      line: { color: C_BORDER, width: 1 }
+      line: { color: C_BORDER, width: 0.75 }
     });
 
     slide.addText('CRITICAL BOTTLENECKS IN TRADITIONAL DINING', {
@@ -296,16 +296,16 @@ async function buildPresentation() {
 
     const issues = [
       {
-        head: '1. Unhygienic & Inflexible Paper Menus',
-        desc: 'Physical laminated menus are touched by hundreds of patrons, creating persistent hygiene concerns. Furthermore, reprinting menus to adjust for seasonal pricing or ingredient stockouts generates recurring recurring costs.'
+        head: '1. Inability to Visualize Dishes Before Ordering (Pre-Order Reality Gap)',
+        desc: 'In conventional dining, patrons cannot see what food dishes actually look like before ordering. Relying on abstract text descriptions or misleading 2D photos prevents customers from assessing authentic portion volume, plate depth, and ingredient presentation. This pre-order uncertainty causes widespread order anxiety, dish mismatch, and an alarming 18%–22% food plate return and wastage rate.'
       },
       {
-        head: '2. 2D Photo Ambiguity & Food Wastage',
-        desc: 'Flat 2D photographs fail to convey true spatial volume, depth, and presentation scale. This misjudgment frequently leads to order remorse, contributing to an estimated 18%–22% plate food return rate across casual restaurants.'
+        head: '2. Unhygienic & Inflexible Physical Menus',
+        desc: 'Laminated paper menus pass through hundreds of hands daily without sanitization, posing health concerns. Moreover, static printed menus cannot accommodate dynamic pricing, seasonal specialties, or real-time ingredient stockouts without expensive, wasteful reprinting.'
       },
       {
-        head: '3. Limitations of Early Digital Solutions',
-        desc: 'Static QR code PDFs provide clumsy mobile navigation with zero interactive cart integration. Meanwhile, proprietary tabletop tablets (e.g. Ziosk) demand high upfront capital investment and suffer frequent hardware breakdowns.'
+        head: '3. Limitations of Basic QR PDFs & Expensive POS Hardware',
+        desc: 'Static QR code PDFs provide clumsy, non-interactive mobile navigation with zero visual engagement. Conversely, dedicated tabletop POS touchscreen tablets require prohibitive capital investment (₹3.5L+ per 10 tables) and suffer frequent battery and screen breakdowns.'
       }
     ];
 
@@ -314,20 +314,20 @@ async function buildPresentation() {
       options: { color: C_TEXT_BODY, fontSize: 9.5, breakLine: i < issues.length - 1 }
     })), {
       x: 0.8,
-      y: 1.82,
+      y: 1.80,
       w: 5.0,
-      h: 3.0,
+      h: 3.05,
       fontFace: FONT_BODY,
       fontSize: 9.5,
-      paraSpaceAfter: 8,
+      paraSpaceAfter: 7,
       margin: 0
     });
 
     // Right Column: Key Empirical Numbers (Human Data Callouts)
     const metrics = [
-      { num: '18% – 22%', label: 'Food Plate Return Rate', sub: 'Caused by portion misjudgment from 2D photos', col: C_RED },
-      { num: '₹3,50,000+', label: 'Hardware CAPEX / 10 Tables', sub: 'Cost of proprietary tabletop POS touchscreen devices', col: C_AMBER },
-      { num: '70%+', label: 'App Install Abandonment', sub: 'Diners who refuse to install native AR apps in restaurants', col: C_BLUE }
+      { num: '18% – 22%', label: 'Food Return & Wastage Rate', sub: 'Driven by inability to visualize portion scale before ordering', col: C_RED },
+      { num: '70%+', label: 'App Install Abandonment', sub: 'Diners who refuse to install native AR apps in restaurants', col: C_BLUE },
+      { num: '₹3,50,000+', label: 'Hardware CAPEX Saved', sub: 'Eliminated through browser-based smartphone AR ordering', col: C_EMERALD }
     ];
 
     metrics.forEach((m, idx) => {
@@ -356,7 +356,7 @@ async function buildPresentation() {
       });
     });
 
-    slide.addNotes('Slide 2 covers the problem statement. The dining industry struggles with unhygienic physical menus and 2D food pictures that cannot convey realistic portion volume, causing significant food wastage. Existing QR PDF menus are difficult to read, while tabletop tablet hardware is expensive and prone to failure.');
+    slide.addNotes('Slide 2 covers our primary problem statement. The fundamental flaw in traditional dining is pre-order visualization blindness: customers cannot see what their food will look like before placing an order. Abstract text descriptions and flat 2D photos fail to convey portion depth and scale, leading to dish mismatch and up to 22% food plate waste. Combined with unhygienic paper menus and clumsy QR PDFs, this creates urgent demand for an intelligent AI-powered AR ordering solution.');
   }
 
   // ==========================================
@@ -495,8 +495,8 @@ async function buildPresentation() {
     });
 
     const objs = [
-      'Main Objective: Build and deploy a production-grade, zero-install WebXR & Scene Viewer 3D AR smart menu with a synchronized real-time Kitchen Display System.',
-      'Zero-Install 6-DoF AR: Implement WebXR Device API hit-testing to anchor 3D food items to physical tabletop planes with 1:1 metric accuracy.',
+      'Main Objective: Build and deploy an Intelligent AI-Powered Restaurant Ordering System using zero-install WebXR 3D Augmented Reality and synchronized real-time KDS.',
+      'Pre-Order 3D Spatial Visualization: Eliminate customer uncertainty by projecting photorealistic, 1:1 true-metric food models directly onto tables before ordering.',
       '3D Asset Optimization Pipeline: Quantize and compress high-poly food models from 46MB down to <10MB for rapid mobile loading (<2.5s over 4G/5G).',
       'Dual-Engine Fallback Architecture: Sniff client capability to dynamically route to WebXR or Google Scene Viewer Android Intent.',
       'Real-Time Kitchen Operations: Synchronize diner orders with a low-latency Kitchen Display System Kanban board with acoustic alerts.'
@@ -1858,7 +1858,7 @@ async function buildPresentation() {
     const conclusions = [
       {
         title: 'Production-Grade System Deployed Live',
-        desc: 'Delivered a fully functioning, end-to-end contactless dining platform active on Vercel at `https://smart-restaurant-2za8.vercel.app/`. Both diner AR ordering and real-time KDS kitchen tracking operate seamlessly.'
+        desc: 'Delivered an Intelligent AI-Powered Restaurant Ordering System Using Augmented Reality active on Vercel at `https://smart-restaurant-2za8.vercel.app/`. Both diner AR ordering and real-time KDS kitchen tracking operate seamlessly.'
       },
       {
         title: 'Frictionless Spatial Computing Viability',
