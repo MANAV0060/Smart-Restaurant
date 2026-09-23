@@ -37,13 +37,13 @@ async function buildPresentation() {
   function addHeader(slide, category, title) {
     slide.background = { color: C_BG };
 
-    // Official TCET Department Header Watermark Banner
+    // Official TCET Department Header Watermark Banner (Stretched horizontally to eliminate side gaps)
     if (fs.existsSync(headerImgPath)) {
       slide.addImage({
         path: headerImgPath,
-        x: 2.0,
-        y: 0.05,
-        w: 6.0,
+        x: 0.0,
+        y: 0.0,
+        w: 10.0,
         h: 0.82
       });
     }
@@ -51,7 +51,7 @@ async function buildPresentation() {
     // Slide Title (Left)
     slide.addText(title, {
       x: 0.6,
-      y: 0.89,
+      y: 0.90,
       w: 6.5,
       h: 0.36,
       fontFace: FONT_HEAD,
@@ -110,16 +110,16 @@ async function buildPresentation() {
     if (fs.existsSync(headerImgPath)) {
       slide.addImage({
         path: headerImgPath,
-        x: 1.5,
-        y: 0.15,
-        w: 7.0,
-        h: 0.95
+        x: 0.0,
+        y: 0.0,
+        w: 10.0,
+        h: 0.88
       });
     }
 
     slide.addText('Presentation III – Capstone Project Evaluation (A.Y. 2026–27)', {
       x: 0.8,
-      y: 1.18,
+      y: 1.05,
       w: 8.4,
       h: 0.25,
       fontFace: FONT_BODY,
@@ -1306,8 +1306,8 @@ async function buildPresentation() {
     ];
 
     slide.addText(feasibilities.map((fb, i) => ({
-      text: `${fb.h}\n${fb.d}`,
-      options: { bullet: true, color: C_TEXT_BODY, fontSize: 9.5, breakLine: i < feasibilities.length - 1 }
+      text: `• ${fb.h}: ${fb.d}`,
+      options: { color: C_TEXT_BODY, fontSize: 9.5, breakLine: i < feasibilities.length - 1 }
     })), {
       x: 5.8,
       y: 1.85,
@@ -1315,7 +1315,7 @@ async function buildPresentation() {
       h: 3.0,
       fontFace: FONT_BODY,
       fontSize: 9.5,
-      paraSpaceAfter: 8,
+      paraSpaceAfter: 10,
       margin: 0
     });
 
@@ -1504,7 +1504,7 @@ async function buildPresentation() {
 
     slide.addText(steps.map((st, i) => ({
       text: st,
-      options: { bullet: true, color: C_TEXT_BODY, fontSize: 8.5, breakLine: i < steps.length - 1 }
+      options: { color: C_TEXT_BODY, fontSize: 9.0, breakLine: i < steps.length - 1 }
     })), {
       x: 0.8,
       y: 4.14,
