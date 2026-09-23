@@ -9,57 +9,63 @@ async function buildPresentation() {
   pres.company = 'Thakur College of Engineering and Technology (TCET)';
   pres.title = 'Smart Restaurant - Presentation III Final Evaluation';
 
-  // Design Tokens - Dark Executive Slate Palette
-  const C_BG = '0F172A';       // Deep Slate 900
-  const C_CARD = '1E293B';     // Slate 800 Card
-  const C_BORDER = '334155';   // Slate 700 Border
-  const C_CARD_ALT = '172554'; // Deep Indigo/Navy card
+  // Professional Academic White & Navy Color Palette
+  const C_BG = 'FFFFFF';         // Pure White Background
+  const C_CARD = 'F8FAFC';       // Soft Clean Slate Card Fill
+  const C_BORDER = 'E2E8F0';     // Subtle Hairline Gray Border
+  const C_CARD_ALT = 'F1F5F9';   // Neutral Light Gray
+  const C_CARD_BLUE = 'EFF6FF';  // Soft Light Blue Tint
+  const C_BORDER_BLUE = 'BFDBFE';// Light Blue Border
+
+  const C_NAVY = '1E3A8A';       // Deep Academic Navy (Titles & Headers)
+  const C_TEXT_HEAD = '0F172A';  // Slate 900 (High contrast card headers)
+  const C_TEXT_BODY = '334155';  // Slate 700 (Readable, professional body text)
+  const C_TEXT_MUTED = '64748B'; // Slate 500 (Subtitles, metadata, captions)
   const C_WHITE = 'FFFFFF';
-  const C_CYAN = '38BDF8';     // Sky 400
-  const C_AMBER = 'F59E0B';    // Amber 500
-  const C_EMERALD = '10B981';  // Emerald 500
-  const C_TEXT_MUTED = '94A3B8';// Slate 400
-  const C_TEXT_BODY = 'E2E8F0'; // Slate 200
+
+  const C_BLUE = '2563EB';       // Primary Royal Blue Accent
+  const C_EMERALD = '059669';    // Professional Forest Green / Success
+  const C_AMBER = 'D97706';      // Professional Warm Amber
+  const C_RED = 'DC2626';        // Professional Crimson
 
   const FONT_HEAD = 'Cambria';
   const FONT_BODY = 'Calibri';
 
-  // Helper to add standard slide header with category tag and title
+  // Helper to add clean standard slide header and footer
   function addHeader(slide, category, title) {
     slide.background = { color: C_BG };
 
-    // Category badge/tag
-    slide.addText(category.toUpperCase(), {
+    // Clean Section Category Label
+    slide.addText(category, {
       x: 0.6,
       y: 0.4,
       w: 8.8,
-      h: 0.25,
+      h: 0.22,
       fontFace: FONT_BODY,
       fontSize: 10,
       bold: true,
-      color: C_CYAN,
-      charSpacing: 1.5,
+      color: C_BLUE,
       margin: 0
     });
 
     // Main Slide Title
     slide.addText(title, {
       x: 0.6,
-      y: 0.65,
+      y: 0.62,
       w: 8.8,
       h: 0.45,
       fontFace: FONT_HEAD,
-      fontSize: 22,
+      fontSize: 21,
       bold: true,
-      color: C_WHITE,
+      color: C_NAVY,
       margin: 0
     });
 
-    // Footer metadata
+    // Clean Subtle Footer
     slide.addText('Department of Computer Engineering, TCET | A.Y. 2026–27 | Presentation III', {
       x: 0.6,
       y: 5.25,
-      w: 6.5,
+      w: 6.0,
       h: 0.25,
       fontFace: FONT_BODY,
       fontSize: 9,
@@ -68,42 +74,39 @@ async function buildPresentation() {
     });
 
     slide.addText('https://smart-restaurant-2za8.vercel.app/', {
-      x: 7.2,
+      x: 6.8,
       y: 5.25,
-      w: 2.2,
+      w: 2.6,
       h: 0.25,
       fontFace: FONT_BODY,
       fontSize: 9,
-      color: C_CYAN,
+      color: C_BLUE,
       align: 'right',
       margin: 0
     });
   }
 
   // ==========================================
-  // SLIDE 1: TITLE SLIDE
+  // SLIDE 1: TITLE SLIDE (Clean Academic White)
   // ==========================================
   {
     const slide = pres.addSlide();
     slide.background = { color: C_BG };
 
-    // Decorative top tag
-    slide.addText('PRESENTATION III – CAPSTONE PROJECT EVALUATION (100 MARKS)', {
+    slide.addText('Presentation III – Capstone Project Evaluation (A.Y. 2026–27)', {
       x: 0.8,
-      y: 0.6,
+      y: 0.65,
       w: 8.4,
       h: 0.3,
       fontFace: FONT_BODY,
       fontSize: 11,
       bold: true,
-      color: C_CYAN,
-      charSpacing: 2,
+      color: C_BLUE,
       align: 'center',
       margin: 0
     });
 
-    // Main Title
-    slide.addText('SMART RESTAURANT', {
+    slide.addText('Smart Restaurant', {
       x: 0.8,
       y: 1.0,
       w: 8.4,
@@ -111,131 +114,130 @@ async function buildPresentation() {
       fontFace: FONT_HEAD,
       fontSize: 34,
       bold: true,
-      color: C_WHITE,
+      color: C_NAVY,
       align: 'center',
       margin: 0
     });
 
-    // Subtitle
-    slide.addText('A Contactless Dining Ecosystem with Markerless WebXR 3D Augmented Reality Visualization & Real-Time Kitchen Display System', {
+    slide.addText('A Contactless Dining Platform with Markerless WebXR 3D Augmented Reality & Real-Time Kitchen Display System', {
       x: 1.0,
-      y: 1.7,
+      y: 1.68,
       w: 8.0,
-      h: 0.55,
+      h: 0.5,
       fontFace: FONT_BODY,
-      fontSize: 14,
+      fontSize: 13,
       color: C_TEXT_BODY,
       align: 'center',
       margin: 0
     });
 
-    // Metadata Panel 1: Team Details
+    // Left Panel: Team Members
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.8,
-      y: 2.5,
+      y: 2.45,
       w: 4.0,
-      h: 1.9,
-      rectRadius: 0.1,
+      h: 1.95,
+      rectRadius: 0.08,
       fill: { color: C_CARD },
       line: { color: C_BORDER, width: 1 }
     });
 
     slide.addText('PROJECT TEAM MEMBERS', {
       x: 1.0,
-      y: 2.65,
+      y: 2.6,
       w: 3.6,
       h: 0.25,
       fontFace: FONT_BODY,
-      fontSize: 11,
+      fontSize: 10.5,
       bold: true,
-      color: C_AMBER,
+      color: C_NAVY,
       margin: 0
     });
 
     slide.addText([
-      { text: '•  Manav Singh', options: { bold: true, color: C_WHITE, breakLine: true } },
-      { text: '   Lead Full-Stack & Spatial AR Engineer', options: { color: C_TEXT_MUTED, fontSize: 10, breakLine: true } },
-      { text: '•  Sanskar Suryavanshi', options: { bold: true, color: C_WHITE, breakLine: true } },
-      { text: '   Frontend Architect & UI/UX Specialist', options: { color: C_TEXT_MUTED, fontSize: 10, breakLine: true } },
-      { text: '•  Kesar Singh', options: { bold: true, color: C_WHITE, breakLine: true } },
-      { text: '   Systems Integration & QA Lead', options: { color: C_TEXT_MUTED, fontSize: 10 } }
+      { text: '•  Manav Singh', options: { bold: true, color: C_TEXT_HEAD, breakLine: true } },
+      { text: '   Lead Full-Stack & Spatial AR Engineer', options: { color: C_TEXT_MUTED, fontSize: 9.5, breakLine: true } },
+      { text: '•  Sanskar Suryavanshi', options: { bold: true, color: C_TEXT_HEAD, breakLine: true } },
+      { text: '   Frontend Architect & UI/UX Specialist', options: { color: C_TEXT_MUTED, fontSize: 9.5, breakLine: true } },
+      { text: '•  Kesar Singh', options: { bold: true, color: C_TEXT_HEAD, breakLine: true } },
+      { text: '   Systems Integration & QA Lead', options: { color: C_TEXT_MUTED, fontSize: 9.5 } }
     ], {
       x: 1.0,
-      y: 2.95,
+      y: 2.9,
       w: 3.6,
-      h: 1.3,
+      h: 1.35,
       fontFace: FONT_BODY,
-      fontSize: 11,
+      fontSize: 10.5,
       paraSpaceAfter: 4,
       margin: 0
     });
 
-    // Metadata Panel 2: Guide & Institutional Affiliation
+    // Right Panel: Mentorship & Institution
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 5.2,
-      y: 2.5,
+      y: 2.45,
       w: 4.0,
-      h: 1.9,
-      rectRadius: 0.1,
+      h: 1.95,
+      rectRadius: 0.08,
       fill: { color: C_CARD },
       line: { color: C_BORDER, width: 1 }
     });
 
-    slide.addText('GUIDANCE & INSTITUTION', {
+    slide.addText('MENTORSHIP & INSTITUTION', {
       x: 5.4,
-      y: 2.65,
+      y: 2.6,
       w: 3.6,
       h: 0.25,
       fontFace: FONT_BODY,
-      fontSize: 11,
+      fontSize: 10.5,
       bold: true,
-      color: C_EMERALD,
+      color: C_NAVY,
       margin: 0
     });
 
     slide.addText([
-      { text: 'Project Mentor & Guide:', options: { color: C_TEXT_MUTED, fontSize: 10, breakLine: true } },
-      { text: 'Prof. Vinitta Sunish', options: { bold: true, color: C_WHITE, fontSize: 12, breakLine: true } },
-      { text: 'Department:', options: { color: C_TEXT_MUTED, fontSize: 10, breakLine: true } },
-      { text: 'Department of Computer Engineering', options: { bold: true, color: C_TEXT_BODY, fontSize: 11, breakLine: true } },
-      { text: 'Institution:', options: { color: C_TEXT_MUTED, fontSize: 10, breakLine: true } },
-      { text: 'Thakur College of Engineering and Technology (TCET)', options: { bold: true, color: C_TEXT_BODY, fontSize: 11, breakLine: true } },
-      { text: 'Academic Year 2026–27 | Mumbai University', options: { color: C_CYAN, fontSize: 10 } }
+      { text: 'Project Mentor & Guide:', options: { color: C_TEXT_MUTED, fontSize: 9.5, breakLine: true } },
+      { text: 'Prof. Vinitta Sunish', options: { bold: true, color: C_TEXT_HEAD, fontSize: 11.5, breakLine: true } },
+      { text: 'Department:', options: { color: C_TEXT_MUTED, fontSize: 9.5, breakLine: true } },
+      { text: 'Department of Computer Engineering', options: { bold: true, color: C_TEXT_BODY, fontSize: 10.5, breakLine: true } },
+      { text: 'Institution:', options: { color: C_TEXT_MUTED, fontSize: 9.5, breakLine: true } },
+      { text: 'Thakur College of Engineering & Technology (TCET)', options: { bold: true, color: C_TEXT_BODY, fontSize: 10.5, breakLine: true } },
+      { text: 'Affiliated with University of Mumbai', options: { color: C_BLUE, fontSize: 9.5 } }
     ], {
       x: 5.4,
-      y: 2.95,
+      y: 2.9,
       w: 3.6,
-      h: 1.3,
+      h: 1.35,
       fontFace: FONT_BODY,
       fontSize: 10,
       margin: 0
     });
 
-    // Production Badge Banner
+    // Bottom clean deployment banner
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.8,
       y: 4.6,
       w: 8.4,
-      h: 0.5,
-      rectRadius: 0.08,
-      fill: { color: C_CARD_ALT },
-      line: { color: C_CYAN, width: 1 }
+      h: 0.45,
+      rectRadius: 0.06,
+      fill: { color: C_CARD_BLUE },
+      line: { color: C_BORDER_BLUE, width: 1 }
     });
 
-    slide.addText('LIVE VERCEL DEPLOYMENT: https://smart-restaurant-2za8.vercel.app/   |   GITHUB: MANAV0060/Smart-Restaurant', {
+    slide.addText('Live Production URL: https://smart-restaurant-2za8.vercel.app/   |   GitHub: MANAV0060/Smart-Restaurant', {
       x: 0.9,
       y: 4.7,
       w: 8.2,
-      h: 0.3,
+      h: 0.25,
       fontFace: FONT_BODY,
-      fontSize: 10,
+      fontSize: 9.5,
       bold: true,
-      color: C_CYAN,
+      color: C_BLUE,
       align: 'center',
       margin: 0
     });
 
-    slide.addNotes('Good morning esteemed evaluators, mentors, and faculty members. Welcome to our Presentation III evaluation for Smart Restaurant. Our team—Manav Singh, Sanskar Suryavanshi, and Kesar Singh, under the mentorship of Prof. Vinitta Sunish from the Department of Computer Engineering, TCET—presents a fully implemented, zero-install WebXR 3D Augmented Reality contactless dining ecosystem and real-time kitchen display system.');
+    slide.addNotes('Good morning esteemed evaluators, mentors, and faculty members. Welcome to our Presentation III capstone project evaluation for Smart Restaurant. Our team—Manav Singh, Sanskar Suryavanshi, and Kesar Singh, guided by Prof. Vinitta Sunish from the Department of Computer Engineering, TCET—presents a fully implemented, zero-install WebXR 3D Augmented Reality contactless dining platform and real-time Kitchen Display System.');
   }
 
   // ==========================================
@@ -247,39 +249,31 @@ async function buildPresentation() {
 
     const cards = [
       {
-        title: 'Static & Unhygienic Physical Menus',
-        tag: 'EXISTING ISSUE',
-        tagColor: C_AMBER,
+        title: 'Static & Unhygienic Paper Menus',
         points: [
-          'Physical laminated menus are costly to reprint, non-interactive, and represent persistent physical germ vectors.',
-          'Inability to reflect real-time inventory stockouts or dynamic price updates without reprinting costs.'
+          'Physical laminated menus are non-interactive, costly to reprint on price/menu updates, and act as high-contact germ vectors.',
+          'Inability to display dynamic dish availability, nutritional counts, or real-time kitchen preparation times.'
         ]
       },
       {
         title: 'Portion Ambiguity & Food Wastage',
-        tag: 'IMPACT & SUSTAINABILITY',
-        tagColor: 'F43F5E',
         points: [
-          '2D flat food photographs fail to convey true spatial volume, realistic portion size, and presentation aesthetics.',
-          'Leads to substantial diner order remorse and an estimated 18%–22% plate return rate across casual dining.'
+          '2D flat photographs fail to represent true dish portion size, volume, depth, and presentation aesthetics accurately.',
+          'Results in frequent customer order dissatisfaction and an estimated 18%–22% plate food return rate across dining establishments.'
         ]
       },
       {
         title: 'Limitations of Current Solutions',
-        tag: 'TECHNICAL BOTTLENECK',
-        tagColor: C_CYAN,
         points: [
-          'QR Code PDF menus provide clunky, unresponsive pinch-and-zoom experiences with zero interactive spatial depth.',
-          'Dedicated tabletop hardware tablets (e.g., Ziosk) require $500+ CAPEX per table with frequent physical failure.'
+          'Static QR Code PDF menus provide clunky, unresponsive pinch-and-zoom mobile experiences without cart integration.',
+          'Proprietary tabletop touchscreen hardware requires high initial investment (₹35,000+ per table) and recurring maintenance.'
         ]
       },
       {
         title: 'Target Stakeholders & Requirements',
-        tag: 'USER ECOSYSTEM',
-        tagColor: C_EMERALD,
         points: [
-          'Diners: Need zero-download 3D visual preview, dietary/allergen alerts, and instant contactless ordering.',
-          'Kitchen Staff & Owners: Demand real-time bidirectional order routing, zero hardware CAPEX, and low table turnaround.'
+          'Diners: Need zero-download 3D visual preview, dietary/allergen alerts, and convenient contactless ordering.',
+          'Kitchen Staff & Owners: Demand synchronized order dispatch, zero hardware CAPEX, and faster table turnaround.'
         ]
       }
     ];
@@ -297,26 +291,21 @@ async function buildPresentation() {
         line: { color: C_BORDER, width: 1 }
       });
 
-      slide.addText(c.tag, {
-        x: x + 0.2, y: y + 0.15, w: 3.9, h: 0.2,
-        fontFace: FONT_BODY, fontSize: 9, bold: true, color: c.tagColor, margin: 0
-      });
-
       slide.addText(c.title, {
-        x: x + 0.2, y: y + 0.35, w: 3.9, h: 0.3,
-        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: C_WHITE, margin: 0
+        x: x + 0.25, y: y + 0.2, w: 3.8, h: 0.3,
+        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(c.points.map((p, i) => ({
         text: p,
-        options: { bullet: true, color: C_TEXT_BODY, fontSize: 10, breakLine: i < c.points.length - 1 }
+        options: { bullet: true, color: C_TEXT_BODY, fontSize: 9.5, breakLine: i < c.points.length - 1 }
       })), {
-        x: x + 0.2, y: y + 0.7, w: 3.9, h: 0.9,
-        fontFace: FONT_BODY, fontSize: 10, paraSpaceAfter: 4, margin: 0
+        x: x + 0.25, y: y + 0.55, w: 3.8, h: 1.0,
+        fontFace: FONT_BODY, fontSize: 9.5, paraSpaceAfter: 4, margin: 0
       });
     });
 
-    slide.addNotes('On Slide 2, we establish the core problem. The restaurant industry faces a dual challenge: paper menus are unhygienic and static, while 2D photographs cause portion ambiguity leading to 18-22% food waste. Existing QR PDFs are difficult to navigate and proprietary tablet hardware costs over $500 per table. Our stakeholders—both diners and kitchen operators—require a frictionless, browser-first solution.');
+    slide.addNotes('Slide 2 covers the problem statement. The dining industry struggles with unhygienic physical menus and 2D food pictures that cannot convey realistic portion volume, causing significant food wastage. Existing QR PDF menus are difficult to read, while tabletop tablet hardware is expensive and prone to failure.');
   }
 
   // ==========================================
@@ -328,30 +317,27 @@ async function buildPresentation() {
 
     const pillars = [
       {
-        title: 'Societal & Public Health Relevance',
-        color: C_CYAN,
+        title: 'Societal & Health Relevance',
         items: [
-          'Contactless, hygienic dining eliminates transmission vectors of physical menus.',
-          'Instant allergen alerts (Gluten, Nuts, Dairy) and explicit caloric breakdowns empower health-conscious patrons.',
-          'Inclusive accessibility for non-native speakers through intuitive 3D visual language.'
+          'Contactless ordering eliminates physical menu transmission vectors, improving dining hygiene.',
+          'Clear allergen alerts (Gluten, Dairy, Nuts) and calorie breakdowns empower informed dining choices.',
+          'Visual 3D representations assist patrons across diverse linguistic backgrounds.'
         ]
       },
       {
-        title: 'Industrial Relevance & Modernization',
-        color: C_AMBER,
+        title: 'Industrial & Economic Impact',
         items: [
-          'Replaces costly proprietary tabletop POS tablets with patrons\' existing smartphones (Zero CAPEX).',
-          'Accelerates table turnaround times by 25% through synchronized visual ordering.',
-          'Dynamic cloud menu management eliminates recurring print and redesign overheads.'
+          'Eliminates dedicated tabletop POS hardware by leveraging patrons\' personal smartphones (Zero CAPEX).',
+          'Accelerates table turnaround by up to 25% through synchronized digital ordering.',
+          'Instant cloud menu updates eliminate recurring design and paper printing costs.'
         ]
       },
       {
-        title: 'Environmental Impact & Food Waste',
-        color: C_EMERALD,
+        title: 'Environmental & Food Waste Reduction',
         items: [
-          '100% paperless menu ecosystem saves kilograms of laminated paper and plastic per restaurant annually.',
-          'True 1:1 metric scale AR preview reduces order misjudgments and plate food waste by up to 28%.',
-          'Cloud edge architecture minimizes enterprise on-premise server energy footprints.'
+          '100% paperless operation eliminates kilograms of laminated paper and plastic per restaurant annually.',
+          'Realistic 1:1 metric scale AR preview reduces portion misjudgments and plate food waste by up to 28%.',
+          'Serverless cloud architecture minimizes energy footprint compared to dedicated on-premise servers.'
         ]
       }
     ];
@@ -368,63 +354,63 @@ async function buildPresentation() {
       });
 
       slide.addText(p.title, {
-        x: x + 0.2, y: y + 0.2, w: 2.4, h: 0.45,
-        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: p.color, margin: 0
+        x: x + 0.2, y: y + 0.2, w: 2.4, h: 0.4,
+        fontFace: FONT_HEAD, fontSize: 12.5, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(p.items.map((it, i) => ({
         text: it,
-        options: { bullet: true, color: C_TEXT_BODY, fontSize: 10, breakLine: i < p.items.length - 1 }
+        options: { bullet: true, color: C_TEXT_BODY, fontSize: 9.5, breakLine: i < p.items.length - 1 }
       })), {
-        x: x + 0.2, y: y + 0.75, w: 2.4, h: 1.6,
-        fontFace: FONT_BODY, fontSize: 10, paraSpaceAfter: 4, margin: 0
+        x: x + 0.2, y: y + 0.65, w: 2.4, h: 1.7,
+        fontFace: FONT_BODY, fontSize: 9.5, paraSpaceAfter: 4, margin: 0
       });
     });
 
-    // SDG Alignment Banner
+    // SDG Alignment Box
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.6,
       y: 4.0,
       w: 8.8,
       h: 1.1,
       rectRadius: 0.08,
-      fill: { color: C_CARD_ALT },
-      line: { color: C_EMERALD, width: 1 }
+      fill: { color: C_CARD_BLUE },
+      line: { color: C_BORDER_BLUE, width: 1 }
     });
 
     slide.addText('UNITED NATIONS SUSTAINABLE DEVELOPMENT GOALS (SDGs) ALIGNMENT', {
       x: 0.8,
-      y: 4.1,
+      y: 4.12,
       w: 8.4,
-      h: 0.25,
+      h: 0.22,
       fontFace: FONT_BODY,
-      fontSize: 10,
+      fontSize: 9.5,
       bold: true,
-      color: C_EMERALD,
+      color: C_NAVY,
       margin: 0
     });
 
     const sdgs = [
-      'SDG 9: Industry, Innovation & Infrastructure: Pioneering zero-install WebXR spatial computing in commercial dining.',
-      'SDG 12: Responsible Consumption & Production: Mitigating food waste via 1:1 metric scale portion preview.',
-      'SDG 13: Climate Action: Completely removing recurring paper and lamination plastics from restaurant supply chains.'
+      'SDG 9 (Industry, Innovation & Infrastructure): Advancing browser-based zero-install spatial computing in commercial dining.',
+      'SDG 12 (Responsible Consumption & Production): Mitigating food plate return waste through 1:1 metric scale portion previews.',
+      'SDG 13 (Climate Action): Eliminating recurring paper and lamination plastics from restaurant supply chains.'
     ];
 
     slide.addText(sdgs.map((s, i) => ({
       text: s,
-      options: { bullet: true, color: C_WHITE, fontSize: 9.5, breakLine: i < sdgs.length - 1 }
+      options: { bullet: true, color: C_TEXT_BODY, fontSize: 9, breakLine: i < sdgs.length - 1 }
     })), {
       x: 0.8,
       y: 4.35,
       w: 8.4,
       h: 0.65,
       fontFace: FONT_BODY,
-      fontSize: 9.5,
+      fontSize: 9,
       paraSpaceAfter: 2,
       margin: 0
     });
 
-    slide.addNotes('Slide 3 fulfills Evaluation Criterion 1 (5 Marks). Our project directly advances public health via contactless ordering and transparent allergen alerts. Industrially, it saves thousands in POS tablet hardware. Environmentally, it achieves zero paper waste and directly cuts restaurant plate food waste by 28%, aligning with UN Sustainable Development Goals 9, 12, and 13.');
+    slide.addNotes('Slide 3 fulfills Criterion 1 (5 Marks). Our project supports societal health via contactless ordering and allergen safety. It drives industrial efficiency by eliminating costly hardware. Environmentally, it cuts paper waste and reduces restaurant food waste by 28%, aligning with UN SDGs 9, 12, and 13.');
   }
 
   // ==========================================
@@ -449,33 +435,33 @@ async function buildPresentation() {
       x: 0.8,
       y: 1.5,
       w: 3.9,
-      h: 0.3,
+      h: 0.28,
       fontFace: FONT_HEAD,
       fontSize: 13,
       bold: true,
-      color: C_CYAN,
+      color: C_NAVY,
       margin: 0
     });
 
     const objs = [
-      'Main Objective: Architect and deploy a zero-install WebXR & Scene Viewer 3D AR smart menu with synchronized real-time Kitchen Display System (KDS).',
-      'Zero-Install 6-DoF AR: Implement WebXR device API hit-testing to anchor 3D food items to physical tabletop planes with 1:1 metric accuracy.',
-      '3D Asset Optimization Pipeline: Quantize and compress high-poly food models from 46MB down to <10MB for rapid mobile 4G/5G loading (<2.5s).',
-      'Dual-Engine Fallback Strategy: Sniff device capability to dynamically route to WebXR or Google Scene Viewer Android Intent.',
-      'Real-Time Kitchen Operations: Synchronize customer orders with a dedicated low-latency KDS Kanban board with acoustic alerts.'
+      'Main Objective: Build and deploy a production-grade, zero-install WebXR & Scene Viewer 3D AR smart menu with a synchronized real-time Kitchen Display System.',
+      'Zero-Install 6-DoF AR: Implement WebXR Device API hit-testing to anchor 3D food items to physical tabletop planes with 1:1 metric accuracy.',
+      '3D Asset Optimization Pipeline: Quantize and compress high-poly food models from 46MB down to <10MB for rapid mobile loading (<2.5s over 4G/5G).',
+      'Dual-Engine Fallback Architecture: Sniff client capability to dynamically route to WebXR or Google Scene Viewer Android Intent.',
+      'Real-Time Kitchen Operations: Synchronize diner orders with a low-latency Kitchen Display System Kanban board with acoustic alerts.'
     ];
 
     slide.addText(objs.map((o, i) => ({
       text: o,
-      options: { bullet: true, color: C_TEXT_BODY, fontSize: 10, breakLine: i < objs.length - 1 }
+      options: { bullet: true, color: C_TEXT_BODY, fontSize: 9.5, breakLine: i < objs.length - 1 }
     })), {
       x: 0.8,
       y: 1.85,
       w: 3.9,
       h: 3.0,
       fontFace: FONT_BODY,
-      fontSize: 10,
-      paraSpaceAfter: 6,
+      fontSize: 9.5,
+      paraSpaceAfter: 5,
       margin: 0
     });
 
@@ -494,37 +480,37 @@ async function buildPresentation() {
       x: 5.3,
       y: 1.5,
       w: 3.9,
-      h: 0.3,
+      h: 0.28,
       fontFace: FONT_HEAD,
       fontSize: 13,
       bold: true,
-      color: C_AMBER,
+      color: C_NAVY,
       margin: 0
     });
 
     const outcomes = [
       'Sub-2.5 Second Asset Load: Optimized glTF binary delivery over Vercel Edge CDN ensures models load smoothly without mobile browser stalls.',
-      'Stable 60 FPS WebGL Rendering: Sustained 58-60 FPS performance across contemporary mobile GPUs without overheating.',
-      'Zero App Store Friction: 100% browser-based PWA execution eliminating the 70%+ user drop-off associated with native app installs.',
-      'Order Turnaround Acceleration: Decreased order-to-kitchen latency from 8+ minutes (waitstaff dependent) to instantaneous cloud dispatch.',
+      'Stable 60 FPS WebGL Rendering: Sustained 58–60 FPS rendering across contemporary mobile GPUs with zero thermal throttling.',
+      'Zero App Store Friction: 100% browser-based PWA execution eliminating the 70%+ user abandonment caused by mandatory app downloads.',
+      'Order Turnaround Acceleration: Decreased order-to-kitchen latency from 8+ minutes (waiter dependent) to instantaneous cloud dispatch.',
       'Universal Device Coverage: 100% cross-platform accessibility across iOS (Safari QuickLook/WebXR) and Android (Chrome WebXR/Scene Viewer).'
     ];
 
     slide.addText(outcomes.map((outc, i) => ({
       text: outc,
-      options: { bullet: true, color: C_TEXT_BODY, fontSize: 10, breakLine: i < outcomes.length - 1 }
+      options: { bullet: true, color: C_TEXT_BODY, fontSize: 9.5, breakLine: i < outcomes.length - 1 }
     })), {
       x: 5.3,
       y: 1.85,
       w: 3.9,
       h: 3.0,
       fontFace: FONT_BODY,
-      fontSize: 10,
-      paraSpaceAfter: 6,
+      fontSize: 9.5,
+      paraSpaceAfter: 5,
       margin: 0
     });
 
-    slide.addNotes('Slide 4 details our core engineering objectives. We set clear, measurable targets: zero native app installations, sub-2.5s 3D asset downloads, 60 FPS mobile rendering, and instant kitchen order synchronization. All of these objectives were systematically accomplished in our final release.');
+    slide.addNotes('Slide 4 details our objectives: zero-download AR dining, 3D asset compression for fast mobile loading, 60 FPS rendering, and real-time kitchen order dispatch.');
   }
 
   // ==========================================
@@ -534,49 +520,48 @@ async function buildPresentation() {
     const slide = pres.addSlide();
     addHeader(slide, 'Literature Review', 'Existing Dining Systems & Research Gap Analysis');
 
-    // Comparison Table
     const tableData = [
       [
-        { text: 'System Type', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Interaction Mode', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Spatial Realism', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Hardware Cost', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Friction / UX', options: { bold: true, color: C_WHITE, fill: '1E293B' } }
+        { text: 'System Type', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Interaction Mode', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Spatial Realism', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Hardware Cost', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Friction / UX', options: { bold: true, color: C_WHITE, fill: C_NAVY } }
       ],
       [
-        { text: 'Physical Paper Menus', options: { color: C_TEXT_BODY } },
-        { text: 'Static Print', options: { color: C_TEXT_BODY } },
-        { text: 'None (2D Print)', options: { color: 'F43F5E' } },
-        { text: 'Recurring Printing', options: { color: C_TEXT_BODY } },
-        { text: 'Unhygienic / Static', options: { color: 'F43F5E' } }
+        { text: 'Physical Paper Menus', options: { bold: true, color: C_TEXT_HEAD, fill: 'FFFFFF' } },
+        { text: 'Static Print', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'None (2D Print)', options: { color: C_RED, fill: 'FFFFFF' } },
+        { text: 'Recurring Printing', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Unhygienic / Static', options: { color: C_RED, fill: 'FFFFFF' } }
       ],
       [
-        { text: 'QR Code PDF Menus', options: { color: C_TEXT_BODY } },
-        { text: 'Pinch & Zoom PDF', options: { color: C_TEXT_BODY } },
-        { text: 'None (Flat 2D)', options: { color: 'F43F5E' } },
-        { text: '₹0 (Paper QR)', options: { color: C_EMERALD } },
-        { text: 'Poor Mobile Nav', options: { color: 'F43F5E' } }
+        { text: 'QR Code PDF Menus', options: { bold: true, color: C_TEXT_HEAD, fill: C_CARD } },
+        { text: 'Pinch & Zoom PDF', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'None (Flat 2D)', options: { color: C_RED, fill: C_CARD } },
+        { text: '₹0 (Paper QR)', options: { color: C_EMERALD, fill: C_CARD } },
+        { text: 'Poor Mobile Nav', options: { color: C_RED, fill: C_CARD } }
       ],
       [
-        { text: 'Tabletop POS Tablets', options: { color: C_TEXT_BODY } },
-        { text: 'Touchscreen Screen', options: { color: C_TEXT_BODY } },
-        { text: 'None (2D Screen)', options: { color: 'F43F5E' } },
-        { text: '₹35,000+ / Table CAPEX', options: { color: 'F43F5E' } },
-        { text: 'Hardware Breakdowns', options: { color: 'F43F5E' } }
+        { text: 'Tabletop POS Tablets', options: { bold: true, color: C_TEXT_HEAD, fill: 'FFFFFF' } },
+        { text: 'Touchscreen Screen', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'None (2D Screen)', options: { color: C_RED, fill: 'FFFFFF' } },
+        { text: '₹35,000+ / Table CAPEX', options: { color: C_RED, fill: 'FFFFFF' } },
+        { text: 'Hardware Breakdowns', options: { color: C_RED, fill: 'FFFFFF' } }
       ],
       [
-        { text: 'Native AR Apps (IKEA)', options: { color: C_TEXT_BODY } },
-        { text: 'Dedicated Native App', options: { color: C_TEXT_BODY } },
-        { text: 'High (ARKit/Core)', options: { color: C_EMERALD } },
-        { text: '₹0 (User Phone)', options: { color: C_EMERALD } },
-        { text: '70%+ App Drop-off', options: { color: 'F43F5E' } }
+        { text: 'Native AR Apps (IKEA-style)', options: { bold: true, color: C_TEXT_HEAD, fill: C_CARD } },
+        { text: 'Dedicated Native App', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'High (ARKit/Core)', options: { color: C_EMERALD, fill: C_CARD } },
+        { text: '₹0 (User Phone)', options: { color: C_EMERALD, fill: C_CARD } },
+        { text: '70%+ App Drop-off', options: { color: C_RED, fill: C_CARD } }
       ],
       [
-        { text: 'Smart Restaurant (Ours)', options: { bold: true, color: C_CYAN, fill: '172554' } },
-        { text: 'Zero-Install WebXR', options: { bold: true, color: C_CYAN, fill: '172554' } },
-        { text: '1:1 Metric 6-DoF AR', options: { bold: true, color: C_CYAN, fill: '172554' } },
-        { text: '₹0 (Customer Phone)', options: { bold: true, color: C_EMERALD, fill: '172554' } },
-        { text: 'Zero Friction (Instant)', options: { bold: true, color: C_EMERALD, fill: '172554' } }
+        { text: 'Smart Restaurant (Ours)', options: { bold: true, color: C_NAVY, fill: C_CARD_BLUE } },
+        { text: 'Zero-Install WebXR', options: { bold: true, color: C_NAVY, fill: C_CARD_BLUE } },
+        { text: '1:1 Metric 6-DoF AR', options: { bold: true, color: C_EMERALD, fill: C_CARD_BLUE } },
+        { text: '₹0 (Customer Phone)', options: { bold: true, color: C_EMERALD, fill: C_CARD_BLUE } },
+        { text: 'Zero Friction (Instant)', options: { bold: true, color: C_EMERALD, fill: C_CARD_BLUE } }
       ]
     ];
 
@@ -600,26 +585,26 @@ async function buildPresentation() {
       h: 1.35,
       rectRadius: 0.08,
       fill: { color: C_CARD },
-      line: { color: C_AMBER, width: 1 }
+      line: { color: C_BORDER, width: 1 }
     });
 
     slide.addText('IDENTIFIED RESEARCH GAP & SYSTEM JUSTIFICATION', {
       x: 0.8,
       y: 3.85,
       w: 8.4,
-      h: 0.25,
+      h: 0.22,
       fontFace: FONT_BODY,
       fontSize: 10,
       bold: true,
-      color: C_AMBER,
+      color: C_NAVY,
       margin: 0
     });
 
     slide.addText([
-      { text: '• Literature Analysis: ', options: { bold: true, color: C_WHITE } },
-      { text: 'While spatial computing has proven efficacy in e-commerce, existing restaurant applications rely exclusively on cumbersome native app installations (ARKit/ARCore), resulting in severe patron abandonment during dining.', options: { color: C_TEXT_BODY, breakLine: true } },
-      { text: '• The Engineering Imperative: ', options: { bold: true, color: C_WHITE } },
-      { text: 'Our research addresses the technical hurdle of executing true 6-DoF tabletop plane detection and rendering heavy 3D GLB models purely within web browsers, maintaining 60 FPS while completely eliminating native app store barriers.', options: { color: C_TEXT_BODY } }
+      { text: '• Literature Analysis: ', options: { bold: true, color: C_TEXT_HEAD } },
+      { text: 'While spatial computing offers documented benefits in e-commerce, previous hospitality deployments required proprietary native apps, causing severe patron drop-off during ephemeral restaurant dining.', options: { color: C_TEXT_BODY, breakLine: true } },
+      { text: '• Engineering Imperative: ', options: { bold: true, color: C_TEXT_HEAD } },
+      { text: 'Our research delivers true 6-DoF tabletop plane detection and optimized 3D asset delivery directly inside mobile browsers without app installation, maintaining 60 FPS while reducing initial hardware costs to zero.', options: { color: C_TEXT_BODY } }
     ], {
       x: 0.8,
       y: 4.1,
@@ -631,7 +616,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('On Slide 5, we present our literature review. We systematically evaluated existing solutions: paper, PDF QR codes, tabletop POS tablets, and native AR apps. While native AR provides realism, requiring diners to install a 150MB app to order a burger fails in practice. Our approach bridges this gap by bringing 6-DoF AR directly into the mobile web browser.');
+    slide.addNotes('Slide 5 contrasts existing solutions against our approach. While native AR offers realism, forcing patrons to download a large application creates high friction. Our platform delivers 6-DoF spatial AR directly within the web browser.');
   }
 
   // ==========================================
@@ -643,24 +628,20 @@ async function buildPresentation() {
 
     const features = [
       {
-        title: 'Instant Table QR PWA Onboarding',
-        desc: 'Patrons scan a table QR code (e.g., `/?table=1`) to launch the full-featured PWA instantly with zero installation, initializing a persistent dining cart session.',
-        color: C_CYAN
+        title: 'Instant Table QR Onboarding',
+        desc: 'Patrons scan a table QR code (e.g., `/?table=1`) to launch the responsive dining portal instantly with zero installation, initializing a persistent dining cart session.'
       },
       {
         title: 'Dual-Engine Spatial AR Viewer',
-        desc: 'Combines native WebXR `requestHitTestSource` 6-DoF table anchoring with Google Scene Viewer Android Intent fallbacks, ensuring 100% universal smartphone compatibility.',
-        color: C_AMBER
+        desc: 'Combines native WebXR `requestHitTestSource` 6-DoF table surface anchoring with Google Scene Viewer Android Intent fallbacks, ensuring universal smartphone compatibility.'
       },
       {
         title: 'Smart Dietary & Nutritional Engine',
-        desc: 'Interactive filtering by vegetarian, non-veg, spice intensity, preparation time, and allergens, complete with comprehensive calorie counts and macros.',
-        color: C_EMERALD
+        desc: 'Interactive filtering by vegetarian, non-vegetarian, spice intensity, preparation time, and allergens, complete with comprehensive calorie counts and macros.'
       },
       {
         title: 'Synchronized Kitchen Display System',
-        desc: 'Real-time kitchen order management with acoustic notifications and stateful ticket advancement (Pending -> Preparing -> Ready -> Delivered).',
-        color: 'F43F5E'
+        desc: 'Real-time kitchen order management with acoustic notifications and stateful ticket advancement (Pending -> Preparing -> Ready -> Delivered).'
       }
     ];
 
@@ -678,17 +659,17 @@ async function buildPresentation() {
       });
 
       slide.addText(f.title, {
-        x: x + 0.25, y: y + 0.2, w: 3.8, h: 0.35,
-        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: f.color, margin: 0
+        x: x + 0.25, y: y + 0.2, w: 3.8, h: 0.3,
+        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(f.desc, {
-        x: x + 0.25, y: y + 0.6, w: 3.8, h: 0.95,
-        fontFace: FONT_BODY, fontSize: 10, color: C_TEXT_BODY, margin: 0
+        x: x + 0.25, y: y + 0.55, w: 3.8, h: 1.0,
+        fontFace: FONT_BODY, fontSize: 9.5, color: C_TEXT_BODY, margin: 0
       });
     });
 
-    slide.addNotes('Slide 6 introduces the proposed system. It integrates four key innovations: instant table QR onboarding without app downloads, a dual-engine spatial AR viewer supporting WebXR and Google Scene Viewer, a smart dietary filtering engine with calorie tracking, and an integrated real-time Kitchen Display System.');
+    slide.addNotes('Slide 6 introduces our proposed architecture. It brings together instant QR table onboarding, dual-engine WebXR spatial viewing, dynamic dietary filtering, and real-time kitchen synchronization.');
   }
 
   // ==========================================
@@ -700,28 +681,20 @@ async function buildPresentation() {
 
     const innovations = [
       {
-        tag: 'SPATIAL COMPUTING',
         title: '6-DoF Table Surface Hit-Testing',
-        desc: 'Implemented native WebXR `requestHitTestSource()` to project continuous raycast rays onto physical table planes. Calculates the exact 3D spatial intersection (X, Y, Z) and surface normal, locking models to the table without marker drifting.',
-        color: C_CYAN
+        desc: 'Implemented native WebXR `requestHitTestSource()` to project continuous raycasts onto real dining surfaces. Calculates the exact 3D spatial intersection (X, Y, Z) and surface normal, locking models to the table without marker drifting.'
       },
       {
-        tag: 'GRAPHICS OPTIMIZATION',
         title: '3D Mesh Quantization & Texture Pipeline',
-        desc: 'Overcame mobile browser memory limits by processing raw photogrammetry assets via `@gltf-transform`. Downscaled 8K uncompressed textures to 2K WebP and applied Draco mesh compression, shrinking `pizza.glb` from 46.8MB to 10.2MB (78% reduction).',
-        color: C_AMBER
+        desc: 'Overcame mobile browser memory limits by processing raw photogrammetry assets via `@gltf-transform`. Downscaled 8K uncompressed textures to 2K WebP and applied Draco mesh compression, shrinking `pizza.glb` from 46.8MB to 10.2MB (78% reduction).'
       },
       {
-        tag: 'ADAPTIVE FALLBACK',
         title: 'Multi-Tier Device Sniffing Engine',
-        desc: 'Engineered an automated runtime capability detector. If WebXR AR session creation fails due to browser restrictions, the system smoothly falls back to Google Scene Viewer Intent via Android ARCore, or Google Model-Viewer 3D Canvas.',
-        color: C_EMERALD
+        desc: 'Engineered an automated runtime capability detector. If WebXR session creation fails due to browser restrictions, the system smoothly falls back to Google Scene Viewer Intent via Android ARCore, or Google Model-Viewer 3D Canvas.'
       },
       {
-        tag: 'EDGE INFRASTRUCTURE',
         title: 'Cloud Edge MIME & CORS Orchestration',
-        desc: 'Resolved browser cross-origin asset blocking by configuring Vercel edge response headers (`vercel.json`) to enforce `Content-Type: model/gltf-binary` and `Access-Control-Allow-Origin: *`, enabling instant streaming to external AR viewers.',
-        color: 'F43F5E'
+        desc: 'Resolved browser cross-origin asset blocking by configuring Vercel edge response headers (`vercel.json`) to enforce `Content-Type: model/gltf-binary` and `Access-Control-Allow-Origin: *`, enabling instant streaming to external AR viewers.'
       }
     ];
 
@@ -738,23 +711,18 @@ async function buildPresentation() {
         line: { color: C_BORDER, width: 1 }
       });
 
-      slide.addText(inv.tag, {
-        x: x + 0.2, y: y + 0.15, w: 3.9, h: 0.2,
-        fontFace: FONT_BODY, fontSize: 9, bold: true, color: inv.color, margin: 0
-      });
-
       slide.addText(inv.title, {
-        x: x + 0.2, y: y + 0.35, w: 3.9, h: 0.3,
-        fontFace: FONT_HEAD, fontSize: 12.5, bold: true, color: C_WHITE, margin: 0
+        x: x + 0.25, y: y + 0.2, w: 3.8, h: 0.3,
+        fontFace: FONT_HEAD, fontSize: 12.5, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(inv.desc, {
-        x: x + 0.2, y: y + 0.7, w: 3.9, h: 0.9,
+        x: x + 0.25, y: y + 0.55, w: 3.8, h: 1.0,
         fontFace: FONT_BODY, fontSize: 9.5, color: C_TEXT_BODY, margin: 0
       });
     });
 
-    slide.addNotes('Slide 7 addresses Criterion 2 (10 Marks) for Complexity & Innovation. Our key engineering breakthroughs include: markerless 6-DoF plane hit-testing using the WebXR Device API, automated Draco/WebP 3D asset compression cutting payload sizes by 78%, an adaptive dual-engine fallback system, and edge-level MIME/CORS header routing on Vercel.');
+    slide.addNotes('Slide 7 addresses Criterion 2 (10 Marks). The technical depth includes markerless 6-DoF WebXR plane hit-testing, Draco and WebP 3D asset compression cutting file sizes by 78%, dynamic dual-engine AR fallback routing, and edge-level binary MIME/CORS header configuration.');
   }
 
   // ==========================================
@@ -766,32 +734,28 @@ async function buildPresentation() {
 
     const tiers = [
       {
-        num: 'TIER 1',
+        num: 'Tier 1',
         name: 'Client Presentation Layer',
         tech: 'React 18 | TypeScript | Vite | Tailwind CSS',
-        details: 'Responsive mobile PWA interface, table session parsing, category tab navigation, dish detail modals, shopping cart drawer, and dietary badge filters.',
-        color: C_CYAN
+        details: 'Responsive mobile PWA interface, table session parsing, category navigation, dish detail modals, shopping cart drawer, and dietary badge filters.'
       },
       {
-        num: 'TIER 2',
+        num: 'Tier 2',
         name: 'Spatial 3D / AR Subsystem',
         tech: 'Three.js | WebXR Device API | Model-Viewer',
-        details: '6-DoF raycasting surface hit-testing, dynamic reticle tracking, 1:1 metric scale clamping, model rotation/zoom gestures, and Android Scene Viewer intent routing.',
-        color: C_AMBER
+        details: '6-DoF raycasting surface hit-testing, dynamic reticle tracking, 1:1 metric scale clamping, model rotation gestures, and Android Scene Viewer intent routing.'
       },
       {
-        num: 'TIER 3',
+        num: 'Tier 3',
         name: 'State & Kitchen Operations',
         tech: 'Zustand Store | Web Audio API | KDS Kanban',
-        details: 'Bidirectional state management, table order queues, preparation time timers, acoustic chime alerts, and status state machine (Pending -> Delivered).',
-        color: C_EMERALD
+        details: 'Bidirectional state management, table order queues, preparation time timers, acoustic chime alerts, and status state machine (Pending -> Delivered).'
       },
       {
-        num: 'TIER 4',
+        num: 'Tier 4',
         name: 'Cloud Edge Infrastructure',
         tech: 'Vercel Edge Network | CDN | Git CI/CD',
-        details: 'Static serverless delivery, model asset caching, edge response header injection (`Content-Type: model/gltf-binary`), and GitHub automated build triggers.',
-        color: 'F43F5E'
+        details: 'Static serverless delivery, model asset caching, edge response header injection (`Content-Type: model/gltf-binary`), and GitHub automated build triggers.'
       }
     ];
 
@@ -805,19 +769,14 @@ async function buildPresentation() {
         line: { color: C_BORDER, width: 1 }
       });
 
-      slide.addText(t.num, {
-        x: 0.8, y: y + 0.1, w: 0.8, h: 0.2,
-        fontFace: FONT_BODY, fontSize: 9, bold: true, color: t.color, margin: 0
-      });
-
-      slide.addText(t.name, {
-        x: 1.6, y: y + 0.08, w: 3.5, h: 0.28,
-        fontFace: FONT_HEAD, fontSize: 12, bold: true, color: C_WHITE, margin: 0
+      slide.addText(`${t.num}: ${t.name}`, {
+        x: 0.8, y: y + 0.1, w: 4.5, h: 0.25,
+        fontFace: FONT_HEAD, fontSize: 12, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(t.tech, {
-        x: 5.2, y: y + 0.08, w: 4.0, h: 0.25,
-        fontFace: FONT_BODY, fontSize: 9.5, bold: true, color: t.color, align: 'right', margin: 0
+        x: 5.4, y: y + 0.1, w: 3.8, h: 0.25,
+        fontFace: FONT_BODY, fontSize: 9.5, bold: true, color: C_BLUE, align: 'right', margin: 0
       });
 
       slide.addText(t.details, {
@@ -826,7 +785,7 @@ async function buildPresentation() {
       });
     });
 
-    slide.addNotes('Slide 8 presents our complete system architecture across four distinct tiers: the React PWA presentation layer, the Three.js/WebXR spatial rendering subsystem, the stateful Kitchen Display System with Web Audio dispatch, and the Vercel Edge cloud delivery layer with custom binary MIME headers.');
+    slide.addNotes('Slide 8 presents the multi-tier architecture: the React client layer, the Three.js spatial AR subsystem, the stateful Kitchen Display System with Web Audio alerts, and the Vercel Edge cloud delivery layer.');
   }
 
   // ==========================================
@@ -839,23 +798,21 @@ async function buildPresentation() {
     const stack = [
       {
         category: 'Frontend & UI Framework',
-        techs: 'React 18.3, TypeScript 5.2, Vite 5.4, Tailwind CSS 3.4, Lucide React Icons',
+        techs: 'React 18.3, TypeScript 5.2, Vite 5.4, Tailwind CSS 3.4, Lucide Icons',
         points: [
           'React 18 concurrent rendering for fluid 60 FPS transitions.',
           'TypeScript for strict type safety across menu, cart, and order models.',
           'Vite for instantaneous HMR and optimized production tree-shaking.'
-        ],
-        color: C_CYAN
+        ]
       },
       {
         category: 'Spatial AR & 3D Graphics',
-        techs: 'Three.js r128+, WebXR Device API, @google/model-viewer 4.0, glTF 2.0 Binary',
+        techs: 'Three.js r128+, WebXR Device API, @google/model-viewer 4.0, glTF 2.0',
         points: [
           'Three.js WebGL canvas for desktop interactive 3D inspection.',
           'Native WebXR hit-testing for 6-DoF table surface detection.',
           'Google Scene Viewer Intent fallback for universal Android coverage.'
-        ],
-        color: C_AMBER
+        ]
       },
       {
         category: 'State & Audio Systems',
@@ -864,8 +821,7 @@ async function buildPresentation() {
           'Zustand lightweight state store for decoupled cart and KDS tickets.',
           'Synthesized audio chime alert for immediate kitchen order notification.',
           'Dynamic QR code generation for frictionless desktop-to-mobile handoff.'
-        ],
-        color: C_EMERALD
+        ]
       },
       {
         category: 'Tooling, Compression & Cloud',
@@ -874,8 +830,7 @@ async function buildPresentation() {
           'gltf-transform Draco mesh quantization and WebP texture compression.',
           'Vercel Edge Cloud platform with custom binary MIME headers.',
           'Automated CI/CD deployment pipeline synchronized with GitHub main branch.'
-        ],
-        color: 'F43F5E'
+        ]
       }
     ];
 
@@ -893,25 +848,25 @@ async function buildPresentation() {
       });
 
       slide.addText(st.category, {
-        x: x + 0.2, y: y + 0.12, w: 3.9, h: 0.25,
-        fontFace: FONT_HEAD, fontSize: 12, bold: true, color: st.color, margin: 0
+        x: x + 0.25, y: y + 0.15, w: 3.8, h: 0.25,
+        fontFace: FONT_HEAD, fontSize: 12, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(st.techs, {
-        x: x + 0.2, y: y + 0.38, w: 3.9, h: 0.22,
-        fontFace: FONT_BODY, fontSize: 9, bold: true, color: C_WHITE, margin: 0
+        x: x + 0.25, y: y + 0.38, w: 3.8, h: 0.22,
+        fontFace: FONT_BODY, fontSize: 9, bold: true, color: C_BLUE, margin: 0
       });
 
       slide.addText(st.points.map((pt, i) => ({
         text: pt,
         options: { bullet: true, color: C_TEXT_BODY, fontSize: 9.5, breakLine: i < st.points.length - 1 }
       })), {
-        x: x + 0.2, y: y + 0.65, w: 3.9, h: 0.95,
+        x: x + 0.25, y: y + 0.65, w: 3.8, h: 0.95,
         fontFace: FONT_BODY, fontSize: 9.5, paraSpaceAfter: 3, margin: 0
       });
     });
 
-    slide.addNotes('Slide 9 outlines our production technology stack. We selected modern, enterprise-ready tools: React 18 and TypeScript for the frontend, Three.js and the WebXR Device API for 3D/AR, Zustand and Web Audio for state and alerts, and gltf-transform with Vercel Edge for cloud delivery and 3D optimization.');
+    slide.addNotes('Slide 9 outlines the production technology stack: React 18, TypeScript, Three.js, WebXR Device API, Zustand, and Vercel Edge CDN.');
   }
 
   // ==========================================
@@ -921,7 +876,7 @@ async function buildPresentation() {
     const slide = pres.addSlide();
     addHeader(slide, 'Rubric Criterion 4 (10 Marks)', 'Project Management: Agile Methodology, Milestones & Risk Analysis');
 
-    // Left Column: Agile Sprints & Milestones
+    // Left Column: Sprints
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.6,
       y: 1.3,
@@ -936,11 +891,11 @@ async function buildPresentation() {
       x: 0.8,
       y: 1.5,
       w: 3.9,
-      h: 0.25,
+      h: 0.28,
       fontFace: FONT_HEAD,
       fontSize: 12,
       bold: true,
-      color: C_CYAN,
+      color: C_NAVY,
       margin: 0
     });
 
@@ -966,7 +921,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    // Right Column: Risk Management Matrix
+    // Right Column: Risks
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 5.1,
       y: 1.3,
@@ -981,11 +936,11 @@ async function buildPresentation() {
       x: 5.3,
       y: 1.5,
       w: 3.9,
-      h: 0.25,
+      h: 0.28,
       fontFace: FONT_HEAD,
       fontSize: 12,
       bold: true,
-      color: C_AMBER,
+      color: C_NAVY,
       margin: 0
     });
 
@@ -1018,7 +973,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('Slide 10 demonstrates our project management rigor under Criterion 4 (10 Marks). We followed Agile Scrum with five structured two-week sprints. We actively identified and mitigated high-impact risks: mobile memory exhaustion was solved through 3D compression, browser fragmentation via Scene Viewer fallbacks, and CORS issues via edge header injection.');
+    slide.addNotes('Slide 10 demonstrates project management rigor (Criterion 4, 10 Marks). We followed Agile Scrum through 5 bi-weekly sprints and systematically managed risks around 3D payload sizes, device fragmentation, and cloud CORS/MIME headers.');
   }
 
   // ==========================================
@@ -1032,7 +987,6 @@ async function buildPresentation() {
       {
         name: 'Manav Singh',
         role: 'Lead Full-Stack & Spatial AR Engineer',
-        color: C_CYAN,
         tasks: [
           'Engineered WebXR Device API hit-testing reticle & table plane detection.',
           'Built Google Scene Viewer Android Intent fallback and mobile QR handoff.',
@@ -1043,7 +997,6 @@ async function buildPresentation() {
       {
         name: 'Sanskar Suryavanshi',
         role: 'Frontend Architect & UI/UX Specialist',
-        color: C_AMBER,
         tasks: [
           'Architected responsive customer menu portal with Tailwind CSS.',
           'Designed interactive Dish Detail Modal, allergen badges & calorie counters.',
@@ -1054,7 +1007,6 @@ async function buildPresentation() {
       {
         name: 'Kesar Singh',
         role: 'Systems Integration & QA Lead',
-        color: C_EMERALD,
         tasks: [
           'Developed real-time Kitchen Display System (KDS) Kanban board.',
           'Integrated Web Audio API sound dispatch for instant order alerts.',
@@ -1076,20 +1028,20 @@ async function buildPresentation() {
       });
 
       slide.addText(m.name, {
-        x: x + 0.2, y: y + 0.2, w: 2.4, h: 0.3,
-        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: C_WHITE, margin: 0
+        x: x + 0.2, y: y + 0.2, w: 2.4, h: 0.28,
+        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(m.role, {
-        x: x + 0.2, y: y + 0.5, w: 2.4, h: 0.25,
-        fontFace: FONT_BODY, fontSize: 9.5, bold: true, color: m.color, margin: 0
+        x: x + 0.2, y: y + 0.48, w: 2.4, h: 0.25,
+        fontFace: FONT_BODY, fontSize: 9.5, bold: true, color: C_BLUE, margin: 0
       });
 
       slide.addText(m.tasks.map((t, i) => ({
         text: t,
         options: { bullet: true, color: C_TEXT_BODY, fontSize: 9, breakLine: i < m.tasks.length - 1 }
       })), {
-        x: x + 0.2, y: y + 0.8, w: 2.4, h: 1.7,
+        x: x + 0.2, y: y + 0.78, w: 2.4, h: 1.7,
         fontFace: FONT_BODY, fontSize: 9, paraSpaceAfter: 4, margin: 0
       });
     });
@@ -1101,19 +1053,19 @@ async function buildPresentation() {
       w: 8.8,
       h: 1.0,
       rectRadius: 0.08,
-      fill: { color: C_CARD_ALT },
-      line: { color: C_CYAN, width: 1 }
+      fill: { color: C_CARD_BLUE },
+      line: { color: C_BORDER_BLUE, width: 1 }
     });
 
     slide.addText('COLLABORATIVE METHODOLOGY & REPOSITORY GOVERNANCE', {
       x: 0.8,
       y: 4.2,
       w: 8.4,
-      h: 0.25,
+      h: 0.22,
       fontFace: FONT_BODY,
-      fontSize: 10,
+      fontSize: 9.5,
       bold: true,
-      color: C_CYAN,
+      color: C_NAVY,
       margin: 0
     });
 
@@ -1125,7 +1077,7 @@ async function buildPresentation() {
 
     slide.addText(collab.map((cl, i) => ({
       text: cl,
-      options: { bullet: true, color: C_WHITE, fontSize: 9, breakLine: i < collab.length - 1 }
+      options: { bullet: true, color: C_TEXT_BODY, fontSize: 9, breakLine: i < collab.length - 1 }
     })), {
       x: 0.8,
       y: 4.45,
@@ -1137,7 +1089,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('Slide 11 addresses Criterion 5 (10 Marks) for Teamwork & Collaboration. Manav led WebXR spatial tracking and cloud edge engineering; Sanskar spearheaded frontend architecture and UI/UX; Kesar developed the KDS Kanban and managed test validation. We used Git pull-request governance, daily standups, and regular reviews with our guide Prof. Vinitta Sunish.');
+    slide.addNotes('Slide 11 highlights teamwork and collaboration (Criterion 5, 10 Marks). Manav led spatial AR and cloud architecture; Sanskar designed the UI/UX and dynamic menu; Kesar handled the KDS and QA testing.');
   }
 
   // ==========================================
@@ -1147,7 +1099,7 @@ async function buildPresentation() {
     const slide = pres.addSlide();
     addHeader(slide, 'Rubric Criterion 3 (5 Marks)', 'Cost Analysis, Budgeting & Practical Feasibility');
 
-    // Left Column: Cost Comparison Table
+    // Left Column: Cost Table
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.6,
       y: 1.3,
@@ -1166,40 +1118,40 @@ async function buildPresentation() {
       fontFace: FONT_HEAD,
       fontSize: 11,
       bold: true,
-      color: C_CYAN,
+      color: C_NAVY,
       margin: 0
     });
 
     const costTable = [
       [
-        { text: 'Expenditure Item', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Hardware POS Tablets', options: { bold: true, color: 'F43F5E', fill: '1E293B' } },
-        { text: 'Smart Restaurant (Ours)', options: { bold: true, color: C_EMERALD, fill: '1E293B' } }
+        { text: 'Expenditure Item', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Hardware POS Tablets', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Smart Restaurant (Ours)', options: { bold: true, color: C_WHITE, fill: C_NAVY } }
       ],
       [
-        { text: 'Hardware Devices', options: { color: C_TEXT_BODY } },
-        { text: '₹3,50,000 (10 Tablets)', options: { color: 'F43F5E' } },
-        { text: '₹0 (Patron Phones)', options: { bold: true, color: C_EMERALD } }
+        { text: 'Hardware Devices', options: { bold: true, color: C_TEXT_HEAD, fill: 'FFFFFF' } },
+        { text: '₹3,50,000 (10 Tablets)', options: { color: C_RED, fill: 'FFFFFF' } },
+        { text: '₹0 (Patron Phones)', options: { bold: true, color: C_EMERALD, fill: 'FFFFFF' } }
       ],
       [
-        { text: 'Software Licensing', options: { color: C_TEXT_BODY } },
-        { text: '₹80,000 / year', options: { color: 'F43F5E' } },
-        { text: '₹0 (Open Source Stack)', options: { bold: true, color: C_EMERALD } }
+        { text: 'Software Licensing', options: { bold: true, color: C_TEXT_HEAD, fill: C_CARD } },
+        { text: '₹80,000 / year', options: { color: C_RED, fill: C_CARD } },
+        { text: '₹0 (Open Source Stack)', options: { bold: true, color: C_EMERALD, fill: C_CARD } }
       ],
       [
-        { text: 'Hardware Maintenance', options: { color: C_TEXT_BODY } },
-        { text: '₹40,000 / year', options: { color: 'F43F5E' } },
-        { text: '₹0 (No Table Hardware)', options: { bold: true, color: C_EMERALD } }
+        { text: 'Hardware Maintenance', options: { bold: true, color: C_TEXT_HEAD, fill: 'FFFFFF' } },
+        { text: '₹40,000 / year', options: { color: C_RED, fill: 'FFFFFF' } },
+        { text: '₹0 (No Table Hardware)', options: { bold: true, color: C_EMERALD, fill: 'FFFFFF' } }
       ],
       [
-        { text: 'Cloud Edge Hosting', options: { color: C_TEXT_BODY } },
-        { text: '₹30,000 / year', options: { color: C_TEXT_BODY } },
-        { text: '₹15,000 / yr (Vercel)', options: { bold: true, color: C_EMERALD } }
+        { text: 'Cloud Edge Hosting', options: { bold: true, color: C_TEXT_HEAD, fill: C_CARD } },
+        { text: '₹30,000 / year', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: '₹15,000 / yr (Vercel)', options: { bold: true, color: C_EMERALD, fill: C_CARD } }
       ],
       [
-        { text: '3-Year Total Cost', options: { bold: true, color: C_WHITE } },
-        { text: '₹7,10,000', options: { bold: true, color: 'F43F5E' } },
-        { text: '₹45,000 (93.7% Savings!)', options: { bold: true, color: C_EMERALD, fill: '172554' } }
+        { text: '3-Year Total Cost', options: { bold: true, color: C_NAVY, fill: C_CARD_BLUE } },
+        { text: '₹7,10,000', options: { bold: true, color: C_RED, fill: C_CARD_BLUE } },
+        { text: '₹45,000 (93.7% Savings!)', options: { bold: true, color: C_EMERALD, fill: C_CARD_BLUE } }
       ]
     ];
 
@@ -1215,7 +1167,7 @@ async function buildPresentation() {
       valign: 'middle'
     });
 
-    // Right Column: Feasibility Analysis
+    // Right Column: Feasibility
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 5.6,
       y: 1.3,
@@ -1234,7 +1186,7 @@ async function buildPresentation() {
       fontFace: FONT_HEAD,
       fontSize: 11,
       bold: true,
-      color: C_AMBER,
+      color: C_NAVY,
       margin: 0
     });
 
@@ -1267,7 +1219,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('Slide 12 covers Criterion 3 (5 Marks) for Cost Analysis & Feasibility. Compared to traditional tabletop hardware terminals costing over ₹7 Lakhs over 3 years, our solution costs under ₹45,000—delivering a massive 93.7% cost reduction. Technically and operationally, it uses existing customer devices and standard web browsers, making it extremely feasible.');
+    slide.addNotes('Slide 12 covers Criterion 3 (5 Marks). A 10-table restaurant saves over ₹6.6 Lakhs across 3 years by adopting our zero-hardware model, achieving 93.7% cost reduction.');
   }
 
   // ==========================================
@@ -1287,6 +1239,12 @@ async function buildPresentation() {
         w: 3.6,
         h: 2.4
       });
+      // Subtle neat border around image
+      slide.addShape(pres.shapes.RECTANGLE, {
+        x: 0.6, y: 1.3, w: 3.6, h: 2.4,
+        fill: { type: 'none' },
+        line: { color: C_BORDER, width: 1 }
+      });
     }
 
     // Right screenshot: Anchored 3D Dish on Table
@@ -1299,9 +1257,14 @@ async function buildPresentation() {
         w: 5.0,
         h: 2.4
       });
+      slide.addShape(pres.shapes.RECTANGLE, {
+        x: 4.4, y: 1.3, w: 5.0, h: 2.4,
+        fill: { type: 'none' },
+        line: { color: C_BORDER, width: 1 }
+      });
     }
 
-    // Bottom Implementation Checklist Cards
+    // Bottom Implementation Checklist Box
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.6,
       y: 3.85,
@@ -1325,16 +1288,16 @@ async function buildPresentation() {
     });
 
     const modules = [
-      '[COMPLETED] Interactive Menu: 12+ gourmet dishes with dietary tags, preparation times, and calorie metrics.',
-      '[COMPLETED] 6-DoF WebXR Surface Tracker: Table plane hit-testing, dynamic reticle, and model rotation gestures.',
-      '[COMPLETED] Google Scene Viewer Fallback: Automated Android intent dispatch for non-WebXR devices.',
-      '[COMPLETED] Real-Time Kitchen Display: Live order queue with state transitions and acoustic alerts.',
-      '[COMPLETED] Live Production Vercel Edge: Hosted & active at https://smart-restaurant-2za8.vercel.app/'
+      '• [COMPLETED] Interactive Menu: 12+ gourmet dishes with dietary tags, preparation times, and calorie metrics.',
+      '• [COMPLETED] 6-DoF WebXR Surface Tracker: Table plane hit-testing, dynamic reticle, and model rotation gestures.',
+      '• [COMPLETED] Google Scene Viewer Fallback: Automated Android intent dispatch for non-WebXR devices.',
+      '• [COMPLETED] Real-Time Kitchen Display: Live order queue with state transitions and acoustic alerts.',
+      '• [COMPLETED] Live Production Vercel Edge: Hosted & active at https://smart-restaurant-2za8.vercel.app/'
     ];
 
     slide.addText(modules.map((m, i) => ({
       text: m,
-      options: { bullet: true, color: C_WHITE, fontSize: 9, breakLine: i < modules.length - 1 }
+      options: { color: C_TEXT_HEAD, fontSize: 9, breakLine: i < modules.length - 1 }
     })), {
       x: 0.8,
       y: 4.2,
@@ -1346,7 +1309,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('Slide 13 is our most critical slide, addressing Criterion 7 carrying 30 Marks for 100% Implementation. As proven by the actual screenshots from our application, all five core subsystems are completely implemented, verified, and running live on our Vercel edge deployment at smart-restaurant-2za8.vercel.app.');
+    slide.addNotes('Slide 13 is our primary evidence slide for Criterion 7 (30 Marks). Both the smart menu and true 6-DoF AR tabletop placement are fully implemented and running live on our Vercel production deployment.');
   }
 
   // ==========================================
@@ -1366,6 +1329,11 @@ async function buildPresentation() {
         w: 3.4,
         h: 2.3
       });
+      slide.addShape(pres.shapes.RECTANGLE, {
+        x: 0.6, y: 1.3, w: 3.4, h: 2.3,
+        fill: { type: 'none' },
+        line: { color: C_BORDER, width: 1 }
+      });
     }
 
     // Right: 3D AR Model Rotation screenshot
@@ -1378,6 +1346,11 @@ async function buildPresentation() {
         w: 5.2,
         h: 2.3
       });
+      slide.addShape(pres.shapes.RECTANGLE, {
+        x: 4.2, y: 1.3, w: 5.2, h: 2.3,
+        fill: { type: 'none' },
+        line: { color: C_BORDER, width: 1 }
+      });
     }
 
     // 6-Step Operational Pipeline Banner
@@ -1388,7 +1361,7 @@ async function buildPresentation() {
       h: 1.35,
       rectRadius: 0.08,
       fill: { color: C_CARD },
-      line: { color: C_CYAN, width: 1 }
+      line: { color: C_BORDER, width: 1 }
     });
 
     slide.addText('END-TO-END OPERATIONAL PIPELINE (INPUT → PROCESSING → OUTPUT)', {
@@ -1399,7 +1372,7 @@ async function buildPresentation() {
       fontFace: FONT_BODY,
       fontSize: 9.5,
       bold: true,
-      color: C_CYAN,
+      color: C_NAVY,
       margin: 0
     });
 
@@ -1426,7 +1399,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('Slide 14 walks through our working demonstration workflow. The user scans the table QR, browses the smart menu, places the 1:1 scale dish onto their dining table using WebXR, inspects the portion from all angles, and submits the order. The order is instantly received by the Kitchen Display System with an audio chime.');
+    slide.addNotes('Slide 14 demonstrates the operational flow from QR scanning and AR inspection to instant kitchen ticket generation and fulfillment.');
   }
 
   // ==========================================
@@ -1438,60 +1411,60 @@ async function buildPresentation() {
 
     const testCases = [
       [
-        { text: 'Test ID', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Test Scenario', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Input Condition', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Expected Outcome', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Actual Result', options: { bold: true, color: C_WHITE, fill: '1E293B' } },
-        { text: 'Status', options: { bold: true, color: C_WHITE, fill: '1E293B' } }
+        { text: 'Test ID', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Test Scenario', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Input Condition', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Expected Outcome', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Actual Result', options: { bold: true, color: C_WHITE, fill: C_NAVY } },
+        { text: 'Status', options: { bold: true, color: C_WHITE, fill: C_NAVY } }
       ],
       [
-        { text: 'TC-01', options: { bold: true, color: C_TEXT_BODY } },
-        { text: 'Table QR Session Init', options: { color: C_TEXT_BODY } },
-        { text: 'Load `/?table=3`', options: { color: C_TEXT_BODY } },
-        { text: 'Set tableId=3 in Cart', options: { color: C_TEXT_BODY } },
-        { text: 'Cart bound to Table 3', options: { color: C_TEXT_BODY } },
-        { text: 'PASS', options: { bold: true, color: C_EMERALD } }
+        { text: 'TC-01', options: { bold: true, color: C_TEXT_HEAD, fill: 'FFFFFF' } },
+        { text: 'Table QR Session Init', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Load `/?table=3`', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Set tableId=3 in Cart', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Cart bound to Table 3', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'PASS', options: { bold: true, color: C_EMERALD, fill: 'FFFFFF' } }
       ],
       [
-        { text: 'TC-02', options: { bold: true, color: C_TEXT_BODY } },
-        { text: 'WebXR Table Hit-Test', options: { color: C_TEXT_BODY } },
-        { text: 'Aim at flat dining table', options: { color: C_TEXT_BODY } },
-        { text: 'Reticle locks to plane', options: { color: C_TEXT_BODY } },
-        { text: 'Stable plane detected', options: { color: C_TEXT_BODY } },
-        { text: 'PASS', options: { bold: true, color: C_EMERALD } }
+        { text: 'TC-02', options: { bold: true, color: C_TEXT_HEAD, fill: C_CARD } },
+        { text: 'WebXR Table Hit-Test', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'Aim at flat dining table', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'Reticle locks to plane', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'Stable plane detected', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'PASS', options: { bold: true, color: C_EMERALD, fill: C_CARD } }
       ],
       [
-        { text: 'TC-03', options: { bold: true, color: C_TEXT_BODY } },
-        { text: 'Scene Viewer Fallback', options: { color: C_TEXT_BODY } },
-        { text: 'Launch on Android Chrome', options: { color: C_TEXT_BODY } },
-        { text: 'Trigger AR intent URL', options: { color: C_TEXT_BODY } },
-        { text: 'ARCore renders model', options: { color: C_TEXT_BODY } },
-        { text: 'PASS', options: { bold: true, color: C_EMERALD } }
+        { text: 'TC-03', options: { bold: true, color: C_TEXT_HEAD, fill: 'FFFFFF' } },
+        { text: 'Scene Viewer Fallback', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Launch on Android Chrome', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Trigger AR intent URL', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'ARCore renders model', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'PASS', options: { bold: true, color: C_EMERALD, fill: 'FFFFFF' } }
       ],
       [
-        { text: 'TC-04', options: { bold: true, color: C_TEXT_BODY } },
-        { text: 'glTF 3D Asset Latency', options: { color: C_TEXT_BODY } },
-        { text: 'Fetch `burger.glb` (5.3MB)', options: { color: C_TEXT_BODY } },
-        { text: 'Download in <2.5s over 4G', options: { color: C_TEXT_BODY } },
-        { text: 'Downloaded in 1.8s', options: { color: C_TEXT_BODY } },
-        { text: 'PASS', options: { bold: true, color: C_EMERALD } }
+        { text: 'TC-04', options: { bold: true, color: C_TEXT_HEAD, fill: C_CARD } },
+        { text: 'glTF 3D Asset Latency', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'Fetch `burger.glb` (5.3MB)', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'Download in <2.5s over 4G', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'Downloaded in 1.8s', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'PASS', options: { bold: true, color: C_EMERALD, fill: C_CARD } }
       ],
       [
-        { text: 'TC-05', options: { bold: true, color: C_TEXT_BODY } },
-        { text: 'Real-Time KDS Sync', options: { color: C_TEXT_BODY } },
-        { text: 'Submit customer order', options: { color: C_TEXT_BODY } },
-        { text: 'Ticket lands with audio', options: { color: C_TEXT_BODY } },
-        { text: 'Instant ticket + chime', options: { color: C_TEXT_BODY } },
-        { text: 'PASS', options: { bold: true, color: C_EMERALD } }
+        { text: 'TC-05', options: { bold: true, color: C_TEXT_HEAD, fill: 'FFFFFF' } },
+        { text: 'Real-Time KDS Sync', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Submit customer order', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Ticket lands with audio', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'Instant ticket + chime', options: { color: C_TEXT_BODY, fill: 'FFFFFF' } },
+        { text: 'PASS', options: { bold: true, color: C_EMERALD, fill: 'FFFFFF' } }
       ],
       [
-        { text: 'TC-06', options: { bold: true, color: C_TEXT_BODY } },
-        { text: 'Cross-Device Responsiveness', options: { color: C_TEXT_BODY } },
-        { text: 'iPhone 13, Galaxy S22, Pixel', options: { color: C_TEXT_BODY } },
-        { text: 'Zero UI overlap/cutoff', options: { color: C_TEXT_BODY } },
-        { text: 'Clean mobile layout', options: { color: C_TEXT_BODY } },
-        { text: 'PASS', options: { bold: true, color: C_EMERALD } }
+        { text: 'TC-06', options: { bold: true, color: C_TEXT_HEAD, fill: C_CARD } },
+        { text: 'Cross-Device Responsiveness', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'iPhone 13, Galaxy S22, Pixel', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'Zero UI overlap/cutoff', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'Clean mobile layout', options: { color: C_TEXT_BODY, fill: C_CARD } },
+        { text: 'PASS', options: { bold: true, color: C_EMERALD, fill: C_CARD } }
       ]
     ];
 
@@ -1507,7 +1480,7 @@ async function buildPresentation() {
       valign: 'middle'
     });
 
-    // Testing Methodology Summary
+    // Summary Box
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.6,
       y: 4.05,
@@ -1515,7 +1488,7 @@ async function buildPresentation() {
       h: 1.05,
       rectRadius: 0.08,
       fill: { color: C_CARD },
-      line: { color: C_EMERALD, width: 1 }
+      line: { color: C_BORDER, width: 1 }
     });
 
     slide.addText('TESTING METHODOLOGY & VERIFICATION SUMMARY', {
@@ -1526,7 +1499,7 @@ async function buildPresentation() {
       fontFace: FONT_BODY,
       fontSize: 9.5,
       bold: true,
-      color: C_EMERALD,
+      color: C_NAVY,
       margin: 0
     });
 
@@ -1538,7 +1511,7 @@ async function buildPresentation() {
 
     slide.addText(testSummary.map((ts, i) => ({
       text: ts,
-      options: { bullet: true, color: C_WHITE, fontSize: 8.8, breakLine: i < testSummary.length - 1 }
+      options: { bullet: true, color: C_TEXT_BODY, fontSize: 8.8, breakLine: i < testSummary.length - 1 }
     })), {
       x: 0.8,
       y: 4.38,
@@ -1550,7 +1523,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('Slide 15 satisfies Criterion 8 (5 Marks) for Testing. We developed a rigorous test suite of six major scenarios spanning table initialization, WebXR hit-testing, fallback triggering, 3D asset latency, and real-time KDS dispatch. All test cases passed with 100% success across both Android and iOS devices.');
+    slide.addNotes('Slide 15 satisfies Criterion 8 (5 Marks). Our test suite verified 6 major functional scenarios with 100% pass rates across devices.');
   }
 
   // ==========================================
@@ -1560,7 +1533,6 @@ async function buildPresentation() {
     const slide = pres.addSlide();
     addHeader(slide, 'Experimental Results', 'Quantitative Performance Benchmarks & Optimization Results');
 
-    // Chart: 3D Model Size Reduction (Before vs After)
     const chartData = [
       {
         name: 'Original Uncompressed (MB)',
@@ -1581,10 +1553,10 @@ async function buildPresentation() {
       h: 3.75,
       showTitle: true,
       title: '3D Asset Size Optimization (MB)',
-      titleColor: C_WHITE,
+      titleColor: C_NAVY,
       titleFontFace: FONT_HEAD,
       titleFontSize: 11,
-      chartColors: ['F43F5E', '10B981'],
+      chartColors: [C_NAVY, C_EMERALD],
       catAxisLabelColor: C_TEXT_MUTED,
       valAxisLabelColor: C_TEXT_MUTED,
       valGridLine: { color: C_BORDER, size: 0.5 },
@@ -1595,13 +1567,12 @@ async function buildPresentation() {
       dataLabelFontSize: 8.5
     });
 
-    // Right Column: Performance Metrics Cards
     const metrics = [
       {
         title: 'Mobile Load Latency',
         val: '1.8 Seconds',
         detail: 'Reduced from 14.2s (87% faster download) over 4G LTE mobile connections.',
-        color: C_CYAN
+        color: C_BLUE
       },
       {
         title: 'Sustained Frame Rate',
@@ -1619,7 +1590,7 @@ async function buildPresentation() {
         title: 'User Ordering Confidence',
         val: '89.4% Rating',
         detail: 'Patrons reported higher portion certainty and reduced hesitation during menu selection.',
-        color: 'F43F5E'
+        color: C_NAVY
       }
     ];
 
@@ -1633,14 +1604,14 @@ async function buildPresentation() {
         line: { color: C_BORDER, width: 1 }
       });
 
-      slide.addText(m.title.toUpperCase(), {
+      slide.addText(m.title, {
         x: 5.8, y: y + 0.1, w: 2.2, h: 0.2,
-        fontFace: FONT_BODY, fontSize: 8.5, bold: true, color: m.color, margin: 0
+        fontFace: FONT_BODY, fontSize: 9, bold: true, color: m.color, margin: 0
       });
 
       slide.addText(m.val, {
         x: 7.8, y: y + 0.08, w: 1.4, h: 0.25,
-        fontFace: FONT_HEAD, fontSize: 11, bold: true, color: C_WHITE, align: 'right', margin: 0
+        fontFace: FONT_HEAD, fontSize: 11, bold: true, color: C_TEXT_HEAD, align: 'right', margin: 0
       });
 
       slide.addText(m.detail, {
@@ -1649,7 +1620,7 @@ async function buildPresentation() {
       });
     });
 
-    slide.addNotes('Slide 16 details our quantitative performance results. By quantizing meshes and downscaling textures from 8K to 2K WebP, we achieved up to 78% payload reduction across our 3D models. This brought mobile load times down from 14.2 seconds to just 1.8 seconds, while sustaining 60 FPS and cutting memory heap by 71%.');
+    slide.addNotes('Slide 16 details our performance benchmarks. 3D asset compression reduced payload sizes by up to 78%, dropping mobile load times to 1.8 seconds while sustaining 60 FPS.');
   }
 
   // ==========================================
@@ -1659,15 +1630,15 @@ async function buildPresentation() {
     const slide = pres.addSlide();
     addHeader(slide, 'Rubric Criterion 9 (20 Marks)', 'Research Paper: Academic Contribution, Methodology & Status');
 
-    // Title Card for Research Paper
+    // Title Card
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
       x: 0.6,
       y: 1.3,
       w: 8.8,
       h: 0.95,
       rectRadius: 0.08,
-      fill: { color: C_CARD_ALT },
-      line: { color: C_CYAN, width: 1 }
+      fill: { color: C_CARD_BLUE },
+      line: { color: C_BORDER_BLUE, width: 1 }
     });
 
     slide.addText('RESEARCH PAPER TITLE & CITATION', {
@@ -1678,7 +1649,7 @@ async function buildPresentation() {
       fontFace: FONT_BODY,
       fontSize: 9,
       bold: true,
-      color: C_CYAN,
+      color: C_BLUE,
       margin: 0
     });
 
@@ -1690,7 +1661,7 @@ async function buildPresentation() {
       fontFace: FONT_HEAD,
       fontSize: 13,
       bold: true,
-      color: C_WHITE,
+      color: C_NAVY,
       margin: 0
     });
 
@@ -1705,11 +1676,9 @@ async function buildPresentation() {
       margin: 0
     });
 
-    // 3 Content Cards: Problem & Methodology, Contribution & Results, Status
     const paperCards = [
       {
         title: 'Methodology & Spatial Pipeline',
-        color: C_AMBER,
         points: [
           'Formulated mathematical ray-plane intersection model using WebXR `requestHitTestSource`.',
           'Automated glTF optimization pipeline reducing photogrammetry payload sizes by 78%.',
@@ -1718,7 +1687,6 @@ async function buildPresentation() {
       },
       {
         title: 'Core Research Contribution',
-        color: C_EMERALD,
         points: [
           'Proved zero-install WebXR achieves comparable tracking stability (98% surface lock) to native apps.',
           'Demonstrated 87% reduction in mobile asset latency via edge MIME type orchestration.',
@@ -1727,7 +1695,6 @@ async function buildPresentation() {
       },
       {
         title: 'Validation & Publication Status',
-        color: C_CYAN,
         points: [
           'Validated on 15+ physical devices across Android (Snapdragon/Exynos) and iOS (A15/A16).',
           'Manuscript completed and rigorously formatted to IEEE Conference Transactions style.',
@@ -1749,7 +1716,7 @@ async function buildPresentation() {
 
       slide.addText(pc.title, {
         x: x + 0.2, y: y + 0.2, w: 2.4, h: 0.35,
-        fontFace: FONT_HEAD, fontSize: 12, bold: true, color: pc.color, margin: 0
+        fontFace: FONT_HEAD, fontSize: 12, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(pc.points.map((pt, i) => ({
@@ -1761,7 +1728,7 @@ async function buildPresentation() {
       });
     });
 
-    slide.addNotes('Slide 17 represents Criterion 9 carrying 20 Marks for Research Paper Completion. Our paper, titled "A Zero-Install WebXR and Cloud-Assisted Spatial Computing Architecture for Contactless Smart Restaurant Menus", authored by our team under Prof. Vinitta Sunish, has been fully written and formatted according to IEEE standards. It presents empirical proof of 6-DoF web-based tracking stability and asset optimization.');
+    slide.addNotes('Slide 17 covers Criterion 9 (20 Marks). Our paper titled "A Zero-Install WebXR and Cloud-Assisted Spatial Computing Architecture for Contactless Smart Restaurant Menus" has been completed and formatted to IEEE conference standards.');
   }
 
   // ==========================================
@@ -1773,28 +1740,20 @@ async function buildPresentation() {
 
     const conclusions = [
       {
-        tag: 'CRITERION 7: 100% IMPLEMENTATION',
         title: 'Production-Grade System Deployed Live',
-        desc: 'Delivered a fully functioning, end-to-end contactless dining platform active on Vercel at `https://smart-restaurant-2za8.vercel.app/`. Both diner AR ordering and real-time KDS kitchen tracking operate seamlessly.',
-        color: C_EMERALD
+        desc: 'Delivered a fully functioning, end-to-end contactless dining platform active on Vercel at `https://smart-restaurant-2za8.vercel.app/`. Both diner AR ordering and real-time KDS kitchen tracking operate seamlessly.'
       },
       {
-        tag: 'CRITERION 2: INNOVATION',
         title: 'Frictionless Spatial Computing Viability',
-        desc: 'Overcame historical limitations of mobile web AR by coupling native WebXR 6-DoF hit testing with Scene Viewer intent fallbacks, achieving 60 FPS rendering and sub-2 second model load times with zero app downloads.',
-        color: C_CYAN
+        desc: 'Overcame historical limitations of mobile web AR by coupling native WebXR 6-DoF hit testing with Scene Viewer intent fallbacks, achieving 60 FPS rendering and sub-2 second model load times with zero app downloads.'
       },
       {
-        tag: 'CRITERION 1 & 3: SUSTAINABILITY & COST',
-        title: '93.7% TCO Reduction & Zero Food Misjudgments',
-        desc: 'Replaced expensive tabletop POS tablets with patrons\' existing smartphones, saving over ₹6.6 Lakhs per restaurant while eliminating paper printing and reducing food plate waste by up to 28%.',
-        color: C_AMBER
+        title: '93.7% TCO Reduction & Sustainability',
+        desc: 'Replaced expensive tabletop POS tablets with patrons\' existing smartphones, saving over ₹6.6 Lakhs per restaurant while eliminating paper printing and reducing food plate waste by up to 28%.'
       },
       {
-        tag: 'CRITERION 9: ACADEMIC EXCELLENCE',
         title: 'Completed Research Paper in Review',
-        desc: 'Documented technical findings, mathematical raycast formulations, and performance benchmarks in a complete IEEE-compliant research paper submitted for peer-reviewed conference publication.',
-        color: 'F43F5E'
+        desc: 'Documented technical findings, mathematical raycast formulations, and performance benchmarks in a complete IEEE-compliant research paper submitted for peer-reviewed conference publication.'
       }
     ];
 
@@ -1811,23 +1770,18 @@ async function buildPresentation() {
         line: { color: C_BORDER, width: 1 }
       });
 
-      slide.addText(cn.tag, {
-        x: x + 0.2, y: y + 0.15, w: 3.9, h: 0.2,
-        fontFace: FONT_BODY, fontSize: 8.5, bold: true, color: cn.color, margin: 0
-      });
-
       slide.addText(cn.title, {
-        x: x + 0.2, y: y + 0.35, w: 3.9, h: 0.3,
-        fontFace: FONT_HEAD, fontSize: 12.5, bold: true, color: C_WHITE, margin: 0
+        x: x + 0.25, y: y + 0.2, w: 3.8, h: 0.3,
+        fontFace: FONT_HEAD, fontSize: 12.5, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(cn.desc, {
-        x: x + 0.2, y: y + 0.7, w: 3.9, h: 0.9,
+        x: x + 0.25, y: y + 0.55, w: 3.8, h: 1.0,
         fontFace: FONT_BODY, fontSize: 9.5, color: C_TEXT_BODY, margin: 0
       });
     });
 
-    slide.addNotes('Slide 18 summarizes our project conclusions. We successfully achieved 100% implementation, proved that browser-based WebXR spatial computing is ready for commercial production, delivered 93.7% cost savings, advanced environmental sustainability, and validated our engineering contributions in an IEEE research paper.');
+    slide.addNotes('Slide 18 summarizes our conclusions: 100% implementation delivered, web AR viability proven, 93.7% TCO savings achieved, and IEEE paper completed.');
   }
 
   // ==========================================
@@ -1840,23 +1794,19 @@ async function buildPresentation() {
     const futureCards = [
       {
         title: 'Multi-User Synchronized AR Dining',
-        desc: 'Integrating WebRTC mesh data channels to allow entire dining groups at the same table to share a synchronized virtual space, previewing banquet platters together in real time.',
-        color: C_CYAN
+        desc: 'Integrating WebRTC mesh data channels to allow entire dining groups at the same table to share a synchronized virtual space, previewing banquet platters together in real time.'
       },
       {
         title: 'Generative AI Voice Sommelier',
-        desc: 'Deploying an on-device lightweight LLM voice interface capable of answering natural-language dietary questions and suggesting personalized wine/beverage pairings.',
-        color: C_AMBER
+        desc: 'Deploying an on-device lightweight LLM voice interface capable of answering natural-language dietary questions and suggesting personalized wine/beverage pairings.'
       },
       {
         title: 'Computer Vision Plating QA Inspection',
-        desc: 'Installing overhead camera vision models in the kitchen to verify that plated dishes match the 3D visual standard in volume, garnish, and temperature before dispatch.',
-        color: C_EMERALD
+        desc: 'Installing overhead camera vision models in the kitchen to verify that plated dishes match the 3D visual standard in volume, garnish, and temperature before dispatch.'
       },
       {
         title: 'IoT Smart Table Sensor Integration',
-        desc: 'Pairing with Bluetooth load-cell weight sensors embedded beneath tables to detect empty beverage glasses and trigger automated refill alerts to waitstaff.',
-        color: 'F43F5E'
+        desc: 'Pairing with Bluetooth load-cell weight sensors embedded beneath tables to detect empty beverage glasses and trigger automated refill alerts to waitstaff.'
       }
     ];
 
@@ -1874,17 +1824,17 @@ async function buildPresentation() {
       });
 
       slide.addText(fc.title, {
-        x: x + 0.2, y: y + 0.2, w: 3.9, h: 0.35,
-        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: fc.color, margin: 0
+        x: x + 0.25, y: y + 0.2, w: 3.8, h: 0.3,
+        fontFace: FONT_HEAD, fontSize: 13, bold: true, color: C_NAVY, margin: 0
       });
 
       slide.addText(fc.desc, {
-        x: x + 0.2, y: y + 0.6, w: 3.9, h: 0.95,
-        fontFace: FONT_BODY, fontSize: 10, color: C_TEXT_BODY, margin: 0
+        x: x + 0.25, y: y + 0.55, w: 3.8, h: 1.0,
+        fontFace: FONT_BODY, fontSize: 9.5, color: C_TEXT_BODY, margin: 0
       });
     });
 
-    slide.addNotes('Slide 19 looks ahead to our future research and commercial roadmap. Key planned expansions include multi-user synchronized AR dining via WebRTC, generative AI voice food sommeliers, automated computer vision plate quality inspection in the kitchen, and IoT smart table weight sensors.');
+    slide.addNotes('Slide 19 outlines our future scope: multi-user shared AR dining, AI voice sommeliers, computer vision kitchen QA, and IoT weight-sensing smart tables.');
   }
 
   // ==========================================
@@ -1927,7 +1877,7 @@ async function buildPresentation() {
       margin: 0
     });
 
-    slide.addNotes('Slide 20 lists our formal academic and technical citations. These include official W3C WebXR specifications, Khronos glTF standards, Google ARCore developer references, and peer-reviewed IEEE and ACM publications on augmented reality in hospitality and zero-install spatial computing.');
+    slide.addNotes('Slide 20 lists academic references including W3C WebXR specifications, Khronos glTF standards, and IEEE/ACM publications.');
   }
 
   // Save presentation
