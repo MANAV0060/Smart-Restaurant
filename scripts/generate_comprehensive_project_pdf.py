@@ -31,22 +31,24 @@ class NumberedCanvas(canvas.Canvas):
 
     def draw_page_decorations(self, page_count):
         self.saveState()
-        self.setFont('Helvetica', 8)
-        self.setFillColor(colors.HexColor('#64748B')) # Slate 500
+        self.setFont('Helvetica-Bold', 8)
+        self.setFillColor(colors.black)
 
         # Running Header on pages > 1
         if self._pageNumber > 1:
             self.drawString(54, 752, 'TCET Department of Computer Engineering | Capstone Research Report')
             self.drawRightString(558, 752, 'Intelligent AI & AR Restaurant System')
-            self.setStrokeColor(colors.HexColor('#CBD5E1')) # Slate 300
-            self.setLineWidth(0.6)
+            self.setStrokeColor(colors.black)
+            self.setLineWidth(0.75)
             self.line(54, 744, 558, 744)
 
         # Running Footer on all pages
+        self.setFont('Helvetica', 8)
         self.drawString(54, 34, 'Production URL: https://smart-restaurant-2za8.vercel.app/ | A.Y. 2026-27')
+        self.setFont('Helvetica-Bold', 8)
         self.drawRightString(558, 34, f'Page {self._pageNumber} of {page_count}')
-        self.setStrokeColor(colors.HexColor('#CBD5E1'))
-        self.setLineWidth(0.6)
+        self.setStrokeColor(colors.black)
+        self.setLineWidth(0.75)
         self.line(54, 46, 558, 46)
         self.restoreState()
 
@@ -66,32 +68,22 @@ def build_comprehensive_pdf(output_path):
 
     content_width = 504 # 612 - 108
 
-    # Color Palette Definitions
-    C_NAVY = colors.HexColor('#1E3A8A')       # Primary Deep Navy
-    C_BLUE = colors.HexColor('#2563EB')       # Royal Accent Blue
-    C_TEAL = colors.HexColor('#0F766E')       # Deep Secondary Teal
-    C_HEAD = colors.HexColor('#0F172A')       # Dark Slate 900
-    C_BODY = colors.HexColor('#334155')       # Slate 700
-    C_MUTED = colors.HexColor('#64748B')      # Slate 500
-    C_BG_CARD = colors.HexColor('#F8FAFC')    # Soft Slate 50
-    C_BG_BLUE = colors.HexColor('#EFF6FF')    # Soft Blue 50
-    C_BORDER = colors.HexColor('#E2E8F0')     # Border Slate 200
-    C_BORDER_BLUE = colors.HexColor('#BFDBFE')
-    C_GREEN = colors.HexColor('#059669')      # Emerald Green
-    C_AMBER = colors.HexColor('#D97706')      # Amber
-    C_RED = colors.HexColor('#DC2626')        # Crimson
+    # Professional Monochrome & High-Contrast Black Styling
+    C_HEADER_BG = colors.HexColor('#0F172A')   # Solid Slate-Black for Table Headers
+    C_BG_CARD = colors.HexColor('#F8FAFC')     # Clean Light Gray for Callouts
+    C_BORDER = colors.HexColor('#CBD5E1')      # Clean Slate Gray Border
 
     # Styles Setup
     styles = getSampleStyleSheet()
 
-    # Custom Typographic Styles
+    # Custom Typographic Styles (All Text Black, Headlines Black Bold)
     title_style = ParagraphStyle(
         'DocTitle',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
         fontSize=18,
         leading=22,
-        textColor=C_NAVY,
+        textColor=colors.black,
         alignment=1, # Center
         spaceAfter=5
     )
@@ -102,7 +94,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica-Bold',
         fontSize=10.5,
         leading=14,
-        textColor=C_BLUE,
+        textColor=colors.black,
         alignment=1,
         spaceAfter=10
     )
@@ -113,7 +105,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica',
         fontSize=8.5,
         leading=12,
-        textColor=C_MUTED,
+        textColor=colors.black,
         alignment=1,
         spaceAfter=10
     )
@@ -124,7 +116,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica-Bold',
         fontSize=13.5,
         leading=17,
-        textColor=C_NAVY,
+        textColor=colors.black,
         spaceBefore=10,
         spaceAfter=5,
         keepWithNext=True
@@ -136,7 +128,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica-Bold',
         fontSize=11,
         leading=14.5,
-        textColor=C_TEAL,
+        textColor=colors.black,
         spaceBefore=8,
         spaceAfter=4,
         keepWithNext=True
@@ -148,7 +140,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica-Bold',
         fontSize=9.5,
         leading=13,
-        textColor=C_HEAD,
+        textColor=colors.black,
         spaceBefore=6,
         spaceAfter=3,
         keepWithNext=True
@@ -160,7 +152,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica',
         fontSize=9.0,
         leading=13.0,
-        textColor=C_BODY,
+        textColor=colors.black,
         spaceAfter=5
     )
 
@@ -170,7 +162,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica',
         fontSize=8.8,
         leading=12.5,
-        textColor=C_BODY,
+        textColor=colors.black,
         leftIndent=12,
         spaceAfter=3.5
     )
@@ -191,7 +183,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica',
         fontSize=8.0,
         leading=10.5,
-        textColor=C_BODY
+        textColor=colors.black
     )
 
     table_body_bold_style = ParagraphStyle(
@@ -200,7 +192,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica-Bold',
         fontSize=8.0,
         leading=10.5,
-        textColor=C_HEAD
+        textColor=colors.black
     )
 
     callout_text_style = ParagraphStyle(
@@ -209,7 +201,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica',
         fontSize=8.6,
         leading=12.2,
-        textColor=C_HEAD
+        textColor=colors.black
     )
 
     citation_style = ParagraphStyle(
@@ -218,7 +210,7 @@ def build_comprehensive_pdf(output_path):
         fontName='Helvetica',
         fontSize=8.0,
         leading=11.0,
-        textColor=C_MUTED,
+        textColor=colors.black,
         leftIndent=14,
         firstLineIndent=-14,
         spaceAfter=3.5
@@ -246,10 +238,10 @@ def build_comprehensive_pdf(output_path):
         "<b>Department of Computer Engineering, Thakur College of Engineering &amp; Technology (TCET), University of Mumbai</b><br/>"
         "Capstone Project Presentation III Evaluation | Academic Year 2026-27<br/>"
         "<b>Project Team:</b> Manav Singh, Sanskar Suryavanshi, Kesar Singh &nbsp;|&nbsp; <b>Project Mentor:</b> Prof. Vinitta Sunish<br/>"
-        "<b>Live Production URL:</b> <font color='#2563EB'>https://smart-restaurant-2za8.vercel.app/</font> &nbsp;|&nbsp; <b>Repository:</b> GitHub MANAV0060/Smart-Restaurant",
+        "<b>Live Production URL:</b> <b>https://smart-restaurant-2za8.vercel.app/</b> &nbsp;|&nbsp; <b>Repository:</b> GitHub MANAV0060/Smart-Restaurant",
         meta_style
     ))
-    story.append(HRFlowable(width="100%", thickness=1.5, color=C_NAVY, spaceAfter=8))
+    story.append(HRFlowable(width="100%", thickness=1.5, color=colors.black, spaceAfter=8))
 
     story.append(Paragraph("1. Executive Summary &amp; Comprehensive Project Analysis", h1_style))
     story.append(Paragraph(
@@ -279,7 +271,7 @@ def build_comprehensive_pdf(output_path):
     t_specs.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,-1), C_BG_CARD),
         ('BOX', (0,0), (-1,-1), 1, C_BORDER),
-        ('LINELEFT', (0,0), (0,0), 3.5, C_NAVY),
+        ('LINELEFT', (0,0), (0,0), 3.5, colors.black),
         ('TOPPADDING', (0,0), (-1,-1), 6),
         ('BOTTOMPADDING', (0,0), (-1,-1), 6),
         ('LEFTPADDING', (0,0), (-1,-1), 9),
@@ -325,7 +317,7 @@ def build_comprehensive_pdf(output_path):
         body_style
     ))
 
-    # TCO Comparison Table
+    # TCO Comparison Table (Monochrome / Black Bold Highlights)
     tco_data = [
         [
             Paragraph("<b>Expenditure Category</b>", table_header_style),
@@ -336,37 +328,37 @@ def build_comprehensive_pdf(output_path):
         [
             Paragraph("<b>Hardware Procurement (CAPEX)</b>", table_body_bold_style),
             Paragraph("₹3,50,000 (10 touch devices + docks)", table_body_style),
-            Paragraph("<b>₹0</b> (Patrons' personal smartphones)", table_body_style),
-            Paragraph("<font color='#059669'><b>100% Elimination</b></font>", table_body_style)
+            Paragraph("<b>₹0</b> (Patrons' personal smartphones)", table_body_bold_style),
+            Paragraph("<b>100% Elimination</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>Proprietary POS Software Licensing</b>", table_body_bold_style),
             Paragraph("₹80,000 / year (₹2,40,000 / 3 yrs)", table_body_style),
-            Paragraph("<b>₹0</b> (Open-source modular web stack)", table_body_style),
-            Paragraph("<font color='#059669'><b>100% Elimination</b></font>", table_body_style)
+            Paragraph("<b>₹0</b> (Open-source modular web stack)", table_body_bold_style),
+            Paragraph("<b>100% Elimination</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>Hardware Repairs &amp; Battery Replacements</b>", table_body_bold_style),
             Paragraph("₹40,000 / year (₹1,20,000 / 3 yrs)", table_body_style),
-            Paragraph("<b>₹0</b> (Zero table hardware to break)", table_body_style),
-            Paragraph("<font color='#059669'><b>100% Elimination</b></font>", table_body_style)
+            Paragraph("<b>₹0</b> (Zero table hardware to break)", table_body_bold_style),
+            Paragraph("<b>100% Elimination</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>Cloud Edge Hosting &amp; CDN Bandwidth</b>", table_body_bold_style),
             Paragraph("₹30,000 / year (₹90,000 / 3 yrs)", table_body_style),
             Paragraph("₹15,000 / year (₹45,000 / 3 yrs)", table_body_style),
-            Paragraph("<font color='#059669'><b>50% Cloud Reduction</b></font>", table_body_style)
+            Paragraph("<b>50% Cloud Reduction</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>3-Year Cumulative Total Cost (TCO)</b>", table_body_bold_style),
-            Paragraph("<font color='#DC2626'><b>₹7,10,000</b></font>", table_body_bold_style),
-            Paragraph("<font color='#059669'><b>₹45,000</b></font>", table_body_bold_style),
-            Paragraph("<font color='#059669'><b>₹6,65,000 Saved (93.7%)</b></font>", table_body_bold_style)
+            Paragraph("<b>₹7,10,000</b>", table_body_bold_style),
+            Paragraph("<b>₹45,000</b>", table_body_bold_style),
+            Paragraph("<b>₹6,65,000 Saved (93.7%)</b>", table_body_bold_style)
         ]
     ]
     t_tco = Table(tco_data, colWidths=[130, 130, 130, 114])
     t_tco.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), C_NAVY),
+        ('BACKGROUND', (0,0), (-1,0), C_HEADER_BG),
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
         ('GRID', (0,0), (-1,-1), 0.5, C_BORDER),
@@ -399,11 +391,11 @@ def build_comprehensive_pdf(output_path):
     story.append(PageBreak())
     story.append(Paragraph("3. Operational Deployment Status &amp; \"How Live Is Our Project\"", h1_style))
     story.append(Paragraph(
-        "A critical question for academic evaluators and commercial stakeholders is whether this project is a theoretical prototype or a deployed, production-grade system. <b>Our project is 100% implemented, functional, and actively deployed live on the global internet.</b> Evaluators can test and verify all operational workflows in real time at <font color='#2563EB'>https://smart-restaurant-2za8.vercel.app/</font>.",
+        "A critical question for academic evaluators and commercial stakeholders is whether this project is a theoretical prototype or a deployed, production-grade system. <b>Our project is 100% implemented, functional, and actively deployed live on the global internet.</b> Evaluators can test and verify all operational workflows in real time at <b>https://smart-restaurant-2za8.vercel.app/</b>.",
         body_style
     ))
 
-    # Live Modules Breakdown Table
+    # Live Modules Breakdown Table (All Text Black, Headlines Black Bold)
     live_modules_data = [
         [
             Paragraph("<b>Module &amp; Subsystem</b>", table_header_style),
@@ -412,33 +404,33 @@ def build_comprehensive_pdf(output_path):
         ],
         [
             Paragraph("<b>1. Customer PWA Menu Portal</b>", table_body_bold_style),
-            Paragraph("<font color='#059669'><b>100% Live &amp; Operational</b></font>", table_body_style),
+            Paragraph("<b>100% Live &amp; Operational</b>", table_body_bold_style),
             Paragraph("Dynamic URL table session parsing (`/?table=1` to `12`), interactive category filtering, live dietary search (Veg, Vegan, Gluten-Free), calorie metrics, and persistent slide-out shopping cart drawer.", table_body_style)
         ],
         [
             Paragraph("<b>2. Spatial 3D AR Viewer (`FoodARViewer.tsx`)</b>", table_body_bold_style),
-            Paragraph("<font color='#059669'><b>100% Live &amp; Operational</b></font>", table_body_style),
+            Paragraph("<b>100% Live &amp; Operational</b>", table_body_bold_style),
             Paragraph("Full-screen interactive 3D WebGL modal, touch orbit controls, calibrated 1:1 metric scale clamping (`diameterCm`, `heightCm`), WebXR plane anchoring, and desktop QR camera handoff modal.", table_body_style)
         ],
         [
             Paragraph("<b>3. Real-Time Kitchen Display System (KDS)</b>", table_body_bold_style),
-            Paragraph("<font color='#059669'><b>100% Live &amp; Operational</b></font>", table_body_style),
+            Paragraph("<b>100% Live &amp; Operational</b>", table_body_bold_style),
             Paragraph("Live Kanban board accessible via navigation bar. Stateful ticket lifecycle: <i>Pending ➔ Preparing ➔ Ready ➔ Delivered</i> with elapsed order timers and table ID tracking.", table_body_style)
         ],
         [
             Paragraph("<b>4. Acoustic Order Dispatch (`useSoundEffects`)</b>", table_body_bold_style),
-            Paragraph("<font color='#059669'><b>100% Live &amp; Operational</b></font>", table_body_style),
+            Paragraph("<b>100% Live &amp; Operational</b>", table_body_bold_style),
             Paragraph("Synthesized dual-tone acoustic chime utilizing Web Audio API oscillators (880Hz / 1760Hz). Dispatches instant auditory alerts upon order arrival without external audio assets.", table_body_style)
         ],
         [
             Paragraph("<b>5. Cloud Edge CDN Deployment</b>", table_body_bold_style),
-            Paragraph("<font color='#059669'><b>100% Live &amp; Operational</b></font>", table_body_style),
+            Paragraph("<b>100% Live &amp; Operational</b>", table_body_bold_style),
             Paragraph("Continuous automated CI/CD deployment on Vercel Serverless Edge network. Custom `vercel.json` headers orchestrating binary MIME types (`model/gltf-binary`) and edge asset caching.", table_body_style)
         ]
     ]
     t_live = Table(live_modules_data, colWidths=[120, 110, 274])
     t_live.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), C_NAVY),
+        ('BACKGROUND', (0,0), (-1,0), C_HEADER_BG),
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('GRID', (0,0), (-1,-1), 0.5, C_BORDER),
@@ -477,7 +469,7 @@ def build_comprehensive_pdf(output_path):
         body_style
     ))
 
-    # Competitor Comparison Matrix
+    # Competitor Comparison Matrix (Monochrome / Black Bold Highlights)
     comp_matrix = [
         [
             Paragraph("<b>Evaluation Dimension</b>", table_header_style),
@@ -491,54 +483,54 @@ def build_comprehensive_pdf(output_path):
             Paragraph("No (Dedicated hardware)", table_body_style),
             Paragraph("Yes (Web browser)", table_body_style),
             Paragraph("No (Mandatory App Store)", table_body_style),
-            Paragraph("<font color='#059669'><b>Yes (WebXR PWA)</b></font>", table_body_bold_style)
+            Paragraph("<b>Yes (WebXR PWA)</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>3D Spatial Table Placement</b>", table_body_bold_style),
             Paragraph("None (Flat 2D screen)", table_body_style),
             Paragraph("None (Static 2D images)", table_body_style),
             Paragraph("Yes (App-based AR)", table_body_style),
-            Paragraph("<font color='#059669'><b>Yes (1:1 WebXR)</b></font>", table_body_bold_style)
+            Paragraph("<b>Yes (1:1 WebXR)</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>True 1:1 Metric Calibrated Scale</b>", table_body_bold_style),
             Paragraph("No", table_body_style),
             Paragraph("No", table_body_style),
             Paragraph("Rarely (Arbitrary scaling)", table_body_style),
-            Paragraph("<font color='#059669'><b>Yes (Clamped cm scale)</b></font>", table_body_bold_style)
+            Paragraph("<b>Yes (Clamped cm scale)</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>Integrated Kitchen KDS</b>", table_body_bold_style),
             Paragraph("Yes (Proprietary)", table_body_style),
             Paragraph("Partial (Printer sync)", table_body_style),
             Paragraph("No (Viewer app only)", table_body_style),
-            Paragraph("<font color='#059669'><b>Yes (Live Audio KDS)</b></font>", table_body_bold_style)
+            Paragraph("<b>Yes (Live Audio KDS)</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>3-Year Hardware CAPEX</b>", table_body_bold_style),
-            Paragraph("<font color='#DC2626'>₹3.5L+ per 10 tables</font>", table_body_style),
+            Paragraph("<b>₹3.5L+ per 10 tables</b>", table_body_bold_style),
             Paragraph("₹0", table_body_style),
             Paragraph("₹0", table_body_style),
-            Paragraph("<font color='#059669'><b>₹0 (Zero CAPEX)</b></font>", table_body_bold_style)
+            Paragraph("<b>₹0 (Zero CAPEX)</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>Customer Friction / Dropout</b>", table_body_bold_style),
             Paragraph("Low friction, unhygienic", table_body_style),
             Paragraph("Moderate (Boring 2D)", table_body_style),
-            Paragraph("<font color='#DC2626'>High (70%+ drop-off)</font>", table_body_style),
-            Paragraph("<font color='#059669'><b>Near Zero (Instant PWA)</b></font>", table_body_bold_style)
+            Paragraph("<b>High (70%+ drop-off)</b>", table_body_bold_style),
+            Paragraph("<b>Near Zero (Instant PWA)</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>Mitigation of Food Waste</b>", table_body_bold_style),
             Paragraph("Negligible impact", table_body_style),
             Paragraph("Zero impact (Blind order)", table_body_style),
             Paragraph("Moderate (App barrier)", table_body_style),
-            Paragraph("<font color='#059669'><b>High (28% reduction)</b></font>", table_body_bold_style)
+            Paragraph("<b>High (28% reduction)</b>", table_body_bold_style)
         ]
     ]
     t_comp = Table(comp_matrix, colWidths=[104, 100, 100, 100, 100])
     t_comp.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), C_NAVY),
+        ('BACKGROUND', (0,0), (-1,0), C_HEADER_BG),
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('GRID', (0,0), (-1,-1), 0.5, C_BORDER),
@@ -615,7 +607,7 @@ def build_comprehensive_pdf(output_path):
         bullet_style
     ))
 
-    # Economics comparison table
+    # Economics comparison table (Monochrome / Black Bold)
     pivot_econ = [
         [
             Paragraph("<b>Market Comparison Metric</b>", table_header_style),
@@ -625,7 +617,7 @@ def build_comprehensive_pdf(output_path):
         [
             Paragraph("<b>Average Order Value (AOV)</b>", table_body_bold_style),
             Paragraph("₹350 – ₹700 per person", table_body_style),
-            Paragraph("<b>₹1,800 – ₹5,500+ per person</b> (3x to 8x higher)", table_body_bold_style)
+            Paragraph("<b>₹1,800 – ₹5,500+ per person (3x to 8x higher)</b>", table_body_bold_style)
         ],
         [
             Paragraph("<b>Operational Priority</b>", table_body_bold_style),
@@ -650,7 +642,7 @@ def build_comprehensive_pdf(output_path):
     ]
     t_pivot = Table(pivot_econ, colWidths=[150, 160, 194])
     t_pivot.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), C_NAVY),
+        ('BACKGROUND', (0,0), (-1,0), C_HEADER_BG),
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('GRID', (0,0), (-1,-1), 0.5, C_BORDER),
@@ -744,7 +736,7 @@ def build_comprehensive_pdf(output_path):
     ]
     t_survey = Table(survey_matrix, colWidths=[24, 210, 114, 156])
     t_survey.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), C_NAVY),
+        ('BACKGROUND', (0,0), (-1,0), C_HEADER_BG),
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('GRID', (0,0), (-1,-1), 0.5, C_BORDER),
@@ -796,8 +788,9 @@ def build_comprehensive_pdf(output_path):
     ]
     t_webrtc = Table(webrtc_box, colWidths=[content_width])
     t_webrtc.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,-1), C_BG_BLUE),
-        ('BOX', (0,0), (-1,-1), 1, C_BORDER_BLUE),
+        ('BACKGROUND', (0,0), (-1,-1), C_BG_CARD),
+        ('BOX', (0,0), (-1,-1), 1, C_BORDER),
+        ('LINELEFT', (0,0), (0,0), 3.5, colors.black),
         ('TOPPADDING', (0,0), (-1,-1), 6),
         ('BOTTOMPADDING', (0,0), (-1,-1), 6),
         ('LEFTPADDING', (0,0), (-1,-1), 9),
@@ -867,7 +860,7 @@ def build_comprehensive_pdf(output_path):
                 "<b>Closed-Loop Kitchen QA Workflow:</b><br/>"
                 "1. Chef finishes plating ➔ Places dish on marked inspection zone beneath 4K overhead camera.<br/>"
                 "2. Vision model runs inference in 120ms ➔ Compares volumetric symmetry, sauce drizzle, and protein weight against 3D standard.<br/>"
-                "3. Verified dish triggers green acoustic chime ➔ KDS ticket automatically advances to <i>'Ready for Table Delivery'</i>.",
+                "3. Verified dish triggers acoustic chime ➔ KDS ticket automatically advances to <i>'Ready for Table Delivery'</i>.",
                 callout_text_style
             )
         ]
@@ -876,7 +869,7 @@ def build_comprehensive_pdf(output_path):
     t_cv.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,-1), C_BG_CARD),
         ('BOX', (0,0), (-1,-1), 1, C_BORDER),
-        ('LINELEFT', (0,0), (0,0), 3.5, C_GREEN),
+        ('LINELEFT', (0,0), (0,0), 3.5, colors.black),
         ('TOPPADDING', (0,0), (-1,-1), 6),
         ('BOTTOMPADDING', (0,0), (-1,-1), 6),
         ('LEFTPADDING', (0,0), (-1,-1), 9),
@@ -953,7 +946,7 @@ def build_comprehensive_pdf(output_path):
         bullet_style
     ))
 
-    # Complete Roadmap Timeline Table
+    # Complete Roadmap Timeline Table (Monochrome / Black Bold)
     roadmap_timeline = [
         [
             Paragraph("<b>Implementation Phase</b>", table_header_style),
@@ -962,7 +955,7 @@ def build_comprehensive_pdf(output_path):
         ],
         [
             Paragraph("<b>Phase 1: Live Foundation (Current)</b>", table_body_bold_style),
-            Paragraph("<font color='#059669'><b>Completed (Q3 2026)</b></font>", table_body_style),
+            Paragraph("<b>Completed (Q3 2026)</b>", table_body_bold_style),
             Paragraph("Zero-install WebXR PWA, 1:1 metric scale clamping, live acoustic KDS, Vercel edge deployment.", table_body_style)
         ],
         [
@@ -983,7 +976,7 @@ def build_comprehensive_pdf(output_path):
     ]
     t_timeline = Table(roadmap_timeline, colWidths=[130, 94, 280])
     t_timeline.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), C_NAVY),
+        ('BACKGROUND', (0,0), (-1,0), C_HEADER_BG),
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('GRID', (0,0), (-1,-1), 0.5, C_BORDER),
@@ -1006,7 +999,7 @@ def build_comprehensive_pdf(output_path):
         body_style
     ))
 
-    # Fact-checking verification table
+    # Fact-checking verification table (Monochrome / Black Bold)
     fact_table = [
         [
             Paragraph("<b>Claim / Metric in Report</b>", table_header_style),
@@ -1015,33 +1008,33 @@ def build_comprehensive_pdf(output_path):
         ],
         [
             Paragraph("<b>Food Plate Return &amp; Wastage Rate</b>", table_body_bold_style),
-            Paragraph("<b>18% – 22%</b>", table_body_style),
+            Paragraph("<b>18% – 22%</b>", table_body_bold_style),
             Paragraph("Cornell University Hospitality Center (2023) &amp; ReFED Food Waste Assessment (2024). Driven by portion size misjudgment and expectation mismatch.", table_body_style)
         ],
         [
             Paragraph("<b>Tabletop POS Tablet 3-Yr CAPEX</b>", table_body_bold_style),
-            Paragraph("<b>₹3,50,000+</b>", table_body_style),
+            Paragraph("<b>₹3,50,000+</b>", table_body_bold_style),
             Paragraph("National Restaurant Association (NRA) Technology Survey (2024). Average hardware cost of ₹35,000 per commercial tablet plus charging docks.", table_body_style)
         ],
         [
             Paragraph("<b>Native App Download Abandonment</b>", table_body_bold_style),
-            Paragraph("<b>70%+</b>", table_body_style),
+            Paragraph("<b>70%+</b>", table_body_bold_style),
             Paragraph("Grand View Research (2024). Hospitality consumers refusing mandatory mobile application installations in casual dining venues.", table_body_style)
         ],
         [
             Paragraph("<b>3D Photogrammetry Compression</b>", table_body_bold_style),
-            Paragraph("<b>78% reduction</b>", table_body_style),
+            Paragraph("<b>78% reduction</b>", table_body_bold_style),
             Paragraph("Khronos Group Draco Mesh Compression Specification (2023). Achieved reduction from 46MB down to &lt;10MB for rapid mobile edge delivery.", table_body_style)
         ],
         [
             Paragraph("<b>Spatial Surface Tracking Stability</b>", table_body_bold_style),
-            Paragraph("<b>98% lock</b>", table_body_style),
+            Paragraph("<b>98% lock</b>", table_body_bold_style),
             Paragraph("Empirical benchmark across 15 physical mobile test devices running W3C WebXR `requestHitTestSource` against horizontal table planes.", table_body_style)
         ]
     ]
     t_fact = Table(fact_table, colWidths=[130, 84, 290])
     t_fact.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), C_NAVY),
+        ('BACKGROUND', (0,0), (-1,0), C_HEADER_BG),
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('GRID', (0,0), (-1,-1), 0.5, C_BORDER),
@@ -1073,7 +1066,7 @@ def build_comprehensive_pdf(output_path):
 
     # Build the document using the NumberedCanvas
     doc.build(story, canvasmaker=NumberedCanvas)
-    print(f"Successfully generated comprehensive PDF report at: {output_path}")
+    print(f"Successfully generated black-formatted PDF report at: {output_path}")
 
 if __name__ == '__main__':
     target = 'd:/resrtorant/Smart_Restaurant_Comprehensive_Feasibility_and_Roadmap_Report.pdf'
